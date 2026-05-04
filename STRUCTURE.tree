@@ -1,0 +1,38 @@
+.
+├── ARCHITECTURE.md
+├── CLAUDE.md
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── DEPLOYMENT_GUIDE.md
+├── DESIGN_DECISIONS.md
+├── FAQ.md
+├── GEMINI.md
+├── .github
+│   ├── ISSUE_TEMPLATE
+│   │   ├── bug_report.yml
+│   │   └── feature_request.yml
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows
+│       ├── badges.yml
+│       ├── ci.yml
+│       ├── pr_automation.yml
+│       └── security.yml
+├── GOVERNANCE.md
+├── LICENSE.md
+├── locales
+│   ├── README.ja.md
+│   └── README.th.md
+├── MANIFESTO.md
+├── PHILOSOPHY.md
+├── .pre-commit-config.yaml
+├── PRINCIPLES.md
+├── README.md
+├── ROADMAP.md
+├── SECURITY.md
+├── STRATEGY.md
+├── STRUCTURE.tree
+├── SUPPORT.md
+├── TROUBLESHOOTING.md
+└── VISION.md
+
+5 directories, 31 files

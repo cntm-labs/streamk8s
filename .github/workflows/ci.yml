@@ -1,0 +1,84 @@
+name: "CI for "StreamK8s""
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  bootstrap-smoke-test:
+    name: Bootstrap smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect source stacks
+        id: stacks
+        run: |
+          echo "rust=$([ -f Cargo.toml ] && echo true || echo false)" >> $GITHUB_OUTPUT
+          echo "python=$({ [ -f pyproject.toml ] || [ -f requirements.txt ]; } && echo true || echo false)" >> $GITHUB_OUTPUT
+          echo "node=$([ -f package.json ] && echo true || echo false)" >> $GITHUB_OUTPUT
+      - name: Verify repo structure
+        run: |
+          echo "rust=${{ steps.stacks.outputs.rust }} python=${{ steps.stacks.outputs.python }} node=${{ steps.stacks.outputs.node }}"
+          echo "OK — repo structure verified. Stack-specific jobs below run only if their manifest exists."
+
+  
+  rust-lint:
+    name: Rust Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip if no Cargo.toml
+        id: guard
+        run: |
+          if [ ! -f Cargo.toml ]; then
+            echo "::notice::No Cargo.toml yet; skipping Rust lint."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Setup Rust
+        if: steps.guard.outputs.skip != 'true'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Check formatting
+        if: steps.guard.outputs.skip != 'true'
+        run: cargo fmt --all --check
+      - name: Clippy
+        if: steps.guard.outputs.skip != 'true'
+        run: cargo clippy --all-targets --all-features -- -D warnings
+  
+  rust-build-and-test:
+    name: Rust Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip if no Cargo.toml
+        id: guard
+        run: |
+          if [ ! -f Cargo.toml ]; then
+            echo "::notice::No Cargo.toml yet; skipping Rust build/test."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Setup Rust
+        if: steps.guard.outputs.skip != 'true'
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Build
+        if: steps.guard.outputs.skip != 'true'
+        run: cargo build
+      - name: Test
+        if: steps.guard.outputs.skip != 'true'
+        run: cargo test
+
