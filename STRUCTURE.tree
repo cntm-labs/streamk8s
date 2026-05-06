@@ -54,6 +54,7 @@
 │   ├── assets
 │   │   └── vue.svg
 │   ├── main.ts
+│   ├── style.css
 │   └── vite-env.d.ts
 ├── src-tauri
 │   ├── build.rs
@@ -94,4 +95,4 @@
 └── .vscode
     └── extensions.json
 
-19 directories, 76 files
+19 directories, 77 files
