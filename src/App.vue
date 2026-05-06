@@ -78,12 +78,18 @@ body { margin: 0; padding: 0; background-color: #111827; }
   gap: 1.5rem;
   padding: 1.5rem;
   flex: 1;
+  overflow: hidden; /* Prevent body scroll, use container scroll instead */
 }
 .telemetry-panel {
   background-color: #1f2937;
   padding: 1.5rem;
   border-radius: 8px;
   border: 1px solid #374151;
+  align-self: start;
+}
+.workloads-panel {
+  height: 100%;
+  overflow: hidden;
 }
 .telemetry-panel h3 { margin-top: 0; margin-bottom: 1.5rem; }
 </style>
