@@ -62,7 +62,8 @@
 │   │   └── vue.svg
 │   ├── components
 │   │   ├── Gauge.vue
-│   │   └── PodList.vue
+│   │   ├── PodList.vue
+│   │   └── TrendChart.vue
 │   ├── main.ts
 │   ├── style.css
 │   └── vite-env.d.ts
@@ -102,7 +103,8 @@
 │   │   │   └── mod.rs
 │   │   ├── k8s
 │   │   │   ├── mod.rs
-│   │   │   └── pods.rs
+│   │   │   ├── pods.rs
+│   │   │   └── scaling.rs
 │   │   ├── lib.rs
 │   │   └── main.rs
 │   └── tauri.conf.json
@@ -133,4 +135,4 @@
 └── .vscode
     └── extensions.json
 
-32 directories, 102 files
+32 directories, 104 files

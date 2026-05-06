@@ -11,7 +11,10 @@ use tauri::Emitter;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![crate::k8s::pods::get_pods])
+        .invoke_handler(tauri::generate_handler![
+            crate::k8s::pods::get_pods,
+            crate::k8s::scaling::scale_workload
+        ])
         .setup(|app| {
             let handle = app.handle().clone();
             let nvml = Nvml::init().ok();
