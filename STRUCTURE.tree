@@ -5,6 +5,19 @@
 ├── CONTRIBUTING.md
 ├── DEPLOYMENT_GUIDE.md
 ├── DESIGN_DECISIONS.md
+├── dist
+│   ├── assets
+│   │   ├── index-4IqbcwHd.js
+│   │   └── index-yfKK-ms3.css
+│   ├── index.html
+│   ├── tauri.svg
+│   └── vite.svg
+├── docs
+│   └── superpowers
+│       ├── plans
+│       │   └── 2026-05-04-streamk8s-init.md
+│       └── specs
+│           └── 2026-05-04-streamk8s-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -17,22 +30,68 @@
 │       ├── ci.yml
 │       ├── pr_automation.yml
 │       └── security.yml
+├── .gitignore
 ├── GOVERNANCE.md
+├── index.html
 ├── LICENSE.md
 ├── locales
 │   ├── README.ja.md
 │   └── README.th.md
 ├── MANIFESTO.md
+├── package.json
+├── package-lock.json
 ├── PHILOSOPHY.md
 ├── .pre-commit-config.yaml
 ├── PRINCIPLES.md
+├── public
+│   ├── tauri.svg
+│   └── vite.svg
 ├── README.md
 ├── ROADMAP.md
 ├── SECURITY.md
+├── src
+│   ├── App.vue
+│   ├── assets
+│   │   └── vue.svg
+│   ├── main.ts
+│   └── vite-env.d.ts
+├── src-tauri
+│   ├── build.rs
+│   ├── capabilities
+│   │   └── default.json
+│   ├── Cargo.lock
+│   ├── Cargo.toml
+│   ├── .gitignore
+│   ├── icons
+│   │   ├── 128x128@2x.png
+│   │   ├── 128x128.png
+│   │   ├── 32x32.png
+│   │   ├── icon.icns
+│   │   ├── icon.ico
+│   │   ├── icon.png
+│   │   ├── Square107x107Logo.png
+│   │   ├── Square142x142Logo.png
+│   │   ├── Square150x150Logo.png
+│   │   ├── Square284x284Logo.png
+│   │   ├── Square30x30Logo.png
+│   │   ├── Square310x310Logo.png
+│   │   ├── Square44x44Logo.png
+│   │   ├── Square71x71Logo.png
+│   │   ├── Square89x89Logo.png
+│   │   └── StoreLogo.png
+│   ├── src
+│   │   ├── lib.rs
+│   │   └── main.rs
+│   └── tauri.conf.json
 ├── STRATEGY.md
 ├── STRUCTURE.tree
 ├── SUPPORT.md
 ├── TROUBLESHOOTING.md
-└── VISION.md
+├── tsconfig.json
+├── tsconfig.node.json
+├── VISION.md
+├── vite.config.ts
+└── .vscode
+    └── extensions.json
 
-5 directories, 31 files
+19 directories, 76 files
