@@ -2,9 +2,10 @@ pub mod hardware;
 pub mod k8s;
 
 use crate::hardware::collector::collect_metrics;
+use nvml_wrapper::Nvml;
 use std::time::Duration;
-use tauri::Manager;
 use sysinfo::System;
+use tauri::Emitter;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -13,10 +14,11 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![crate::k8s::pods::get_pods])
         .setup(|app| {
             let handle = app.handle().clone();
+            let nvml = Nvml::init().ok();
             tauri::async_runtime::spawn(async move {
                 let mut sys = System::new_all();
                 loop {
-                    let metrics = collect_metrics(&mut sys);
+                    let metrics = collect_metrics(&mut sys, &nvml);
                     let _ = handle.emit("hardware-update", metrics);
                     tokio::time::sleep(Duration::from_secs(1)).await;
                 }

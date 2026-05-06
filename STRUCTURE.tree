@@ -17,11 +17,13 @@
 │       ├── plans
 │       │   ├── 2026-05-04-streamk8s-init.md
 │       │   ├── 2026-05-06-github-repo-init.md
-│       │   └── 2026-05-06-milestone-1-dashboard.md
+│       │   ├── 2026-05-06-milestone-1-dashboard.md
+│       │   └── 2026-05-06-milestone-2-control.md
 │       └── specs
 │           ├── 2026-05-04-streamk8s-design.md
 │           ├── 2026-05-06-github-repo-init-design.md
-│           └── 2026-05-06-milestone-1-dashboard-design.md
+│           ├── 2026-05-06-milestone-1-dashboard-design.md
+│           └── 2026-05-06-milestone-2-control-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -58,6 +60,9 @@
 │   ├── App.vue
 │   ├── assets
 │   │   └── vue.svg
+│   ├── components
+│   │   ├── Gauge.vue
+│   │   └── PodList.vue
 │   ├── main.ts
 │   ├── style.css
 │   └── vite-env.d.ts
@@ -67,6 +72,12 @@
 │   │   └── default.json
 │   ├── Cargo.lock
 │   ├── Cargo.toml
+│   ├── gen
+│   │   └── schemas
+│   │       ├── acl-manifests.json
+│   │       ├── capabilities.json
+│   │       ├── desktop-schema.json
+│   │       └── linux-schema.json
 │   ├── .gitignore
 │   ├── icons
 │   │   ├── 128x128@2x.png
@@ -99,10 +110,17 @@
 ├── STRUCTURE.tree
 ├── .superpowers
 │   └── brainstorm
-│       └── 3323371-1778067877
+│       ├── 3323371-1778067877
+│       │   ├── content
+│       │   │   ├── first-steps.html
+│       │   │   ├── hardware-design.html
+│       │   │   └── pod-control-design.html
+│       │   └── state
+│       │       ├── server.pid
+│       │       └── server-stopped
+│       └── 3783278-1778072564
 │           ├── content
-│           │   ├── first-steps.html
-│           │   └── hardware-design.html
+│           │   └── pod-control-design.html
 │           └── state
 │               ├── server-info
 │               └── server.pid
@@ -115,4 +133,4 @@
 └── .vscode
     └── extensions.json
 
-26 directories, 90 files
+32 directories, 102 files
