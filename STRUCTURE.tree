@@ -15,9 +15,11 @@
 ├── docs
 │   └── superpowers
 │       ├── plans
-│       │   └── 2026-05-04-streamk8s-init.md
+│       │   ├── 2026-05-04-streamk8s-init.md
+│       │   └── 2026-05-06-github-repo-init.md
 │       └── specs
-│           └── 2026-05-04-streamk8s-design.md
+│           ├── 2026-05-04-streamk8s-design.md
+│           └── 2026-05-06-github-repo-init-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -95,4 +97,4 @@
 └── .vscode
     └── extensions.json
 
-19 directories, 77 files
+19 directories, 79 files
