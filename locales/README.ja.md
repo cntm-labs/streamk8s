@@ -2,18 +2,24 @@
 
 # "StreamK8s"
 
-**StreamK8s is an AI-driven Kubernetes IDE that solves resource hogging and manual GPU switching with an ultra-intuitive, monkey-proof interface.**
+**StreamK8sは、AI駆動型のKubernetes IDEであり、リソースの占有や手動でのGPU切り替えの問題を、直感的で誰にでも使いやすいインターフェースで解決します。**
 
-[![CI](https://github.com/"cntm-labs"/"StreamK8s"/actions/workflows/ci.yml/badge.svg)](https://github.com/"cntm-labs"/"StreamK8s"/actions/workflows/ci.yml)
-[![Security](https://github.com/"cntm-labs"/"StreamK8s"/actions/workflows/security.yml/badge.svg)](https://github.com/"cntm-labs"/"StreamK8s"/actions/workflows/security.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-active-success)](./)
+[![CI](https://github.com/cntm-labs/streamk8s/actions/workflows/ci.yml/badge.svg)](https://github.com/cntm-labs/streamk8s/actions/workflows/ci.yml)
+[![Security](https://github.com/cntm-labs/streamk8s/actions/workflows/security.yml/badge.svg)](https://github.com/cntm-labs/streamk8s/actions/workflows/security.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../LICENSE)
+[![Status](https://img.shields.io/badge/status-active-success)](../)
 
-<!-- Language Badges: Synchronize with English README -->
-[AI: Generate the same individual language badges here]
+<!-- Language Badges -->
+[![Rust](https://img.shields.io/badge/Rust-2021-orange?logo=rust)](https://www.rust-lang.org/)
+[![Tauri](https://img.shields.io/badge/Tauri-v2-24C8D8?logo=tauri)](https://tauri.app/)
+[![Vue](https://img.shields.io/badge/Vue.js-3.5-4FC08D?logo=vue.js)](https://vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 
-<!-- LOD Badges: Synchronize with English README -->
-[AI: Generate the same LOD badges here]
+<!-- LOD Badges -->
+![Rust LOD](https://img.shields.io/badge/Rust_LOD-23-orange)
+![Vue LOD](https://img.shields.io/badge/Vue_LOD-61-4FC08D)
+![TypeScript LOD](https://img.shields.io/badge/TypeScript_LOD-12-3178C6)
+![Total LOD](https://img.shields.io/badge/Total_LOD-96-blue)
 
 </div>
 
@@ -21,14 +27,19 @@
 
 [ [English](../README.md) | [ภาษาไทย](./README.th.md) | 日本語 | [简体中文](./README.zh.md) ]
 
-> [AI: TRANSLATE the professional tagline/description into JAPANESE here]
-StreamK8s dynamically allocates GPUs and auto-suspends background K8s pods when heavy desktop applications or games are running. It features a fast visual dashboard, AI smart profiling, and a VSCode-like extensible 3rd-party marketplace, making K8s resource management effortless.
+StreamK8sは、重いデスクトップアプリケーションやゲームが実行されているときに、GPUを動的に割り当て、バックグラウンドのK8sポッドを自動的にサスペンドします。高速なビジュアルダッシュボード、AIスマートプロファイリング、およびVSCodeのような拡張可能なサードパーティマーケットプレイスを備えており、K8sリソース管理を容易にします。
 
 ## ✨ 特徴 (Features)
-> [AI: TRANSLATE all 3 Features into JAPANESE here]
+
+- 🚀 **AIリソースマネージャーとダイナミックGPUスイッチャー**
+- 🛡️ **スマートプロファイリング機能を備えたリアルタイム・ビジュアルダッシュボード**
+- 📊 **VSCodeのようなサードパーティ製拡張機能マーケットプレイス**
 
 ## 🛠️ クイックスタート (Quick Start)
-> [AI: TRANSLATE getting_started_instructions into JAPANESE here]
+
+```bash
+# 依存関係をインストールし、Tauri開発サーバーを実行すると、StreamK8sがローカルのKubeconfigを自動的に検出します。
+```
 
 ## 🗺️ ナวิゲーション (Navigation)
 - 🏗️ **[アーキテクチャ (Architecture)](../ARCHITECTURE.md)**

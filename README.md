@@ -4,16 +4,22 @@
 
 **StreamK8s is an AI-driven Kubernetes IDE that solves resource hogging and manual GPU switching with an ultra-intuitive, monkey-proof interface.**
 
-[![CI](https://github.com/"cntm-labs"/"StreamK8s"/actions/workflows/ci.yml/badge.svg)](https://github.com/"cntm-labs"/"StreamK8s"/actions/workflows/ci.yml)
-[![Security](https://github.com/"cntm-labs"/"StreamK8s"/actions/workflows/security.yml/badge.svg)](https://github.com/"cntm-labs"/"StreamK8s"/actions/workflows/security.yml)
+[![CI](https://github.com/cntm-labs/streamk8s/actions/workflows/ci.yml/badge.svg)](https://github.com/cntm-labs/streamk8s/actions/workflows/ci.yml)
+[![Security](https://github.com/cntm-labs/streamk8s/actions/workflows/security.yml/badge.svg)](https://github.com/cntm-labs/streamk8s/actions/workflows/security.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-active-success)](./)
 
 <!-- Language Badges -->
-[AI: Generate individual language badges here, e.g., Rust, Mojo, TypeScript, Python]
+[![Rust](https://img.shields.io/badge/Rust-2021-orange?logo=rust)](https://www.rust-lang.org/)
+[![Tauri](https://img.shields.io/badge/Tauri-v2-24C8D8?logo=tauri)](https://tauri.app/)
+[![Vue](https://img.shields.io/badge/Vue.js-3.5-4FC08D?logo=vue.js)](https://vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 
 <!-- LOD Badges -->
-[AI: Generate LOD badges for each language and a Total LOD badge, e.g., Rust LOD: 0, Total LOD: 0]
+![Rust LOD](https://img.shields.io/badge/Rust_LOD-23-orange)
+![Vue LOD](https://img.shields.io/badge/Vue_LOD-61-4FC08D)
+![TypeScript LOD](https://img.shields.io/badge/TypeScript_LOD-12-3178C6)
+![Total LOD](https://img.shields.io/badge/Total_LOD-96-blue)
 
 </div>
 
