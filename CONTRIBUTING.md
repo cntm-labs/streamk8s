@@ -1,18 +1,23 @@
-# Contributing to "StreamK8s"
+# Contributing to StreamK8s
 
-We are committed to building a high-quality MLOps ecosystem. Thank you for your interest!
+We are building a revolutionary bridge between local hardware and Kubernetes. Thank you for your interest in contributing!
 
 ## 🚀 Workflow
-1. **Fork** the repository and create your branch from `main`.
-2. Ensure your code follows the **[PRINCIPLES.md](PRINCIPLES.md)**.
-3. Use **[DESIGN_DECISIONS.md](DESIGN_DECISIONS.md)** to log any architectural changes.
-4. Open a Pull Request using the **[PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md)**.
+1. **Fork** the repository and create your branch from `master`.
+2. **Design First:** If proposing a major change, update **[DESIGN_DECISIONS.md](DESIGN_DECISIONS.md)** first.
+3. **Follow the Bridge:** Ensure your code respects the boundaries defined in **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+4. **Monkey-Proof UI:** UI changes should be tested for simplicity and intuitive flow.
+
+## 🛠️ Development Environment
+- **Backend:** Rust 2021+ (Requires `cargo`).
+- **Frontend:** Node.js 20+ (Requires `npm` or `pnpm`).
+- **Framework:** Tauri v2 CLI (`cargo tauri`).
 
 ## ⚖️ Standards
-- **Testing:** All features must include tests runnable via `cargo test && npm run test`.
-- **Quality:** Run `npm install && cargo tauri build` and ensure a clean build.
-- **Ethics:** Follow our **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)**.
+- **TDD Preferred:** We value tests. Run `cargo test` and `npm run test` (or `npm run build` for type checking).
+- **Formatting:** We use `cargo fmt` and `prettier`. Please format before committing.
+- **Commits:** Follow conventional commits (e.g., `feat:`, `fix:`, `docs:`).
 
-## 🏷️ Issues
-- Use **[bug_report.md](.github/ISSUE_TEMPLATE/bug_report.md)** for issues.
-- Use **[feature_request.md](.github/ISSUE_TEMPLATE/feature_request.md)** for ideas.
+## 🏷️ Issues & Pull Requests
+- Use the provided templates for Bug Reports and Feature Requests.
+- Ensure all PRs pass the CI/CD pipeline before requesting review.

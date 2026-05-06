@@ -1,14 +1,14 @@
 # Project Vision
 
 ## 🌟 Mission Statement
-**Become the default OS-level orchestrator for both desktop apps and Kubernetes.**
+**Become the default OS-level orchestrator that bridges desktop performance with Kubernetes agility.**
 
 ## 🎯 Primary Objectives
-- **Objective 1:** Eliminate manual GPU switching and desktop resource hogging
-- **Objective 2:** Provide a monkey-proof Kubernetes management experience
+- **Resource Harmony:** Seamlessly manage GPU and CPU allocation between local desktop tasks (gaming, rendering) and background Kubernetes workloads.
+- **Cognitive Ease:** Provide an "ultra-intuitive, monkey-proof" interface that demystifies Kubernetes management for developers and enthusiasts alike.
+- **Intelligent Orchestration:** Leverage AI to profile workload patterns and predictively suspend or scale K8s pods based on local system demand.
 
 ## 🔭 Long-term Impact
-`"StreamK8s"` aims to solve the following problem:
-StreamK8s dynamically allocates GPUs and auto-suspends background K8s pods when heavy desktop applications or games are running. It features a fast visual dashboard, AI smart profiling, and a VSCode-like extensible 3rd-party marketplace, making K8s resource management effortless.
+StreamK8s aims to make "Local-K8s" a viable daily-driver environment by solving the resource hogging problem. By dynamically allocating GPUs and auto-suspending background pods, we turn the workstation into a unified, high-performance engine for both production-grade dev work and leisure.
 
-By leveraging `Rust, Tauri, Vue`, we ensure that our solution is not only functional but also future-proof and high-performing.
+By leveraging **Rust, Tauri, and Vue**, we ensure a high-performance, low-footprint desktop experience that feels native to the OS while managing complex distributed systems.

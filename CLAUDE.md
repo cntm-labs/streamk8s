@@ -3,8 +3,8 @@
 This file is the operational core for Claude. Gemini CLI and Claude MUST follow these protocols to maintain project integrity.
 
 ## 🎯 Architectural Intent
-- **Core Mission:** Become the default OS-level orchestrator for both desktop apps and Kubernetes.
-- **Primary Stack:** Rust, Tauri, Vue
+- **Core Mission:** Become the default OS-level orchestrator that bridges desktop performance with Kubernetes agility.
+- **Primary Stack:** Rust (Tauri v2), Vue 3.5 (TypeScript)
 - **System Nature:** StreamK8s dynamically allocates GPUs and auto-suspends background K8s pods when heavy desktop applications or games are running. It features a fast visual dashboard, AI smart profiling, and a VSCode-like extensible 3rd-party marketplace, making K8s resource management effortless.
 
 ## 🧬 Automated Lifecycle Management
@@ -12,7 +12,7 @@ This file is the operational core for Claude. Gemini CLI and Claude MUST follow 
    - You MUST update `DESIGN_DECISIONS.md` with new ADRs found in research.
    - **Constraint:** Maintain a rolling log of the **latest 10 ADRs**.
 2. **PR Creation Protocol:** When instructed to create a Pull Request:
-   - **Summarize:** Analyze all commit messages since the last merge to `main`.
+   - **Summarize:** Analyze all commit messages since the last merge to `master`.
    - **Template:** Read `.github/PULL_REQUEST_TEMPLATE.md` and populate it with:
      - Detailed description of changes.
      - Linked Issue ID (search for keywords like "fixes #123").
