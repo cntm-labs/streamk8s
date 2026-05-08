@@ -13,7 +13,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             crate::k8s::pods::get_pods,
-            crate::k8s::scaling::scale_workload
+            crate::k8s::scaling::scale_workload,
+            crate::k8s::logs::start_log_stream
         ])
         .setup(|app| {
             let handle = app.handle().clone();

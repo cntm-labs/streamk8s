@@ -18,12 +18,14 @@
 │       │   ├── 2026-05-04-streamk8s-init.md
 │       │   ├── 2026-05-06-github-repo-init.md
 │       │   ├── 2026-05-06-milestone-1-dashboard.md
-│       │   └── 2026-05-06-milestone-2-control.md
+│       │   ├── 2026-05-06-milestone-2-control.md
+│       │   └── 2026-05-06-milestone-3-logs.md
 │       └── specs
 │           ├── 2026-05-04-streamk8s-design.md
 │           ├── 2026-05-06-github-repo-init-design.md
 │           ├── 2026-05-06-milestone-1-dashboard-design.md
-│           └── 2026-05-06-milestone-2-control-design.md
+│           ├── 2026-05-06-milestone-2-control-design.md
+│           └── 2026-05-06-milestone-3-logs-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -102,6 +104,7 @@
 │   │   │   ├── collector.rs
 │   │   │   └── mod.rs
 │   │   ├── k8s
+│   │   │   ├── logs.rs
 │   │   │   ├── mod.rs
 │   │   │   ├── pods.rs
 │   │   │   └── scaling.rs
@@ -124,9 +127,10 @@
 │           ├── content
 │           │   └── pod-control-design.html
 │           └── state
-│               ├── server-info
-│               └── server.pid
+│               ├── server.pid
+│               └── server-stopped
 ├── SUPPORT.md
+├── task_2_plan.md
 ├── TROUBLESHOOTING.md
 ├── tsconfig.json
 ├── tsconfig.node.json
@@ -135,4 +139,4 @@
 └── .vscode
     └── extensions.json
 
-32 directories, 104 files
+32 directories, 108 files
