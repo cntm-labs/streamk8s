@@ -6,6 +6,7 @@ import Gauge from './components/Gauge.vue';
 import PodList from './components/PodList.vue';
 import TrendChart from './components/TrendChart.vue';
 import LogPanel from './components/LogPanel.vue';
+import AdviceBanner from './components/AdviceBanner.vue';
 
 interface Metrics {
   cpu_usage: number;
@@ -19,6 +20,11 @@ interface Pod {
   status: string;
 }
 
+interface Advice {
+  action: string;
+  reason: string;
+}
+
 const metrics = ref<Metrics>({ 
   cpu_usage: 0, 
   ram_usage: 0,
@@ -27,6 +33,7 @@ const metrics = ref<Metrics>({
 });
 
 const pods = ref<Pod[]>([]);
+const currentAdvice = ref<Advice | null>(null);
 
 const selectedPod = ref<{ namespace: string, name: string } | null>(null);
 const logPanelRef = ref<InstanceType<typeof LogPanel> | null>(null);
@@ -42,6 +49,26 @@ const handleSelectPod = async (namespace: string, name: string) => {
     await invoke('start_log_stream', { namespace, name });
   } catch (e) {
     console.error('Failed to start log stream:', e);
+  }
+};
+
+const applyOptimization = async () => {
+  if (!currentAdvice.value) return;
+  
+  try {
+    // Scale all pods to 0 as suggested in the task
+    for (const pod of pods.value) {
+      await invoke('scale_pod', { 
+        namespace: pod.namespace, 
+        name: pod.name, 
+        replicas: 0 
+      });
+    }
+    currentAdvice.value = null;
+    // Refresh pod list
+    pods.value = await invoke<Pod[]>('get_pods');
+  } catch (e) {
+    console.error('Failed to apply optimization:', e);
   }
 };
 
@@ -66,6 +93,11 @@ onMounted(async () => {
     if (event.payload.gpu_usage !== null) {
       pushAndShift(gpuHistory.value, event.payload.gpu_usage);
     }
+  });
+
+  // Listen to AI advice
+  await listen<Advice>('smart-advice', (event) => {
+    currentAdvice.value = event.payload;
   });
 
   // Fetch initial pods
@@ -108,6 +140,7 @@ onMounted(async () => {
           </div>
         </section>
         <section class="workloads-panel">
+          <AdviceBanner :advice="currentAdvice" @optimize="applyOptimization" />
           <PodList :pods="pods" @select-pod="handleSelectPod" />
         </section>
       </div>
