@@ -5,6 +5,7 @@ import { invoke } from '@tauri-apps/api/core';
 import Gauge from './components/Gauge.vue';
 import PodList from './components/PodList.vue';
 import TrendChart from './components/TrendChart.vue';
+import LogPanel from './components/LogPanel.vue';
 
 interface Metrics {
   cpu_usage: number;
@@ -26,6 +27,23 @@ const metrics = ref<Metrics>({
 });
 
 const pods = ref<Pod[]>([]);
+
+const selectedPod = ref<{ namespace: string, name: string } | null>(null);
+const logPanelRef = ref<InstanceType<typeof LogPanel> | null>(null);
+
+const handleSelectPod = async (namespace: string, name: string) => {
+  selectedPod.value = { namespace, name };
+  
+  if (logPanelRef.value) {
+    logPanelRef.value.clearLogs();
+  }
+  
+  try {
+    await invoke('start_log_stream', { namespace, name });
+  } catch (e) {
+    console.error('Failed to start log stream:', e);
+  }
+};
 
 // History buffers for trend charts
 const cpuHistory = ref<number[]>([]);
@@ -65,32 +83,37 @@ onMounted(async () => {
       <div class="brand">StreamK8s | OS v0.1</div>
       <div class="system-time">{{ new Date().toLocaleTimeString() }}</div>
     </header>
-    <div class="content-area">
-      <section class="telemetry-panel">
-        <h3>System Telemetry</h3>
-        
-        <div class="metric-group">
-          <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
-          <TrendChart :data="cpuHistory" color="#3b82f6" />
-        </div>
+    <div class="main-layout">
+      <div class="content-area">
+        <section class="telemetry-panel">
+          <h3>System Telemetry</h3>
+          
+          <div class="metric-group">
+            <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
+            <TrendChart :data="cpuHistory" color="#3b82f6" />
+          </div>
 
-        <div class="metric-group">
-          <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
-          <TrendChart :data="ramHistory" color="#10b981" />
-        </div>
+          <div class="metric-group">
+            <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
+            <TrendChart :data="ramHistory" color="#10b981" />
+          </div>
 
-        <div v-if="metrics.gpu_usage !== null" class="metric-group">
-          <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
-          <TrendChart :data="gpuHistory" color="#f59e0b" />
-          <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
-        </div>
-        <div v-else class="gpu-not-found">
-          No NVIDIA GPU Detected
-        </div>
-      </section>
-      <section class="workloads-panel">
-        <PodList :pods="pods" />
-      </section>
+          <div v-if="metrics.gpu_usage !== null" class="metric-group">
+            <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
+            <TrendChart :data="gpuHistory" color="#f59e0b" />
+            <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
+          </div>
+          <div v-else class="gpu-not-found">
+            No NVIDIA GPU Detected
+          </div>
+        </section>
+        <section class="workloads-panel">
+          <PodList :pods="pods" @select-pod="handleSelectPod" />
+        </section>
+      </div>
+      <footer class="footer-panel">
+        <LogPanel ref="logPanelRef" />
+      </footer>
     </div>
   </div>
 </template>
@@ -115,6 +138,12 @@ body { margin: 0; padding: 0; background-color: #111827; }
 }
 .brand { font-weight: 700; color: #3b82f6; letter-spacing: 1px; }
 .system-time { font-family: monospace; color: #9ca3af; }
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
 .content-area {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -122,6 +151,9 @@ body { margin: 0; padding: 0; background-color: #111827; }
   padding: 1.5rem;
   flex: 1;
   overflow: hidden; /* Prevent body scroll, use container scroll instead */
+}
+.footer-panel {
+  flex-shrink: 0;
 }
 .telemetry-panel {
   background-color: #1f2937;
