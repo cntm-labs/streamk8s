@@ -9,6 +9,14 @@ interface Pod {
 }
 const props = defineProps<{ pods: Pod[] }>();
 
+const emit = defineEmits<{
+  (e: 'select-pod', namespace: string, name: string): void
+}>();
+
+const selectPod = (namespace: string, name: string) => {
+  emit('select-pod', namespace, name);
+};
+
 const searchQuery = ref('');
 const selectedNames = ref<string[]>([]);
 
@@ -117,7 +125,9 @@ const bulkScale = async (replicas: number) => {
                 @change="toggleSelection(pod.name)"
               />
             </td>
-            <td>{{ pod.name }}</td>
+            <td class="pod-name-cell" @click.stop="selectPod(pod.namespace, pod.name)">
+              {{ pod.name }}
+            </td>
             <td>{{ pod.namespace }}</td>
             <td>
               <span :class="['status-badge', pod.status.toLowerCase()]">
@@ -255,6 +265,14 @@ td {
 .col-check {
   width: 40px;
   text-align: center;
+}
+.pod-name-cell {
+  color: #3b82f6;
+  font-weight: 500;
+  cursor: pointer;
+}
+.pod-name-cell:hover {
+  text-decoration: underline;
 }
 tr {
   cursor: pointer;
