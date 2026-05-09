@@ -1,5 +1,5 @@
 use k8s_openapi::api::core::v1::Pod;
-use kube::{Api, Client};
+use kube::Api;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -10,8 +10,17 @@ pub struct PodInfo {
 }
 
 #[tauri::command]
-pub async fn get_pods() -> Result<Vec<PodInfo>, String> {
-    let client = Client::try_default().await.map_err(|e| e.to_string())?;
+pub async fn get_pods(context_name: Option<String>) -> Result<Vec<PodInfo>, String> {
+    let config = if let Some(name) = context_name {
+        let mut options = kube::config::KubeConfigOptions::default();
+        options.context = Some(name);
+        kube::Config::from_kubeconfig(&options)
+            .await
+            .map_err(|e| e.to_string())?
+    } else {
+        kube::Config::infer().await.map_err(|e| e.to_string())?
+    };
+    let client = kube::Client::try_from(config).map_err(|e| e.to_string())?;
     let pods: Api<Pod> = Api::all(client);
     let lp = pods
         .list(&Default::default())

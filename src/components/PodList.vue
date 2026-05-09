@@ -7,7 +7,10 @@ interface Pod {
   namespace: string;
   status: string;
 }
-const props = defineProps<{ pods: Pod[] }>();
+const props = defineProps<{ 
+  pods: Pod[],
+  contextName?: string
+}>();
 
 const emit = defineEmits<{
   (e: 'select-pod', namespace: string, name: string): void
@@ -57,7 +60,12 @@ const toggleSelectAll = () => {
 const bulkScale = async (replicas: number) => {
   const selectedPods = props.pods.filter(p => selectedNames.value.includes(p.name));
   const promises = selectedPods.map(p => 
-    invoke('scale_workload', { namespace: p.namespace, name: p.name, replicas })
+    invoke('scale_workload', { 
+      contextName: props.contextName,
+      namespace: p.namespace, 
+      name: p.name, 
+      replicas 
+    })
       .catch(err => console.error(`Failed to scale ${p.name}:`, err))
   );
   await Promise.all(promises);
