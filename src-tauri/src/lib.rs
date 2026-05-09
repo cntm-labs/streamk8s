@@ -2,7 +2,9 @@ pub mod hardware;
 pub mod k8s;
 
 use crate::hardware::collector::collect_metrics;
+use crate::hardware::profiler::Profiler;
 use nvml_wrapper::Nvml;
+use serde_json::json;
 use std::time::Duration;
 use sysinfo::System;
 use tauri::Emitter;
@@ -23,7 +25,27 @@ pub fn run() {
                 let mut sys = System::new_all();
                 loop {
                     let metrics = collect_metrics(&mut sys, &nvml);
-                    let _ = handle.emit("hardware-update", metrics);
+                    let _ = handle.emit("hardware-update", &metrics);
+
+                    let heavy_apps = Profiler::scan_heavy_apps(&sys);
+                    if !heavy_apps.is_empty()
+                        || metrics.cpu_usage > 80.0
+                        || metrics.gpu_usage.unwrap_or(0.0) > 80.0
+                    {
+                        let _ = handle.emit(
+                            "smart-advice",
+                            json!({
+                                "action": "Suspend",
+                                "reason": if !heavy_apps.is_empty() {
+                                    format!("Heavy apps detected: {:?}", heavy_apps)
+                                } else {
+                                    "High system load detected".to_string()
+                                },
+                                "suggested_pods": ["*"]
+                            }),
+                        );
+                    }
+
                     tokio::time::sleep(Duration::from_secs(1)).await;
                 }
             });

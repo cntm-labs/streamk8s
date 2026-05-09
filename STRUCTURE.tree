@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-BgFz7TfZ.js
-│   │   └── index-BuZ4JUpf.css
+│   │   ├── index-ikjyzWcy.js
+│   │   └── index-sgN-QUIx.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -19,13 +19,15 @@
 │       │   ├── 2026-05-06-github-repo-init.md
 │       │   ├── 2026-05-06-milestone-1-dashboard.md
 │       │   ├── 2026-05-06-milestone-2-control.md
-│       │   └── 2026-05-06-milestone-3-logs.md
+│       │   ├── 2026-05-06-milestone-3-logs.md
+│       │   └── 2026-05-06-milestone-4-profiler.md
 │       └── specs
 │           ├── 2026-05-04-streamk8s-design.md
 │           ├── 2026-05-06-github-repo-init-design.md
 │           ├── 2026-05-06-milestone-1-dashboard-design.md
 │           ├── 2026-05-06-milestone-2-control-design.md
-│           └── 2026-05-06-milestone-3-logs-design.md
+│           ├── 2026-05-06-milestone-3-logs-design.md
+│           └── 2026-05-06-milestone-4-profiler-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -64,6 +66,7 @@
 │   │   └── vue.svg
 │   ├── components
 │   │   ├── Gauge.vue
+│   │   ├── LogPanel.vue
 │   │   ├── PodList.vue
 │   │   └── TrendChart.vue
 │   ├── main.ts
@@ -102,7 +105,8 @@
 │   ├── src
 │   │   ├── hardware
 │   │   │   ├── collector.rs
-│   │   │   └── mod.rs
+│   │   │   ├── mod.rs
+│   │   │   └── profiler.rs
 │   │   ├── k8s
 │   │   │   ├── logs.rs
 │   │   │   ├── mod.rs
@@ -130,7 +134,6 @@
 │               ├── server.pid
 │               └── server-stopped
 ├── SUPPORT.md
-├── task_2_plan.md
 ├── TROUBLESHOOTING.md
 ├── tsconfig.json
 ├── tsconfig.node.json
@@ -139,4 +142,4 @@
 └── .vscode
     └── extensions.json
 
-32 directories, 108 files
+32 directories, 111 files
