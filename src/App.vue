@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import Gauge from './components/Gauge.vue';
-import PodList from './components/PodList.vue';
+import ClusterAccordion from './components/ClusterAccordion.vue';
 import TrendChart from './components/TrendChart.vue';
 import LogPanel from './components/LogPanel.vue';
 import AdviceBanner from './components/AdviceBanner.vue';
@@ -20,6 +20,11 @@ interface Pod {
   status: string;
 }
 
+interface ClusterContext {
+  name: string;
+  is_current: boolean;
+}
+
 interface Advice {
   action: string;
   reason: string;
@@ -32,21 +37,22 @@ const metrics = ref<Metrics>({
   gpu_mem_usage: null
 });
 
-const pods = ref<Pod[]>([]);
+const availableContexts = ref<ClusterContext[]>([]);
+const clusterPods = ref<Record<string, Pod[]>>({});
 const currentAdvice = ref<Advice | null>(null);
 
-const selectedPod = ref<{ namespace: string, name: string } | null>(null);
+const selectedPod = ref<{ contextName: string, namespace: string, name: string } | null>(null);
 const logPanelRef = ref<InstanceType<typeof LogPanel> | null>(null);
 
-const handleSelectPod = async (namespace: string, name: string) => {
-  selectedPod.value = { namespace, name };
+const handleSelectPod = async (contextName: string, namespace: string, name: string) => {
+  selectedPod.value = { contextName, namespace, name };
   
   if (logPanelRef.value) {
     logPanelRef.value.clearLogs();
   }
   
   try {
-    await invoke('start_log_stream', { namespace, name });
+    await invoke('start_log_stream', { contextName, namespace, podName: name });
   } catch (e) {
     console.error('Failed to start log stream:', e);
   }
@@ -57,16 +63,22 @@ const applyOptimization = async () => {
   
   try {
     // Scale all pods to 0 as suggested in the task
-    for (const pod of pods.value) {
-      await invoke('scale_pod', { 
-        namespace: pod.namespace, 
-        name: pod.name, 
-        replicas: 0 
-      });
+    for (const contextName in clusterPods.value) {
+      for (const pod of clusterPods.value[contextName]) {
+        await invoke('scale_workload', { 
+          contextName,
+          namespace: pod.namespace, 
+          name: pod.name, 
+          replicas: 0 
+        });
+      }
     }
     currentAdvice.value = null;
-    // Refresh pod list
-    pods.value = await invoke<Pod[]>('get_pods');
+    
+    // Refresh all pod lists
+    for (const context of availableContexts.value) {
+      clusterPods.value[context.name] = await invoke<Pod[]>('get_pods', { contextName: context.name });
+    }
   } catch (e) {
     console.error('Failed to apply optimization:', e);
   }
@@ -100,11 +112,14 @@ onMounted(async () => {
     currentAdvice.value = event.payload;
   });
 
-  // Fetch initial pods
+  // Fetch initial contexts and pods
   try {
-    pods.value = await invoke<Pod[]>('get_pods');
+    availableContexts.value = await invoke<ClusterContext[]>('get_available_contexts');
+    for (const context of availableContexts.value) {
+      clusterPods.value[context.name] = await invoke<Pod[]>('get_pods', { contextName: context.name });
+    }
   } catch (e) {
-    console.error('Failed to fetch pods:', e);
+    console.error('Failed to fetch contexts or pods:', e);
   }
 });
 </script>
@@ -141,7 +156,16 @@ onMounted(async () => {
         </section>
         <section class="workloads-panel">
           <AdviceBanner :advice="currentAdvice" @optimize="applyOptimization" />
-          <PodList :pods="pods" @select-pod="handleSelectPod" />
+          <div class="cluster-list">
+            <ClusterAccordion 
+              v-for="context in availableContexts" 
+              :key="context.name"
+              :context-name="context.name"
+              :is-current="context.is_current"
+              :pods="clusterPods[context.name] || []"
+              @select-pod="handleSelectPod"
+            />
+          </div>
         </section>
       </div>
       <footer class="footer-panel">
@@ -197,7 +221,14 @@ body { margin: 0; padding: 0; background-color: #111827; }
 }
 .workloads-panel {
   height: 100%;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+}
+.cluster-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.25rem;
 }
 .telemetry-panel h3 { margin-top: 0; margin-bottom: 1.5rem; }
 .metric-group {
