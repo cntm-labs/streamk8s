@@ -1,0 +1,15 @@
+feat:
+  - changed-files:
+    - any-glob-to-any-file: ['src/**/*', 'src-tauri/**/*']
+docs:
+  - changed-files:
+    - any-glob-to-any-file: ['*.md', 'docs/**/*', 'locales/**/*']
+ci:
+  - changed-files:
+    - any-glob-to-any-file: ['.github/workflows/**/*']
+rust:
+  - changed-files:
+    - any-glob-to-any-file: ['src-tauri/**/*.rs']
+vue:
+  - changed-files:
+    - any-glob-to-any-file: ['src/**/*.vue']
