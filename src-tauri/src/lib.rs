@@ -19,7 +19,9 @@ pub fn run() {
             crate::k8s::logs::start_log_stream,
             crate::k8s::contexts::get_available_contexts,
             crate::k8s::inspector::get_resource_manifest,
-            crate::k8s::inspector::get_pod_events
+            crate::k8s::inspector::get_pod_events,
+            crate::k8s::inspector::read_pod_file,
+            crate::k8s::inspector::write_pod_file
         ])
         .setup(|app| {
             let handle = app.handle().clone();
