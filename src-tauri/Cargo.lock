@@ -3923,6 +3923,7 @@ dependencies = [
  "nvml-wrapper",
  "serde",
  "serde_json",
+ "serde_yaml",
  "sysinfo",
  "tauri",
  "tauri-build",

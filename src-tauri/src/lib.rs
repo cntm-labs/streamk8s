@@ -17,7 +17,9 @@ pub fn run() {
             crate::k8s::pods::get_pods,
             crate::k8s::scaling::scale_workload,
             crate::k8s::logs::start_log_stream,
-            crate::k8s::contexts::get_available_contexts
+            crate::k8s::contexts::get_available_contexts,
+            crate::k8s::inspector::get_resource_manifest,
+            crate::k8s::inspector::get_pod_events
         ])
         .setup(|app| {
             let handle = app.handle().clone();
