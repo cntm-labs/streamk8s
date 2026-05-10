@@ -5,7 +5,7 @@ import { invoke } from '@tauri-apps/api/core';
 import Gauge from './components/Gauge.vue';
 import ClusterAccordion from './components/ClusterAccordion.vue';
 import TrendChart from './components/TrendChart.vue';
-import LogPanel from './components/LogPanel.vue';
+import InspectorPanel from './components/InspectorPanel.vue';
 import AdviceBanner from './components/AdviceBanner.vue';
 
 interface Metrics {
@@ -42,13 +42,13 @@ const clusterPods = ref<Record<string, Pod[]>>({});
 const currentAdvice = ref<Advice | null>(null);
 
 const selectedPod = ref<{ contextName: string, namespace: string, name: string } | null>(null);
-const logPanelRef = ref<InstanceType<typeof LogPanel> | null>(null);
+const inspectorPanelRef = ref<InstanceType<typeof InspectorPanel> | null>(null);
 
 const handleSelectPod = async (contextName: string, namespace: string, name: string) => {
   selectedPod.value = { contextName, namespace, name };
   
-  if (logPanelRef.value) {
-    logPanelRef.value.clearLogs();
+  if (inspectorPanelRef.value) {
+    inspectorPanelRef.value.clearLogs();
   }
   
   try {
@@ -169,7 +169,7 @@ onMounted(async () => {
         </section>
       </div>
       <footer class="footer-panel">
-        <LogPanel ref="logPanelRef" />
+        <InspectorPanel ref="inspectorPanelRef" :selected-pod="selectedPod" />
       </footer>
     </div>
   </div>
