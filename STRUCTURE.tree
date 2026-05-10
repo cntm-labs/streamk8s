@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-CZMhZ78n.css
-│   │   └── index-DT5tus6_.js
+│   │   ├── index-CDhxliXC.css
+│   │   └── index-Cw1piwUz.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -21,7 +21,8 @@
 │       │   ├── 2026-05-06-milestone-2-control.md
 │       │   ├── 2026-05-06-milestone-3-logs.md
 │       │   ├── 2026-05-06-milestone-4-profiler.md
-│       │   └── 2026-05-06-milestone-5-multicluster.md
+│       │   ├── 2026-05-06-milestone-5-multicluster.md
+│       │   └── 2026-05-08-milestone-6-inspector.md
 │       └── specs
 │           ├── 2026-05-04-streamk8s-design.md
 │           ├── 2026-05-06-github-repo-init-design.md
@@ -29,7 +30,8 @@
 │           ├── 2026-05-06-milestone-2-control-design.md
 │           ├── 2026-05-06-milestone-3-logs-design.md
 │           ├── 2026-05-06-milestone-4-profiler-design.md
-│           └── 2026-05-06-milestone-5-multicluster-design.md
+│           ├── 2026-05-06-milestone-5-multicluster-design.md
+│           └── 2026-05-08-milestone-6-inspector-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -71,7 +73,7 @@
 │   │   ├── AdviceBanner.vue
 │   │   ├── ClusterAccordion.vue
 │   │   ├── Gauge.vue
-│   │   ├── LogPanel.vue
+│   │   ├── InspectorPanel.vue
 │   │   ├── PodList.vue
 │   │   └── TrendChart.vue
 │   ├── main.ts
@@ -114,6 +116,7 @@
 │   │   │   └── profiler.rs
 │   │   ├── k8s
 │   │   │   ├── contexts.rs
+│   │   │   ├── inspector.rs
 │   │   │   ├── logs.rs
 │   │   │   ├── mod.rs
 │   │   │   ├── pods.rs
@@ -125,6 +128,13 @@
 ├── STRUCTURE.tree
 ├── .superpowers
 │   └── brainstorm
+│       ├── 187396-1778415162
+│       │   ├── content
+│       │   │   └── inspector-design.html
+│       │   └── state
+│       │       ├── events
+│       │       ├── server.pid
+│       │       └── server-stopped
 │       ├── 2570962-1778330137
 │       │   ├── content
 │       │   │   └── multi-cluster-approaches.html
@@ -155,4 +165,4 @@
 └── .vscode
     └── extensions.json
 
-35 directories, 121 files
+38 directories, 128 files
