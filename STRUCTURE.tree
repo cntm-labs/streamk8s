@@ -74,7 +74,6 @@
 │   │   ├── ClusterAccordion.vue
 │   │   ├── Gauge.vue
 │   │   ├── InspectorPanel.vue
-│   │   ├── LogPanel.vue
 │   │   ├── PodList.vue
 │   │   └── TrendChart.vue
 │   ├── main.ts
@@ -166,4 +165,4 @@
 └── .vscode
     └── extensions.json
 
-38 directories, 129 files
+38 directories, 128 files
