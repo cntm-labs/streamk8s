@@ -1,7 +1,32 @@
 use k8s_openapi::api::core::v1::{Event, Pod};
-use kube::{api::ListParams, Api, Client};
+use kube::{
+    api::ListParams,
+    api::{Patch, PatchParams},
+    Api, Client,
+};
 use serde_json::Value;
 use tokio::io::AsyncReadExt;
+
+#[tauri::command]
+pub async fn apply_resource_manifest(
+    context_name: Option<String>,
+    namespace: String,
+    pod_name: String,
+    yaml_content: String,
+) -> Result<(), String> {
+    let client = create_client(context_name).await?;
+    let pods: Api<Pod> = Api::namespaced(client, &namespace);
+    let patch: Pod = serde_yaml::from_str(&yaml_content).map_err(|e| e.to_string())?;
+
+    pods.patch(
+        &pod_name,
+        &PatchParams::apply("streamk8s"),
+        &Patch::Apply(&patch),
+    )
+    .await
+    .map_err(|e| e.to_string())?;
+    Ok(())
+}
 
 #[tauri::command]
 pub async fn get_resource_manifest(

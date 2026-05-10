@@ -86,6 +86,46 @@ const readFile = async () => {
   }
 };
 
+const applyYaml = async () => {
+  if (!props.selectedPod) return;
+  isLoadingYaml.value = true;
+  try {
+    await invoke('apply_resource_manifest', {
+      contextName: props.selectedPod.contextName,
+      namespace: props.selectedPod.namespace,
+      podName: props.selectedPod.name,
+      yamlContent: yamlContent.value
+    });
+    alert('Manifest applied successfully!');
+  } catch (e) {
+    alert(`Failed to apply manifest: ${e}`);
+  } finally {
+    isLoadingYaml.value = false;
+  }
+};
+
+const saveFile = async () => {
+  if (!props.selectedPod) return;
+  isLoadingFiles.value = true;
+  try {
+    // UTF-8 to Base64
+    const contentBase64 = window.btoa(unescape(encodeURIComponent(fileContent.value)));
+    await invoke('write_pod_file', {
+      contextName: props.selectedPod.contextName,
+      namespace: props.selectedPod.namespace,
+      podName: props.selectedPod.name,
+      containerName: props.selectedPod.name, // Assumption matches readFile
+      filePath: filePath.value,
+      contentBase64
+    });
+    alert('File saved successfully!');
+  } catch (e) {
+    alert(`Failed to save file: ${e}`);
+  } finally {
+    isLoadingFiles.value = false;
+  }
+};
+
 onMounted(async () => {
   unlisten = await listen<string>('pod-log-line', (event) => {
     logs.value.push(event.payload);
@@ -137,7 +177,9 @@ defineExpose({ clearLogs });
       <div class="actions">
         <button v-if="activeTab === 'Logs'" @click="clearLogs" class="action-btn">Clear</button>
         <button v-if="activeTab === 'YAML'" @click="fetchYaml" class="action-btn" :disabled="isLoadingYaml">Refresh</button>
+        <button v-if="activeTab === 'YAML'" @click="applyYaml" class="action-btn save-btn" :disabled="isLoadingYaml">Apply</button>
         <button v-if="activeTab === 'Events'" @click="fetchEvents" class="action-btn" :disabled="isLoadingEvents">Refresh</button>
+        <button v-if="activeTab === 'Files'" @click="saveFile" class="action-btn save-btn" :disabled="isLoadingFiles">Save</button>
       </div>
     </div>
 
@@ -156,7 +198,7 @@ defineExpose({ clearLogs });
       <!-- YAML TAB -->
       <div v-if="activeTab === 'YAML'" class="yaml-content">
         <div v-if="isLoadingYaml" class="loading-overlay">Loading manifest...</div>
-        <textarea readonly v-model="yamlContent" class="code-editor"></textarea>
+        <textarea v-model="yamlContent" class="code-editor"></textarea>
       </div>
 
       <!-- EVENTS TAB -->
@@ -265,6 +307,14 @@ defineExpose({ clearLogs });
 .action-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.action-btn.save-btn {
+  background-color: #2563eb;
+  border-color: #3b82f6;
+  color: white;
+}
+.action-btn.save-btn:hover:not(:disabled) {
+  background-color: #1d4ed8;
 }
 
 .tab-content {

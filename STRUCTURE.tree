@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-Ckbu8CJj.js
-│   │   └── index-VCxyjEb8.css
+│   │   ├── index-CDhxliXC.css
+│   │   └── index-Cw1piwUz.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg

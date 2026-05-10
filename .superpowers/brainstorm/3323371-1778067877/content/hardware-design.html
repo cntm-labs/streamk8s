@@ -1,0 +1,39 @@
+<h2>แนวทางการออกแบบระบบ Hardware Monitoring (Option A)</h2>
+<p class="subtitle">เน้นความยืดหยุ่น และการจัดการโมดูลภายใน (Internal Library Pattern)</p>
+
+<div class="mockup">
+  <div class="mockup-header">Rust Backend Architecture: <code>src-tauri/src/hardware/</code></div>
+  <div class="mockup-body">
+    <pre style="background: #1f2937; padding: 1rem; border-radius: 4px; color: #10b981;">
+hardware/
+├── mod.rs          (Trait definitions: Collector)
+├── generic.rs      (CPU/RAM via sysinfo)
+└── nvidia.rs       (GPU via nvml-wrapper or custom low-level)
+    </pre>
+  </div>
+</div>
+
+<div class="section">
+  <h3>ข้อเสนอในการจัดการ Crate และ Implementation:</h3>
+  <div class="split">
+    <div class="card">
+      <h4>1. Use Official Crates (Recommended for Stability)</h4>
+      <p>ใช้ <code>sysinfo</code> และ <code>nvml-wrapper</code> เป็นฐานการทำงานเบื้องต้นเพื่อให้ฟีเจอร์ "Auto-Suspend" ใช้งานได้จริงเร็วที่สุด</p>
+    </div>
+    <div class="card">
+      <h4>2. Custom Implementation (Targeted)</h4>
+      <p>สำหรับส่วนที่สำคัญ เช่น การเรียกใช้ NVML APIs โดยตรง หรือการดึงข้อมูลเฉพาะทางที่เราต้องการทำเองเพื่อประสิทธิภาพสูงสุด</p>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons">
+  <div class="pros">
+    <h4>ข้อดีของแนวทางนี้</h4>
+    <ul>
+      <li>แยกส่วน Driver ชัดเจน (ขยายไป AMD/Intel ได้ง่าย)</li>
+      <li>รองรับการย้ายเข้า Kellnr ในฐานะ Internal Crate</li>
+      <li>ได้ Dashboard ที่มีข้อมูล Real-time ทันที</li>
+    </ul>
+  </div>
+</div>

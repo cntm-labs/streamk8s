@@ -1,0 +1,31 @@
+<h2>ก้าวแรกของการพัฒนา StreamK8s</h2>
+<p class="subtitle">เราควรเริ่มต้นจากส่วนไหนเพื่อให้เห็นผลลัพธ์ที่จับต้องได้เร็วที่สุด?</p>
+
+<div class="options">
+  <div class="option" data-choice="hardware-bridge" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>ระบบ Hardware Telemetry (Dashboard)</h3>
+      <p>สร้างระบบดึงข้อมูล CPU/GPU Usage จาก OS มาแสดงบนหน้าจอทันที เพื่อพิสูจน์ "Bridge" ระหว่าง Rust และ Vue</p>
+    </div>
+  </div>
+  <div class="option" data-choice="k8s-discovery" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>ระบบ Kubernetes Explorer</h3>
+      <p>เชื่อมต่อกับ local Kubeconfig เพื่อดึงรายการ Pods มาแสดงผล เริ่มต้นฟีเจอร์ "IDE" สำหรับจัดการคลัสเตอร์</p>
+    </div>
+  </div>
+  <div class="option" data-choice="ui-scaffolding" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>โครงสร้าง UI และ Visual Style</h3>
+      <p>เน้นการออกแบบ Layout และ Component พื้นฐาน (Gauges, Pod Cards) ให้สวยงามแบบ "Monkey-Proof" ก่อนลงลึกเชิงเทคนิค</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>คำแนะนำของผม:</h3>
+  <p>ผมแนะนำ <strong>Option A</strong> ครับ เพราะเป็นหัวใจสำคัญของ StreamK8s การแสดงผล GPU Usage แบบ Real-time จะช่วยให้เราวางรากฐานการสื่อสารระหว่าง Tauri Backend และ Frontend ได้ดีที่สุด</p>
+</div>
