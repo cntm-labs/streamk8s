@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
+import ActivityBar from './components/ActivityBar.vue';
+import Sidebar from './components/Sidebar.vue';
 import Gauge from './components/Gauge.vue';
 import ClusterAccordion from './components/ClusterAccordion.vue';
 import TrendChart from './components/TrendChart.vue';
@@ -30,6 +32,7 @@ interface Advice {
   reason: string;
 }
 
+const activeTab = ref('explorer');
 const metrics = ref<Metrics>({ 
   cpu_usage: 0, 
   ram_usage: 0,
@@ -125,66 +128,90 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="dashboard-os">
-    <header class="top-bar">
-      <div class="brand">StreamK8s | OS v0.1</div>
-      <div class="system-time">{{ new Date().toLocaleTimeString() }}</div>
-    </header>
-    <div class="main-layout">
-      <div class="content-area">
-        <section class="telemetry-panel">
-          <h3>System Telemetry</h3>
-          
-          <div class="metric-group">
-            <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
-            <TrendChart :data="cpuHistory" color="#3b82f6" />
-          </div>
+  <div class="ide-container">
+    <ActivityBar v-model:activeId="activeTab" />
+    
+    <Sidebar :title="activeTab">
+      <div v-if="activeTab === 'explorer'" class="explorer-content">
+        <div class="cluster-list">
+          <ClusterAccordion 
+            v-for="context in availableContexts" 
+            :key="context.name"
+            :context-name="context.name"
+            :is-current="context.is_current"
+            :pods="clusterPods[context.name] || []"
+            @select-pod="handleSelectPod"
+          />
+        </div>
+      </div>
+      <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
+        <h3>System Telemetry</h3>
+        
+        <div class="metric-group">
+          <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
+          <TrendChart :data="cpuHistory" color="#3b82f6" />
+        </div>
 
-          <div class="metric-group">
-            <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
-            <TrendChart :data="ramHistory" color="#10b981" />
-          </div>
+        <div class="metric-group">
+          <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
+          <TrendChart :data="ramHistory" color="#10b981" />
+        </div>
 
-          <div v-if="metrics.gpu_usage !== null" class="metric-group">
-            <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
-            <TrendChart :data="gpuHistory" color="#f59e0b" />
-            <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
-          </div>
-          <div v-else class="gpu-not-found">
-            No NVIDIA GPU Detected
-          </div>
-        </section>
+        <div v-if="metrics.gpu_usage !== null" class="metric-group">
+          <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
+          <TrendChart :data="gpuHistory" color="#f59e0b" />
+          <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
+        </div>
+        <div v-else class="gpu-not-found">
+          No NVIDIA GPU Detected
+        </div>
+      </div>
+      <div v-else class="placeholder-content">
+        {{ activeTab }} content coming soon...
+      </div>
+    </Sidebar>
+
+    <main class="main-area">
+      <header class="top-search">
+        <div class="brand">StreamK8s | OS v0.1</div>
+        <div class="search-placeholder">Search or execute command...</div>
+        <div class="system-time">{{ new Date().toLocaleTimeString() }}</div>
+      </header>
+      
+      <div class="content-viewport">
         <section class="workloads-panel">
           <AdviceBanner :advice="currentAdvice" @optimize="applyOptimization" />
-          <div class="cluster-list">
-            <ClusterAccordion 
-              v-for="context in availableContexts" 
-              :key="context.name"
-              :context-name="context.name"
-              :is-current="context.is_current"
-              :pods="clusterPods[context.name] || []"
-              @select-pod="handleSelectPod"
-            />
+          <div class="welcome-screen" v-if="!selectedPod">
+            <h2>StreamK8s Orchestrator</h2>
+            <p>Select a pod from the explorer to view logs and details.</p>
           </div>
+          <InspectorPanel v-show="selectedPod" ref="inspectorPanelRef" :selected-pod="selectedPod" />
         </section>
       </div>
-      <footer class="footer-panel">
-        <InspectorPanel ref="inspectorPanelRef" :selected-pod="selectedPod" />
-      </footer>
-    </div>
+    </main>
   </div>
 </template>
 
 <style>
-body { margin: 0; padding: 0; background-color: #111827; }
-.dashboard-os {
-  display: flex;
-  flex-direction: column;
+body { margin: 0; padding: 0; background-color: #111827; overflow: hidden; }
+
+.ide-container {
+  display: grid;
+  grid-template-columns: 48px 260px 1fr;
   height: 100vh;
   color: #f3f4f6;
   font-family: 'Inter', system-ui, sans-serif;
 }
-.top-bar {
+
+.main-area {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #030712;
+}
+
+.top-search {
   height: 48px;
   background-color: #1f2937;
   display: flex;
@@ -193,46 +220,50 @@ body { margin: 0; padding: 0; background-color: #111827; }
   padding: 0 1.5rem;
   border-bottom: 1px solid #374151;
 }
+
 .brand { font-weight: 700; color: #3b82f6; letter-spacing: 1px; }
+.search-placeholder { 
+  background-color: #111827;
+  border: 1px solid #374151;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  color: #6b7280;
+  width: 40%;
+  text-align: center;
+}
 .system-time { font-family: monospace; color: #9ca3af; }
-.main-layout {
+
+.content-viewport {
+  flex: 1;
+  padding: 1rem;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  flex: 1;
-  overflow: hidden;
 }
-.content-area {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 1.5rem;
-  padding: 1.5rem;
-  flex: 1;
-  overflow: hidden; /* Prevent body scroll, use container scroll instead */
-}
-.footer-panel {
-  flex-shrink: 0;
-}
-.telemetry-panel {
-  background-color: #1f2937;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px solid #374151;
-  align-self: start;
-}
+
 .workloads-panel {
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
+
+.explorer-content, .telemetry-panel {
+  padding: 12px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .cluster-list {
   flex: 1;
   overflow-y: auto;
-  padding-right: 0.25rem;
 }
-.telemetry-panel h3 { margin-top: 0; margin-bottom: 1.5rem; }
+
+.telemetry-panel h3 { margin-top: 0; margin-bottom: 1rem; font-size: 1rem; }
 .metric-group {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   background-color: rgba(255, 255, 255, 0.02);
   padding: 0.75rem;
   border-radius: 6px;
@@ -252,4 +283,20 @@ body { margin: 0; padding: 0; background-color: #111827; }
   border: 1px dashed #374151;
   border-radius: 4px;
 }
+
+.welcome-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #4b5563;
+}
+
+.placeholder-content {
+  padding: 20px;
+  color: #6b7280;
+  text-align: center;
+}
 </style>
+
