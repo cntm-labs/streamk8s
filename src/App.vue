@@ -135,18 +135,7 @@ onMounted(async () => {
     <Sidebar :title="activeTab">
       <div v-if="activeTab === 'explorer'" class="explorer-content">
         <ResourceTree @select="(type) => console.log('Selected resource type:', type)" />
-        
-        <div class="cluster-divider">Clusters</div>
-        <div class="cluster-list">
-          <ClusterAccordion 
-            v-for="context in availableContexts" 
-            :key="context.name"
-            :context-name="context.name"
-            :is-current="context.is_current"
-            :pods="clusterPods[context.name] || []"
-            @select-pod="handleSelectPod"
-          />
-        </div>
+        <!-- Cluster list is now in main area -->
       </div>
       <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
         <h3>System Telemetry</h3>
@@ -185,11 +174,24 @@ onMounted(async () => {
       <div class="content-viewport">
         <section class="workloads-panel">
           <AdviceBanner :advice="currentAdvice" @optimize="applyOptimization" />
-          <div class="welcome-screen" v-if="!selectedPod">
-            <h2>StreamK8s Orchestrator</h2>
-            <p>Select a pod from the explorer to view logs and details.</p>
+          
+          <div class="main-scroll-area">
+            <!-- Clusters back in Main Area -->
+            <div class="cluster-list">
+              <ClusterAccordion 
+                v-for="context in availableContexts" 
+                :key="context.name"
+                :context-name="context.name"
+                :is-current="context.is_current"
+                :pods="clusterPods[context.name] || []"
+                @select-pod="handleSelectPod"
+              />
+            </div>
           </div>
-          <InspectorPanel v-show="selectedPod" ref="inspectorPanelRef" :selected-pod="selectedPod" />
+
+          <div v-if="selectedPod" class="floating-inspector">
+             <InspectorPanel ref="inspectorPanelRef" :selected-pod="selectedPod" />
+          </div>
         </section>
       </div>
     </main>
@@ -238,42 +240,29 @@ body { margin: 0; padding: 0; background-color: #111827; overflow: hidden; }
 }
 .system-time { font-family: monospace; color: #9ca3af; }
 
-.content-viewport {
+.main-scroll-area {
   flex: 1;
-  padding: 1rem;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.workloads-panel {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.explorer-content, .telemetry-panel {
-  padding: 4px 8px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.cluster-divider {
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  padding: 4px 8px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #6b7280;
-  border-top: 1px solid #1f2937;
+  overflow-y: auto;
+  padding-bottom: 1rem;
 }
 
 .cluster-list {
-  flex: 1;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.floating-inspector {
+  height: 350px; /* Fixed height for bottom panel */
+  border-top: 1px solid #374151;
+  background-color: #030712;
+}
+
+.explorer-content, .telemetry-panel {
+  padding: 1rem 8px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .telemetry-panel h3 { margin-top: 0; margin-bottom: 1rem; font-size: 1rem; }
