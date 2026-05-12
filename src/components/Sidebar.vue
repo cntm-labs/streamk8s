@@ -45,5 +45,6 @@ defineProps<{
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
+  padding: 8px 4px;
 }
 </style>

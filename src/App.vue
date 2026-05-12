@@ -4,6 +4,7 @@ import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import ActivityBar from './components/ActivityBar.vue';
 import Sidebar from './components/Sidebar.vue';
+import ResourceTree from './components/ResourceTree.vue';
 import Gauge from './components/Gauge.vue';
 import ClusterAccordion from './components/ClusterAccordion.vue';
 import TrendChart from './components/TrendChart.vue';
@@ -133,6 +134,9 @@ onMounted(async () => {
     
     <Sidebar :title="activeTab">
       <div v-if="activeTab === 'explorer'" class="explorer-content">
+        <ResourceTree @select="(type) => console.log('Selected resource type:', type)" />
+        
+        <div class="cluster-divider">Clusters</div>
         <div class="cluster-list">
           <ClusterAccordion 
             v-for="context in availableContexts" 
@@ -250,10 +254,21 @@ body { margin: 0; padding: 0; background-color: #111827; overflow: hidden; }
 }
 
 .explorer-content, .telemetry-panel {
-  padding: 12px;
+  padding: 4px 8px;
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.cluster-divider {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #6b7280;
+  border-top: 1px solid #1f2937;
 }
 
 .cluster-list {

@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-BP-d4Pp8.js
-│   │   └── index-DLYqhub0.css
+│   │   ├── index-D6PzfuDB.js
+│   │   └── index-h7reEqD4.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -78,6 +78,7 @@
 │   │   ├── Gauge.vue
 │   │   ├── InspectorPanel.vue
 │   │   ├── PodList.vue
+│   │   ├── ResourceTree.vue
 │   │   ├── Sidebar.vue
 │   │   └── TrendChart.vue
 │   ├── main.ts
@@ -169,4 +170,4 @@
 └── .vscode
     └── extensions.json
 
-38 directories, 132 files
+38 directories, 133 files
