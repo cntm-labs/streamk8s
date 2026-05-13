@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import ActivityBar from './components/ActivityBar.vue';
+import ClusterHotbar from './components/ClusterHotbar.vue';
 import Sidebar from './components/Sidebar.vue';
 import ResourceTree from './components/ResourceTree.vue';
 import Gauge from './components/Gauge.vue';
@@ -42,6 +43,7 @@ const metrics = ref<Metrics>({
 });
 
 const availableContexts = ref<ClusterContext[]>([]);
+const selectedContextName = ref<string | null>(null);
 const clusterPods = ref<Record<string, Pod[]>>({});
 const currentAdvice = ref<Advice | null>(null);
 
@@ -131,6 +133,11 @@ onMounted(async () => {
 <template>
   <div class="ide-container">
     <ActivityBar v-model:activeId="activeTab" />
+    <ClusterHotbar 
+      :contexts="availableContexts" 
+      :active-name="selectedContextName" 
+      @select="(name) => selectedContextName = name" 
+    />
     
     <Sidebar :title="activeTab">
       <div v-if="activeTab === 'explorer'" class="explorer-content">
@@ -203,7 +210,7 @@ body { margin: 0; padding: 0; background-color: #111827; overflow: hidden; }
 
 .ide-container {
   display: grid;
-  grid-template-columns: 48px 260px 1fr;
+  grid-template-columns: 48px 48px 260px 1fr;
   height: 100vh;
   color: #f3f4f6;
   font-family: 'Inter', system-ui, sans-serif;
