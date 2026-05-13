@@ -7,7 +7,6 @@ import ClusterHotbar from './components/ClusterHotbar.vue';
 import Sidebar from './components/Sidebar.vue';
 import ResourceTree from './components/ResourceTree.vue';
 import Gauge from './components/Gauge.vue';
-import ClusterAccordion from './components/ClusterAccordion.vue';
 import TrendChart from './components/TrendChart.vue';
 import InspectorPanel from './components/InspectorPanel.vue';
 import AdviceBanner from './components/AdviceBanner.vue';
@@ -121,6 +120,15 @@ onMounted(async () => {
   // Fetch initial contexts and pods
   try {
     availableContexts.value = await invoke<ClusterContext[]>('get_available_contexts');
+    
+    // Set initial selected context
+    const current = availableContexts.value.find(c => c.is_current);
+    if (current) {
+      selectedContextName.value = current.name;
+    } else if (availableContexts.value.length > 0) {
+      selectedContextName.value = availableContexts.value[0].name;
+    }
+
     for (const context of availableContexts.value) {
       clusterPods.value[context.name] = await invoke<Pod[]>('get_pods', { contextName: context.name });
     }
@@ -141,8 +149,11 @@ onMounted(async () => {
     
     <Sidebar :title="activeTab">
       <div v-if="activeTab === 'explorer'" class="explorer-content">
+        <div class="active-cluster-label" v-if="selectedContextName">
+          <span class="label-icon">⎈</span>
+          <span class="label-text">{{ selectedContextName }}</span>
+        </div>
         <ResourceTree @select="(type) => console.log('Selected resource type:', type)" />
-        <!-- Cluster list is now in main area -->
       </div>
       <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
         <h3>System Telemetry</h3>
@@ -183,16 +194,35 @@ onMounted(async () => {
           <AdviceBanner :advice="currentAdvice" @optimize="applyOptimization" />
           
           <div class="main-scroll-area">
-            <!-- Clusters back in Main Area -->
-            <div class="cluster-list">
-              <ClusterAccordion 
-                v-for="context in availableContexts" 
-                :key="context.name"
-                :context-name="context.name"
-                :is-current="context.is_current"
-                :pods="clusterPods[context.name] || []"
-                @select-pod="handleSelectPod"
+            <div v-if="selectedContextName" class="focused-cluster-view">
+              <header class="cluster-view-header">
+                <div class="cluster-title">
+                  <span class="k8s-icon">⎈</span>
+                  <h2>{{ selectedContextName }}</h2>
+                  <span v-if="availableContexts.find(c => c.name === selectedContextName)?.is_current" class="current-badge">
+                    Current
+                  </span>
+                </div>
+                <div class="cluster-actions">
+                  <button class="btn-refresh" @click="async () => {
+                    if (selectedContextName) {
+                      clusterPods[selectedContextName] = await invoke('get_pods', { contextName: selectedContextName });
+                    }
+                  }">Refresh</button>
+                </div>
+              </header>
+
+              <PodList 
+                :pods="clusterPods[selectedContextName] || []" 
+                :context-name="selectedContextName"
+                @select-pod="(namespace, name) => handleSelectPod(selectedContextName!, namespace, name)" 
               />
+            </div>
+            <div v-else class="no-cluster-selected">
+              <div class="empty-state">
+                <span class="empty-icon">📂</span>
+                <p>Select a cluster from the hotbar to view workloads</p>
+              </div>
             </div>
           </div>
 
@@ -214,6 +244,28 @@ body { margin: 0; padding: 0; background-color: #111827; overflow: hidden; }
   height: 100vh;
   color: #f3f4f6;
   font-family: 'Inter', system-ui, sans-serif;
+}
+
+.active-cluster-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-bottom: 1px solid #374151;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.label-icon { color: #3b82f6; font-size: 1.1rem; }
+.label-text { 
+  font-size: 0.85rem; 
+  font-weight: 600; 
+  font-family: monospace;
+  color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .main-area {
@@ -250,14 +302,66 @@ body { margin: 0; padding: 0; background-color: #111827; overflow: hidden; }
 .main-scroll-area {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 1rem;
+  padding: 1.5rem;
 }
 
-.cluster-list {
+.focused-cluster-view {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
+  height: 100%;
 }
+
+.cluster-view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cluster-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.k8s-icon { font-size: 1.5rem; color: #3b82f6; }
+.cluster-title h2 { margin: 0; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+
+.current-badge {
+  font-size: 0.7rem;
+  background-color: #3b82f6;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.btn-refresh {
+  background-color: #374151;
+  border: 1px solid #4b5563;
+  color: #f3f4f6;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.btn-refresh:hover { background-color: #4b5563; }
+
+.no-cluster-selected {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.empty-state {
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
 
 .floating-inspector {
   height: 350px; /* Fixed height for bottom panel */
