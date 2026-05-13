@@ -23,7 +23,8 @@
 │       │   ├── 2026-05-06-milestone-4-profiler.md
 │       │   ├── 2026-05-06-milestone-5-multicluster.md
 │       │   ├── 2026-05-08-ide-architecture.md
-│       │   └── 2026-05-08-milestone-6-inspector.md
+│       │   ├── 2026-05-08-milestone-6-inspector.md
+│       │   └── 2026-05-08-professional-layout.md
 │       └── specs
 │           ├── 2026-05-04-streamk8s-design.md
 │           ├── 2026-05-06-github-repo-init-design.md
@@ -33,7 +34,8 @@
 │           ├── 2026-05-06-milestone-4-profiler-design.md
 │           ├── 2026-05-06-milestone-5-multicluster-design.md
 │           ├── 2026-05-08-ide-architecture-design.md
-│           └── 2026-05-08-milestone-6-inspector-design.md
+│           ├── 2026-05-08-milestone-6-inspector-design.md
+│           └── 2026-05-08-professional-layout-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -74,7 +76,7 @@
 │   ├── components
 │   │   ├── ActivityBar.vue
 │   │   ├── AdviceBanner.vue
-│   │   ├── ClusterAccordion.vue
+│   │   ├── ClusterHotbar.vue
 │   │   ├── Gauge.vue
 │   │   ├── InspectorPanel.vue
 │   │   ├── PodList.vue
@@ -140,6 +142,12 @@
 │       │       ├── events
 │       │       ├── server.pid
 │       │       └── server-stopped
+│       ├── 2413762-1778663007
+│       │   ├── content
+│       │   │   └── lens-comparison.html
+│       │   └── state
+│       │       ├── server.pid
+│       │       └── server-stopped
 │       ├── 2570962-1778330137
 │       │   ├── content
 │       │   │   └── multi-cluster-approaches.html
@@ -170,4 +178,4 @@
 └── .vscode
     └── extensions.json
 
-38 directories, 133 files
+41 directories, 138 files
