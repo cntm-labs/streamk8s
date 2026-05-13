@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-CDhxliXC.css
-│   │   └── index-Cw1piwUz.js
+│   │   ├── index-D6PzfuDB.js
+│   │   └── index-h7reEqD4.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -22,6 +22,7 @@
 │       │   ├── 2026-05-06-milestone-3-logs.md
 │       │   ├── 2026-05-06-milestone-4-profiler.md
 │       │   ├── 2026-05-06-milestone-5-multicluster.md
+│       │   ├── 2026-05-08-ide-architecture.md
 │       │   └── 2026-05-08-milestone-6-inspector.md
 │       └── specs
 │           ├── 2026-05-04-streamk8s-design.md
@@ -31,6 +32,7 @@
 │           ├── 2026-05-06-milestone-3-logs-design.md
 │           ├── 2026-05-06-milestone-4-profiler-design.md
 │           ├── 2026-05-06-milestone-5-multicluster-design.md
+│           ├── 2026-05-08-ide-architecture-design.md
 │           └── 2026-05-08-milestone-6-inspector-design.md
 ├── FAQ.md
 ├── GEMINI.md
@@ -70,11 +72,14 @@
 │   ├── assets
 │   │   └── vue.svg
 │   ├── components
+│   │   ├── ActivityBar.vue
 │   │   ├── AdviceBanner.vue
 │   │   ├── ClusterAccordion.vue
 │   │   ├── Gauge.vue
 │   │   ├── InspectorPanel.vue
 │   │   ├── PodList.vue
+│   │   ├── ResourceTree.vue
+│   │   ├── Sidebar.vue
 │   │   └── TrendChart.vue
 │   ├── main.ts
 │   ├── style.css
@@ -165,4 +170,4 @@
 └── .vscode
     └── extensions.json
 
-38 directories, 128 files
+38 directories, 133 files
