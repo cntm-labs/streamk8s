@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import { 
+  LayoutGrid, 
+  Bot, 
+  ShoppingBag, 
+  Activity 
+} from 'lucide-vue-next';
+
 defineProps<{
   activeId: string;
 }>();
@@ -8,10 +15,10 @@ const emit = defineEmits<{
 }>();
 
 const items = [
-  { id: 'explorer', label: 'EXP', title: 'Explorer' },
-  { id: 'ai', label: 'AI', title: 'AI Assistant' },
-  { id: 'marketplace', label: 'MKT', title: 'Marketplace' },
-  { id: 'hardware', label: 'HW', title: 'Hardware' },
+  { id: 'explorer', icon: LayoutGrid, title: 'Explorer' },
+  { id: 'ai', icon: Bot, title: 'AI Assistant' },
+  { id: 'marketplace', icon: ShoppingBag, title: 'Marketplace' },
+  { id: 'hardware', icon: Activity, title: 'Hardware' },
 ];
 
 const selectItem = (id: string) => {
@@ -29,7 +36,7 @@ const selectItem = (id: string) => {
       :title="item.title"
       @click="selectItem(item.id)"
     >
-      {{ item.label }}
+      <component :is="item.icon" :size="24" stroke-width="1.5" />
     </div>
   </nav>
 </template>
