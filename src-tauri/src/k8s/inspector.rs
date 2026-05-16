@@ -114,7 +114,7 @@ pub async fn write_pod_file(
 }
 
 // Internal helper for client creation (shared across k8s modules)
-async fn create_client(context_name: Option<String>) -> Result<Client, String> {
+pub(crate) async fn create_client(context_name: Option<String>) -> Result<Client, String> {
     let config = if let Some(name) = context_name {
         let mut options = kube::config::KubeConfigOptions::default();
         options.context = Some(name);

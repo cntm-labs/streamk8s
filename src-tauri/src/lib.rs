@@ -22,7 +22,11 @@ pub fn run() {
             crate::k8s::inspector::apply_resource_manifest,
             crate::k8s::inspector::get_pod_events,
             crate::k8s::inspector::read_pod_file,
-            crate::k8s::inspector::write_pod_file
+            crate::k8s::inspector::write_pod_file,
+            crate::k8s::resources::get_deployments,
+            crate::k8s::resources::get_services,
+            crate::k8s::resources::get_configmaps,
+            crate::k8s::resources::get_secrets
         ])
         .setup(|app| {
             let handle = app.handle().clone();
