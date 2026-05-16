@@ -70,15 +70,50 @@ const metrics = ref<Metrics>({
 
 const availableContexts = ref<ClusterContext[]>([]);
 const selectedContextName = ref<string | null>(null);
-const clusterPods = ref<Record<string, ResourceRow[]>>({});
+const clusterResources = ref<Record<string, ResourceRow[]>>({});
 const currentAdvice = ref<Advice | null>(null);
 
 const activeResourceKind = ref('Pod');
 const currentResourceData = computed(() => {
   if (!selectedContextName.value) return [];
-  // For now, we only have pods data, but this can be expanded
-  return clusterPods.value[selectedContextName.value] || [];
+  return clusterResources.value[selectedContextName.value] || [];
 });
+
+const fetchResources = async (contextName: string, kind: string) => {
+  try {
+    let command = 'get_pods';
+    switch (kind.toLowerCase()) {
+      case 'pods': command = 'get_pods'; break;
+      case 'deployments': command = 'get_deployments'; break;
+      case 'services': command = 'get_services'; break;
+      case 'configmaps': command = 'get_configmaps'; break;
+      case 'secrets': command = 'get_secrets'; break;
+    }
+    clusterResources.value[contextName] = await invoke<ResourceRow[]>(command, { contextName });
+  } catch (e) {
+    console.error(`Failed to fetch ${kind}:`, e);
+    clusterResources.value[contextName] = [];
+  }
+};
+
+const handleResourceTypeSelect = async (type: string) => {
+  // Map internal type names to display names
+  const kindMap: Record<string, string> = {
+    'pods': 'Pod',
+    'deployments': 'Deployment',
+    'services': 'Service',
+    'configmaps': 'ConfigMap',
+    'secrets': 'Secret',
+    'statefulsets': 'StatefulSet',
+    'ingresses': 'Ingress'
+  };
+  
+  activeResourceKind.value = kindMap[type] || type;
+  
+  if (selectedContextName.value) {
+    await fetchResources(selectedContextName.value, type);
+  }
+};
 
 const selectedResource = ref<{ contextName: string, namespace: string, name: string, kind: string } | null>(null);
 const inspectorPanelRef = ref<InstanceType<typeof InspectorPanel> | null>(null);
@@ -103,8 +138,8 @@ const applyOptimization = async () => {
   if (!currentAdvice.value) return;
   
   try {
-    for (const contextName in clusterPods.value) {
-      for (const pod of clusterPods.value[contextName]) {
+    for (const contextName in clusterResources.value) {
+      for (const pod of clusterResources.value[contextName]) {
         await invoke('scale_workload', { 
           contextName,
           namespace: pod.namespace, 
@@ -115,8 +150,8 @@ const applyOptimization = async () => {
     }
     currentAdvice.value = null;
     
-    for (const context of availableContexts.value) {
-      clusterPods.value[context.name] = await invoke<ResourceRow[]>('get_pods', { contextName: context.name });
+    if (selectedContextName.value) {
+      await fetchResources(selectedContextName.value, activeResourceKind.value.toLowerCase() + 's');
     }
   } catch (e) {
     console.error('Failed to apply optimization:', e);
@@ -153,11 +188,12 @@ onMounted(async () => {
     } else if (availableContexts.value.length > 0) {
       selectedContextName.value = availableContexts.value[0].name;
     }
-    for (const context of availableContexts.value) {
-      clusterPods.value[context.name] = await invoke<ResourceRow[]>('get_pods', { contextName: context.name });
+    
+    if (selectedContextName.value) {
+      await fetchResources(selectedContextName.value, 'pods');
     }
   } catch (e) {
-    console.error('Failed to fetch contexts or pods:', e);
+    console.error('Failed to fetch contexts or resources:', e);
   }
 });
 </script>
@@ -168,7 +204,10 @@ onMounted(async () => {
     <ClusterHotbar 
       :contexts="availableContexts" 
       :active-name="selectedContextName" 
-      @select="(name) => selectedContextName = name" 
+      @select="(name) => {
+        selectedContextName = name;
+        if (name) fetchResources(name, activeResourceKind.toLowerCase() + (activeResourceKind.endsWith('s') ? '' : 's'));
+      }" 
     />
     
     <Sidebar :title="activeTab" :width="sidebarWidth" @start-resize="handleStartResize">
@@ -177,7 +216,7 @@ onMounted(async () => {
           <span class="label-icon">⎈</span>
           <span class="label-text">{{ selectedContextName }}</span>
         </div>
-        <ResourceTree @select="(type) => console.log('Selected resource type:', type)" />
+        <ResourceTree @select-resource-type="handleResourceTypeSelect" />
       </div>
       <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
         <h3>System Telemetry</h3>
@@ -220,7 +259,7 @@ onMounted(async () => {
                 <div class="cluster-actions">
                   <button class="btn-refresh" @click="async () => {
                     if (selectedContextName) {
-                      clusterPods[selectedContextName] = await invoke('get_pods', { contextName: selectedContextName });
+                      await fetchResources(selectedContextName, activeResourceKind.toLowerCase() + (activeResourceKind.endsWith('s') ? '' : 's'));
                     }
                   }">Refresh</button>
                 </div>
