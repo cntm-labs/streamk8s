@@ -1,6 +1,6 @@
-use serde_json::json;
-use crate::k8s::inspector::get_resource_manifest;
 use crate::k8s::inspector::get_pod_events;
+use crate::k8s::inspector::get_resource_manifest;
+use serde_json::json;
 
 #[tauri::command]
 pub async fn analyze_with_ai(
@@ -10,9 +10,14 @@ pub async fn analyze_with_ai(
     api_key: String,
 ) -> Result<String, String> {
     // 1. Aggregate Context
-    let manifest = get_resource_manifest(context_name.clone(), namespace.clone(), resource_name.clone()).await?;
+    let manifest = get_resource_manifest(
+        context_name.clone(),
+        namespace.clone(),
+        resource_name.clone(),
+    )
+    .await?;
     let events = get_pod_events(context_name, namespace, resource_name).await?;
-    
+
     let prompt = format!(
         "Analyze the following Kubernetes Resource state and provide a diagnostic report.\n\nMANIFEST:\n{}\n\nEVENTS:\n{:?}",
         manifest, events
@@ -32,10 +37,13 @@ pub async fn analyze_with_ai(
         .send().await.map_err(|e| e.to_string())?;
 
     let json: serde_json::Value = res.json().await.map_err(|e| e.to_string())?;
-    
+
     if let Some(err) = json["error"]["message"].as_str() {
         return Err(format!("AI Error: {}", err));
     }
 
-    Ok(json["choices"][0]["message"]["content"].as_str().unwrap_or("No advice found").to_string())
+    Ok(json["choices"][0]["message"]["content"]
+        .as_str()
+        .unwrap_or("No advice found")
+        .to_string())
 }
