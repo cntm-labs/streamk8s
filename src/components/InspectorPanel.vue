@@ -2,13 +2,14 @@
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
+import { marked } from 'marked';
 
 const props = defineProps<{
   selectedResource: { contextName: string, namespace: string, name: string, kind: string } | null
 }>();
 
 const activeTab = ref('Logs');
-const tabs = ['Logs', 'YAML', 'Events', 'Files'];
+const tabs = ['Logs', 'YAML', 'Events', 'Files', 'AI Diagnostic'];
 
 // Logs State
 const logs = ref<string[]>([]);
@@ -27,6 +28,11 @@ const isLoadingEvents = ref(false);
 const fileContent = ref('');
 const filePath = ref('/etc/hosts'); // Default example
 const isLoadingFiles = ref(false);
+
+// AI Diagnostic State
+const aiAdvice = ref('');
+const isAnalyzing = ref(false);
+const apiKey = ref('');
 
 const clearLogs = () => {
   logs.value = [];
@@ -126,6 +132,33 @@ const saveFile = async () => {
   }
 };
 
+const runAiAnalysis = async () => {
+  if (!props.selectedResource) return;
+  
+  if (!apiKey.value) {
+    const key = prompt('Please enter your Gemini API Key:');
+    if (!key) return;
+    apiKey.value = key;
+  }
+
+  isAnalyzing.value = true;
+  aiAdvice.value = 'AI is analyzing the resource state and logs...';
+  
+  try {
+    const result: string = await invoke('analyze_with_ai', {
+      contextName: props.selectedResource.contextName,
+      namespace: props.selectedResource.namespace,
+      podName: props.selectedResource.name,
+      apiKey: apiKey.value
+    });
+    aiAdvice.value = result;
+  } catch (e) {
+    aiAdvice.value = `### Error during AI Analysis\n\n${e}`;
+  } finally {
+    isAnalyzing.value = false;
+  }
+};
+
 onMounted(async () => {
   unlisten = await listen<string>('pod-log-line', (event) => {
     logs.value.push(event.payload);
@@ -180,6 +213,7 @@ defineExpose({ clearLogs });
         <button v-if="activeTab === 'YAML'" @click="applyYaml" class="action-btn save-btn" :disabled="isLoadingYaml">Apply</button>
         <button v-if="activeTab === 'Events'" @click="fetchEvents" class="action-btn" :disabled="isLoadingEvents">Refresh</button>
         <button v-if="activeTab === 'Files'" @click="saveFile" class="action-btn save-btn" :disabled="isLoadingFiles">Save</button>
+        <button v-if="activeTab === 'AI Diagnostic'" @click="runAiAnalysis" class="action-btn ai-btn" :disabled="isAnalyzing">AI Analyze</button>
       </div>
     </div>
 
@@ -236,6 +270,15 @@ defineExpose({ clearLogs });
         <div class="file-editor-area">
           <div v-if="isLoadingFiles" class="loading-overlay">Reading file...</div>
           <textarea v-model="fileContent" class="code-editor" placeholder="File content will appear here..."></textarea>
+        </div>
+      </div>
+
+      <!-- AI DIAGNOSTIC TAB -->
+      <div v-if="activeTab === 'AI Diagnostic'" class="ai-content">
+        <div v-if="isAnalyzing" class="loading-overlay">AI is thinking...</div>
+        <div v-if="aiAdvice" class="markdown-body" v-html="marked.parse(aiAdvice)"></div>
+        <div v-else class="empty-state">
+          Click "AI Analyze" to get diagnostic advice from Gemini AI.
         </div>
       </div>
     </div>
@@ -316,6 +359,15 @@ defineExpose({ clearLogs });
 .action-btn.save-btn:hover:not(:disabled) {
   background-color: #1d4ed8;
 }
+.action-btn.ai-btn {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  border-color: #818cf8;
+  color: white;
+}
+.action-btn.ai-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
 
 .tab-content {
   flex: 1;
@@ -325,9 +377,47 @@ defineExpose({ clearLogs });
 }
 
 /* Common Content Styles */
-.log-content, .yaml-content, .events-content, .files-content {
+.log-content, .yaml-content, .events-content, .files-content, .ai-content {
   height: 100%;
   overflow-y: auto;
+}
+
+/* AI Diagnostic Styles */
+.ai-content {
+  padding: 1rem;
+  color: #e5e7eb;
+}
+.markdown-body {
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.markdown-body :deep(h1), .markdown-body :deep(h2), .markdown-body :deep(h3) {
+  color: #a855f7;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.markdown-body :deep(code) {
+  background-color: #1f2937;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: inherit;
+}
+.markdown-body :deep(pre) {
+  background-color: #111827;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.markdown-body :deep(ul), .markdown-body :deep(ol) {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+.markdown-body :deep(blockquote) {
+  border-left: 4px solid #4f46e5;
+  padding-left: 1rem;
+  color: #9ca3af;
+  font-style: italic;
 }
 
 /* Logs Styles */
