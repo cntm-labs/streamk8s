@@ -12,6 +12,10 @@ import TrendChart from './components/TrendChart.vue';
 import InspectorPanel from './components/InspectorPanel.vue';
 import AdviceBanner from './components/AdviceBanner.vue';
 
+// Views
+import WelcomeView from './views/WelcomeView.vue';
+import SettingsView from './views/SettingsView.vue';
+
 interface Metrics {
   cpu_usage: number;
   ram_usage: number;
@@ -35,8 +39,18 @@ interface Advice {
 }
 
 const activeTab = ref('explorer');
+const currentView = ref<'welcome' | 'cluster' | 'settings'>('welcome');
 const sidebarWidth = ref(240);
 const isResizing = ref(false);
+
+const handleTabChange = (id: string) => {
+  activeTab.value = id;
+  if (id === 'explorer') {
+    currentView.value = 'cluster';
+  } else if (id === 'settings') {
+    currentView.value = 'settings';
+  }
+};
 
 const handleStartResize = () => {
   isResizing.value = true;
@@ -77,6 +91,13 @@ const activeResourceKind = ref('Pod');
 const currentResourceData = computed(() => {
   if (!selectedContextName.value) return [];
   return clusterResources.value[selectedContextName.value] || [];
+});
+
+const gridColumns = computed(() => {
+  if (currentView.value === 'cluster') {
+    return `48px 48px ${sidebarWidth.value}px 1fr`;
+  }
+  return `48px 1fr`;
 });
 
 const fetchResources = async (contextName: string, kind: string) => {
@@ -199,93 +220,99 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="ide-container" :style="{ gridTemplateColumns: `48px 48px ${sidebarWidth}px 1fr` }">
-    <ActivityBar v-model:activeId="activeTab" />
-    <ClusterHotbar 
-      :contexts="availableContexts" 
-      :active-name="selectedContextName" 
-      @select="(name) => {
-        selectedContextName = name;
-        if (name) fetchResources(name, activeResourceKind.toLowerCase() + (activeResourceKind.endsWith('s') ? '' : 's'));
-      }" 
-    />
+  <div class="ide-container" :style="{ gridTemplateColumns: gridColumns }">
+    <ActivityBar :activeId="activeTab" @update:activeId="handleTabChange" />
     
-    <Sidebar :title="activeTab" :width="sidebarWidth" @start-resize="handleStartResize">
-      <div v-if="activeTab === 'explorer'" class="explorer-content">
-        <div class="active-cluster-label" v-if="selectedContextName">
-          <span class="label-icon">⎈</span>
-          <span class="label-text">{{ selectedContextName }}</span>
-        </div>
-        <ResourceTree @select-resource-type="handleResourceTypeSelect" />
-      </div>
-      <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
-        <h3>System Telemetry</h3>
-        <div class="metric-group">
-          <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
-          <TrendChart :data="cpuHistory" color="#3b82f6" />
-        </div>
-        <div class="metric-group">
-          <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
-          <TrendChart :data="ramHistory" color="#10b981" />
-        </div>
-        <div v-if="metrics.gpu_usage !== null" class="metric-group">
-          <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
-          <TrendChart :data="gpuHistory" color="#f59e0b" />
-          <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
-        </div>
-        <div v-else class="gpu-not-found">No NVIDIA GPU Detected</div>
-      </div>
-    </Sidebar>
-
-    <main class="main-area">
-      <header class="top-search">
-        <div class="brand">StreamK8s | OS v0.1</div>
-        <div class="search-placeholder">Search or execute command...</div>
-        <div class="system-time">{{ new Date().toLocaleTimeString() }}</div>
-      </header>
+    <template v-if="currentView === 'cluster'">
+      <ClusterHotbar 
+        :contexts="availableContexts" 
+        :active-name="selectedContextName" 
+        @select="(name) => {
+          selectedContextName = name;
+          if (name) fetchResources(name, activeResourceKind.toLowerCase() + (activeResourceKind.endsWith('s') ? '' : 's'));
+        }" 
+      />
       
-      <div class="content-viewport">
-        <section class="workloads-panel">
-          <AdviceBanner :advice="currentAdvice" @optimize="applyOptimization" />
-          
-          <div class="main-scroll-area">
-            <div v-if="selectedContextName" class="focused-cluster-view">
-              <header class="cluster-view-header">
-                <div class="cluster-title">
-                  <span class="k8s-icon">⎈</span>
-                  <h2>{{ selectedContextName }}</h2>
-                  <span v-if="availableContexts.find(c => c.name === selectedContextName)?.is_current" class="current-badge">Current</span>
+      <Sidebar :title="activeTab" :width="sidebarWidth" @start-resize="handleStartResize">
+        <div v-if="activeTab === 'explorer'" class="explorer-content">
+          <div class="active-cluster-label" v-if="selectedContextName">
+            <span class="label-icon">⎈</span>
+            <span class="label-text">{{ selectedContextName }}</span>
+          </div>
+          <ResourceTree @select-resource-type="handleResourceTypeSelect" />
+        </div>
+        <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
+          <h3>System Telemetry</h3>
+          <div class="metric-group">
+            <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
+            <TrendChart :data="cpuHistory" color="#3b82f6" />
+          </div>
+          <div class="metric-group">
+            <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
+            <TrendChart :data="ramHistory" color="#10b981" />
+          </div>
+          <div v-if="metrics.gpu_usage !== null" class="metric-group">
+            <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
+            <TrendChart :data="gpuHistory" color="#f59e0b" />
+            <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
+          </div>
+          <div v-else class="gpu-not-found">No NVIDIA GPU Detected</div>
+        </div>
+      </Sidebar>
+
+      <main class="main-area">
+        <header class="top-search">
+          <div class="brand">StreamK8s | OS v0.1</div>
+          <div class="search-placeholder">Search or execute command...</div>
+          <div class="system-time">{{ new Date().toLocaleTimeString() }}</div>
+        </header>
+        
+        <div class="content-viewport">
+          <section class="workloads-panel">
+            <AdviceBanner :advice="currentAdvice" @optimize="applyOptimization" />
+            
+            <div class="main-scroll-area">
+              <div v-if="selectedContextName" class="focused-cluster-view">
+                <header class="cluster-view-header">
+                  <div class="cluster-title">
+                    <span class="k8s-icon">⎈</span>
+                    <h2>{{ selectedContextName }}</h2>
+                    <span v-if="availableContexts.find(c => c.name === selectedContextName)?.is_current" class="current-badge">Current</span>
+                  </div>
+                  <div class="cluster-actions">
+                    <button class="btn-refresh" @click="async () => {
+                      if (selectedContextName) {
+                        await fetchResources(selectedContextName, activeResourceKind.toLowerCase() + (activeResourceKind.endsWith('s') ? '' : 's'));
+                      }
+                    }">Refresh</button>
+                  </div>
+                </header>
+                <ResourceTable 
+                  :rows="currentResourceData" 
+                  :context-name="selectedContextName"
+                  :kind="activeResourceKind"
+                  @select-resource="(namespace, name, kind) => handleSelectResource(selectedContextName!, namespace, name, kind)" 
+                />
+              </div>
+              <div v-else class="no-cluster-selected">
+                <div class="empty-state">
+                  <span class="empty-icon">📂</span>
+                  <p>Select a cluster from the hotbar to view workloads</p>
                 </div>
-                <div class="cluster-actions">
-                  <button class="btn-refresh" @click="async () => {
-                    if (selectedContextName) {
-                      await fetchResources(selectedContextName, activeResourceKind.toLowerCase() + (activeResourceKind.endsWith('s') ? '' : 's'));
-                    }
-                  }">Refresh</button>
-                </div>
-              </header>
-              <ResourceTable 
-                :rows="currentResourceData" 
-                :context-name="selectedContextName"
-                :kind="activeResourceKind"
-                @select-resource="(namespace, name, kind) => handleSelectResource(selectedContextName!, namespace, name, kind)" 
-              />
-            </div>
-            <div v-else class="no-cluster-selected">
-              <div class="empty-state">
-                <span class="empty-icon">📂</span>
-                <p>Select a cluster from the hotbar to view workloads</p>
               </div>
             </div>
-          </div>
 
-          <!-- Bottom Bar / Inspector Panel -->
-          <div v-if="selectedResource" class="floating-inspector">
-             <InspectorPanel ref="inspectorPanelRef" :selected-resource="selectedResource" />
-          </div>
-        </section>
-      </div>
-    </main>
+            <!-- Bottom Bar / Inspector Panel -->
+            <div v-if="selectedResource" class="floating-inspector">
+               <InspectorPanel ref="inspectorPanelRef" :selected-resource="selectedResource" />
+            </div>
+          </section>
+        </div>
+      </main>
+    </template>
+
+    <WelcomeView v-else-if="currentView === 'welcome'" />
+    <SettingsView v-else-if="currentView === 'settings'" />
   </div>
 </template>
 
