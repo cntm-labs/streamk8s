@@ -26,7 +26,8 @@ pub fn run() {
             crate::k8s::resources::get_deployments,
             crate::k8s::resources::get_services,
             crate::k8s::resources::get_configmaps,
-            crate::k8s::resources::get_secrets
+            crate::k8s::resources::get_secrets,
+            crate::k8s::ai::analyze_with_ai
         ])
         .setup(|app| {
             let handle = app.handle().clone();
