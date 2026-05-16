@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import { marked } from 'marked';
+import { Loader2 } from 'lucide-vue-next';
 
 const props = defineProps<{
   selectedResource: { contextName: string, namespace: string, name: string, kind: string } | null
@@ -275,7 +276,10 @@ defineExpose({ clearLogs });
 
       <!-- AI DIAGNOSTIC TAB -->
       <div v-if="activeTab === 'AI Diagnostic'" class="ai-content">
-        <div v-if="isAnalyzing" class="loading-overlay">AI is thinking...</div>
+        <div v-if="isAnalyzing" class="loading-overlay">
+          <Loader2 class="animate-spin mr-2" :size="18" />
+          <span>AI is analyzing resource context (YAML + Events)...</span>
+        </div>
         <div v-if="aiAdvice" class="markdown-body" v-html="marked.parse(aiAdvice)"></div>
         <div v-else class="empty-state">
           Click "AI Analyze" to get diagnostic advice from Gemini AI.
@@ -519,6 +523,20 @@ defineExpose({ clearLogs });
   font-size: 0.8rem;
   z-index: 10;
 }
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .empty-state {
   display: flex;
   justify-content: center;
