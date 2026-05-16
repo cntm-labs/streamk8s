@@ -4,7 +4,7 @@ import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 
 const props = defineProps<{
-  selectedPod: { contextName: string, namespace: string, name: string } | null
+  selectedResource: { contextName: string, namespace: string, name: string, kind: string } | null
 }>();
 
 const activeTab = ref('Logs');
@@ -33,13 +33,13 @@ const clearLogs = () => {
 };
 
 const fetchYaml = async () => {
-  if (!props.selectedPod) return;
+  if (!props.selectedResource) return;
   isLoadingYaml.value = true;
   try {
     yamlContent.value = await invoke('get_resource_manifest', {
-      contextName: props.selectedPod.contextName,
-      namespace: props.selectedPod.namespace,
-      podName: props.selectedPod.name
+      contextName: props.selectedResource.contextName,
+      namespace: props.selectedResource.namespace,
+      podName: props.selectedResource.name
     });
   } catch (e) {
     yamlContent.value = `Error fetching YAML: ${e}`;
@@ -49,13 +49,13 @@ const fetchYaml = async () => {
 };
 
 const fetchEvents = async () => {
-  if (!props.selectedPod) return;
+  if (!props.selectedResource) return;
   isLoadingEvents.value = true;
   try {
     const response: any = await invoke('get_pod_events', {
-      contextName: props.selectedPod.contextName,
-      namespace: props.selectedPod.namespace,
-      podName: props.selectedPod.name
+      contextName: props.selectedResource.contextName,
+      namespace: props.selectedResource.namespace,
+      podName: props.selectedResource.name
     });
     events.value = response.items || [];
   } catch (e) {
@@ -66,17 +66,17 @@ const fetchEvents = async () => {
 };
 
 const readFile = async () => {
-  if (!props.selectedPod) return;
+  if (!props.selectedResource) return;
   isLoadingFiles.value = true;
   try {
     // Note: container_name is required. For simplicity, we might need to fetch container names first.
     // For now, let's assume the first container name matches the pod name prefix or just try to get it.
     // In a real app, we'd have a container selector.
     fileContent.value = await invoke('read_pod_file', {
-      contextName: props.selectedPod.contextName,
-      namespace: props.selectedPod.namespace,
-      podName: props.selectedPod.name,
-      containerName: props.selectedPod.name, // Temporary assumption
+      contextName: props.selectedResource.contextName,
+      namespace: props.selectedResource.namespace,
+      podName: props.selectedResource.name,
+      containerName: props.selectedResource.name, // Temporary assumption
       filePath: filePath.value
     });
   } catch (e) {
@@ -87,13 +87,13 @@ const readFile = async () => {
 };
 
 const applyYaml = async () => {
-  if (!props.selectedPod) return;
+  if (!props.selectedResource) return;
   isLoadingYaml.value = true;
   try {
     await invoke('apply_resource_manifest', {
-      contextName: props.selectedPod.contextName,
-      namespace: props.selectedPod.namespace,
-      podName: props.selectedPod.name,
+      contextName: props.selectedResource.contextName,
+      namespace: props.selectedResource.namespace,
+      podName: props.selectedResource.name,
       yamlContent: yamlContent.value
     });
     alert('Manifest applied successfully!');
@@ -105,16 +105,16 @@ const applyYaml = async () => {
 };
 
 const saveFile = async () => {
-  if (!props.selectedPod) return;
+  if (!props.selectedResource) return;
   isLoadingFiles.value = true;
   try {
     // UTF-8 to Base64
     const contentBase64 = window.btoa(unescape(encodeURIComponent(fileContent.value)));
     await invoke('write_pod_file', {
-      contextName: props.selectedPod.contextName,
-      namespace: props.selectedPod.namespace,
-      podName: props.selectedPod.name,
-      containerName: props.selectedPod.name, // Assumption matches readFile
+      contextName: props.selectedResource.contextName,
+      namespace: props.selectedResource.namespace,
+      podName: props.selectedResource.name,
+      containerName: props.selectedResource.name, // Assumption matches readFile
       filePath: filePath.value,
       contentBase64
     });
@@ -151,7 +151,7 @@ watch(activeTab, (newTab) => {
   if (newTab === 'Files') readFile();
 });
 
-watch(() => props.selectedPod, () => {
+watch(() => props.selectedResource, () => {
   clearLogs();
   if (activeTab.value === 'YAML') fetchYaml();
   if (activeTab.value === 'Events') fetchEvents();
@@ -191,7 +191,7 @@ defineExpose({ clearLogs });
           <span class="line-text">{{ line }}</span>
         </div>
         <div v-if="logs.length === 0" class="empty-state">
-          {{ selectedPod ? 'Streaming logs...' : 'Select a pod to start streaming logs...' }}
+          {{ selectedResource ? 'Streaming logs...' : 'Select a resource to start streaming logs...' }}
         </div>
       </div>
 
@@ -221,7 +221,7 @@ defineExpose({ clearLogs });
               <td>{{ new Date(event.lastTimestamp || event.eventTime).toLocaleString() }}</td>
             </tr>
             <tr v-if="events.length === 0">
-              <td colspan="4" class="empty-state">No events found for this pod.</td>
+              <td colspan="4" class="empty-state">No events found for this {{ selectedResource?.kind || 'resource' }}.</td>
             </tr>
           </tbody>
         </table>

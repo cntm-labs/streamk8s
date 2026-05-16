@@ -11,10 +11,10 @@ const toggleGroup = (group: string) => {
   expandedGroups.value[group] = !expandedGroups.value[group];
 };
 
-const emit = defineEmits(['select']);
+const emit = defineEmits(['select-resource-type']);
 
 const handleItemClick = (type: string) => {
-  emit('select', type);
+  emit('select-resource-type', type);
 };
 </script>
 

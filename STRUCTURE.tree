@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-D6PzfuDB.js
-│   │   └── index-h7reEqD4.css
+│   │   ├── index-DfL3rTa-.js
+│   │   └── index-OnJlAyuV.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -24,7 +24,8 @@
 │       │   ├── 2026-05-06-milestone-5-multicluster.md
 │       │   ├── 2026-05-08-ide-architecture.md
 │       │   ├── 2026-05-08-milestone-6-inspector.md
-│       │   └── 2026-05-08-professional-layout.md
+│       │   ├── 2026-05-08-professional-layout.md
+│       │   └── 2026-05-09-milestone-8-full-resources.md
 │       └── specs
 │           ├── 2026-05-04-streamk8s-design.md
 │           ├── 2026-05-06-github-repo-init-design.md
@@ -35,7 +36,8 @@
 │           ├── 2026-05-06-milestone-5-multicluster-design.md
 │           ├── 2026-05-08-ide-architecture-design.md
 │           ├── 2026-05-08-milestone-6-inspector-design.md
-│           └── 2026-05-08-professional-layout-design.md
+│           ├── 2026-05-08-professional-layout-design.md
+│           └── 2026-05-09-milestone-8-full-resources.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -80,6 +82,7 @@
 │   │   ├── Gauge.vue
 │   │   ├── InspectorPanel.vue
 │   │   ├── PodList.vue
+│   │   ├── ResourceTable.vue
 │   │   ├── ResourceTree.vue
 │   │   ├── Sidebar.vue
 │   │   └── TrendChart.vue
@@ -127,6 +130,7 @@
 │   │   │   ├── logs.rs
 │   │   │   ├── mod.rs
 │   │   │   ├── pods.rs
+│   │   │   ├── resources.rs
 │   │   │   └── scaling.rs
 │   │   ├── lib.rs
 │   │   └── main.rs
@@ -178,4 +182,4 @@
 └── .vscode
     └── extensions.json
 
-41 directories, 138 files
+41 directories, 142 files
