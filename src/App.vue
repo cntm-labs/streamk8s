@@ -302,7 +302,11 @@ onMounted(async () => {
 
           <!-- Bottom Bar / Inspector Panel -->
           <div v-if="selectedResource" class="floating-inspector">
-             <InspectorPanel ref="inspectorPanelRef" :selected-resource="selectedResource" />
+             <InspectorPanel 
+               ref="inspectorPanelRef" 
+               :selected-resource="selectedResource" 
+               @close="selectedResource = null"
+             />
           </div>
         </section>
       </div>

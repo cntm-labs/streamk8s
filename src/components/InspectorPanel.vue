@@ -3,11 +3,13 @@ import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import { marked } from 'marked';
-import { Loader2 } from 'lucide-vue-next';
+import { X, Loader2 } from 'lucide-vue-next';
 
 const props = defineProps<{
   selectedResource: { contextName: string, namespace: string, name: string, kind: string } | null
 }>();
+
+const emit = defineEmits(['close']);
 
 const activeTab = ref('Logs');
 const tabs = ['Logs', 'YAML', 'Events', 'Files', 'AI Diagnostic'];
@@ -215,6 +217,11 @@ defineExpose({ clearLogs });
         <button v-if="activeTab === 'Events'" @click="fetchEvents" class="action-btn" :disabled="isLoadingEvents">Refresh</button>
         <button v-if="activeTab === 'Files'" @click="saveFile" class="action-btn save-btn" :disabled="isLoadingFiles">Save</button>
         <button v-if="activeTab === 'AI Diagnostic'" @click="runAiAnalysis" class="action-btn ai-btn" :disabled="isAnalyzing">AI Analyze</button>
+        
+        <div class="header-divider"></div>
+        <button @click="emit('close')" class="close-btn" title="Close Panel">
+          <X :size="16" />
+        </button>
       </div>
     </div>
 
@@ -371,6 +378,31 @@ defineExpose({ clearLogs });
 .action-btn.ai-btn:hover:not(:disabled) {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+.header-divider {
+  width: 1px;
+  height: 20px;
+  background-color: #374151;
+  margin: 0 4px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #ef4444;
+  color: white;
 }
 
 .tab-content {
