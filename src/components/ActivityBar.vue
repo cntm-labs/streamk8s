@@ -3,7 +3,9 @@ import {
   LayoutGrid, 
   Bot, 
   ShoppingBag, 
-  Activity 
+  Activity,
+  User,
+  Settings
 } from 'lucide-vue-next';
 
 defineProps<{
@@ -14,7 +16,7 @@ const emit = defineEmits<{
   (e: 'update:activeId', id: string): void;
 }>();
 
-const items = [
+const topItems = [
   { id: 'explorer', icon: LayoutGrid, title: 'Explorer' },
   { id: 'ai', icon: Bot, title: 'AI Assistant' },
   { id: 'marketplace', icon: ShoppingBag, title: 'Marketplace' },
@@ -28,15 +30,35 @@ const selectItem = (id: string) => {
 
 <template>
   <nav class="activity-bar">
-    <div 
-      v-for="item in items" 
-      :key="item.id"
-      class="activity-item"
-      :class="{ active: activeId === item.id }"
-      :title="item.title"
-      @click="selectItem(item.id)"
-    >
-      <component :is="item.icon" :size="24" stroke-width="1.5" />
+    <div class="top-items">
+      <div 
+        v-for="item in topItems" 
+        :key="item.id"
+        class="activity-item"
+        :class="{ active: activeId === item.id }"
+        :title="item.title"
+        @click="selectItem(item.id)"
+      >
+        <component :is="item.icon" :size="24" stroke-width="1.5" />
+      </div>
+    </div>
+
+    <div class="bottom-items">
+      <div 
+        class="activity-item" 
+        title="Profile"
+        @click="selectItem('profile')"
+      >
+        <User :size="24" stroke-width="1.5" />
+      </div>
+      <div 
+        class="activity-item" 
+        :class="{ active: activeId === 'settings' }"
+        title="Settings"
+        @click="selectItem('settings')"
+      >
+        <Settings :size="24" stroke-width="1.5" />
+      </div>
     </div>
   </nav>
 </template>
@@ -47,10 +69,18 @@ const selectItem = (id: string) => {
   background-color: #1f2937;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  padding-top: 12px;
+  padding: 12px 0;
   border-right: 1px solid #374151;
   height: 100%;
+}
+
+.top-items, .bottom-items {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .activity-item {

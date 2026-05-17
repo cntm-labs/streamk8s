@@ -1,3 +1,4 @@
+pub mod ai;
 pub mod contexts;
 pub mod inspector;
 pub mod logs;

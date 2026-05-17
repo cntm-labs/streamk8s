@@ -1,3 +1,4 @@
+pub mod config;
 pub mod hardware;
 pub mod k8s;
 
@@ -14,6 +15,8 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            crate::config::get_config,
+            crate::config::save_config,
             crate::k8s::pods::get_pods,
             crate::k8s::scaling::scale_workload,
             crate::k8s::logs::start_log_stream,
@@ -26,7 +29,8 @@ pub fn run() {
             crate::k8s::resources::get_deployments,
             crate::k8s::resources::get_services,
             crate::k8s::resources::get_configmaps,
-            crate::k8s::resources::get_secrets
+            crate::k8s::resources::get_secrets,
+            crate::k8s::ai::analyze_with_ai
         ])
         .setup(|app| {
             let handle = app.handle().clone();

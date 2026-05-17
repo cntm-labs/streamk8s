@@ -7,14 +7,15 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-DfL3rTa-.js
-│   │   └── index-OnJlAyuV.css
+│   │   ├── index-CiG9w1Ns.css
+│   │   └── index-DtKlvWvV.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
 ├── docs
 │   └── superpowers
 │       ├── plans
+│       │   ├── 2025-01-24-ai-diagnostic-polish-pr.md
 │       │   ├── 2026-05-04-streamk8s-init.md
 │       │   ├── 2026-05-06-github-repo-init.md
 │       │   ├── 2026-05-06-milestone-1-dashboard.md
@@ -25,8 +26,10 @@
 │       │   ├── 2026-05-08-ide-architecture.md
 │       │   ├── 2026-05-08-milestone-6-inspector.md
 │       │   ├── 2026-05-08-professional-layout.md
-│       │   └── 2026-05-09-milestone-8-full-resources.md
+│       │   ├── 2026-05-09-milestone-8-full-resources.md
+│       │   └── 2026-05-09-milestone-9-ai-analyzer.md
 │       └── specs
+│           ├── 2025-01-24-ai-diagnostic-ui-polish-design.md
 │           ├── 2026-05-04-streamk8s-design.md
 │           ├── 2026-05-06-github-repo-init-design.md
 │           ├── 2026-05-06-milestone-1-dashboard-design.md
@@ -37,7 +40,8 @@
 │           ├── 2026-05-08-ide-architecture-design.md
 │           ├── 2026-05-08-milestone-6-inspector-design.md
 │           ├── 2026-05-08-professional-layout-design.md
-│           └── 2026-05-09-milestone-8-full-resources.md
+│           ├── 2026-05-09-milestone-8-full-resources.md
+│           └── 2026-05-09-milestone-9-ai-analyzer.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -125,6 +129,7 @@
 │   │   │   ├── mod.rs
 │   │   │   └── profiler.rs
 │   │   ├── k8s
+│   │   │   ├── ai.rs
 │   │   │   ├── contexts.rs
 │   │   │   ├── inspector.rs
 │   │   │   ├── logs.rs
@@ -182,4 +187,4 @@
 └── .vscode
     └── extensions.json
 
-41 directories, 142 files
+41 directories, 147 files
