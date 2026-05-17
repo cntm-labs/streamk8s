@@ -259,60 +259,54 @@ onMounted(async () => {
           <div v-else class="gpu-not-found">No NVIDIA GPU Detected</div>
         </div>
       </Sidebar>
-
-      <main class="main-area">
-        <header class="top-search">
-          <div class="brand">StreamK8s | OS v0.1</div>
-          <div class="search-placeholder">Search or execute command...</div>
-          <div class="system-time">{{ new Date().toLocaleTimeString() }}</div>
-        </header>
-        
-        <div class="content-viewport">
-          <section class="workloads-panel">
-            <AdviceBanner :advice="currentAdvice" @optimize="applyOptimization" />
-            
-            <div class="main-scroll-area">
-              <div v-if="selectedContextName" class="focused-cluster-view">
-                <header class="cluster-view-header">
-                  <div class="cluster-title">
-                    <span class="k8s-icon">⎈</span>
-                    <h2>{{ selectedContextName }}</h2>
-                    <span v-if="availableContexts.find(c => c.name === selectedContextName)?.is_current" class="current-badge">Current</span>
-                  </div>
-                  <div class="cluster-actions">
-                    <button class="btn-refresh" @click="async () => {
-                      if (selectedContextName) {
-                        await fetchResources(selectedContextName, activeResourceKind.toLowerCase() + (activeResourceKind.endsWith('s') ? '' : 's'));
-                      }
-                    }">Refresh</button>
-                  </div>
-                </header>
-                <ResourceTable 
-                  :rows="currentResourceData" 
-                  :context-name="selectedContextName"
-                  :kind="activeResourceKind"
-                  @select-resource="(namespace, name, kind) => handleSelectResource(selectedContextName!, namespace, name, kind)" 
-                />
-              </div>
-              <div v-else class="no-cluster-selected">
-                <div class="empty-state">
-                  <span class="empty-icon">📂</span>
-                  <p>Select a cluster from the hotbar to view workloads</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Bottom Bar / Inspector Panel -->
-            <div v-if="selectedResource" class="floating-inspector">
-               <InspectorPanel ref="inspectorPanelRef" :selected-resource="selectedResource" />
-            </div>
-          </section>
-        </div>
-      </main>
     </template>
 
-    <WelcomeView v-else-if="currentView === 'welcome'" />
-    <SettingsView v-else-if="currentView === 'settings'" />
+    <main class="main-area">
+      <header class="top-search" v-if="currentView === 'cluster' && selectedContextName">
+        <div class="brand">StreamK8s | OS v0.1</div>
+        <div class="search-placeholder">Search or execute command...</div>
+        <div class="system-time">{{ new Date().toLocaleTimeString() }}</div>
+      </header>
+      
+      <div class="content-viewport">
+        <WelcomeView v-if="currentView === 'welcome' || (currentView === 'cluster' && !selectedContextName)" />
+        <SettingsView v-else-if="currentView === 'settings'" />
+        
+        <section v-else-if="currentView === 'cluster' && selectedContextName" class="workloads-panel">
+          <AdviceBanner :advice="currentAdvice" @optimize="applyOptimization" />
+          
+          <div class="main-scroll-area">
+            <div class="focused-cluster-view">
+              <header class="cluster-view-header">
+                <div class="cluster-title">
+                  <span class="k8s-icon">⎈</span>
+                  <h2>{{ selectedContextName }}</h2>
+                  <span v-if="availableContexts.find(c => c.name === selectedContextName)?.is_current" class="current-badge">Current</span>
+                </div>
+                <div class="cluster-actions">
+                  <button class="btn-refresh" @click="async () => {
+                    if (selectedContextName) {
+                      await fetchResources(selectedContextName, activeResourceKind.toLowerCase() + (activeResourceKind.endsWith('s') ? '' : 's'));
+                    }
+                  }">Refresh</button>
+                </div>
+              </header>
+              <ResourceTable 
+                :rows="currentResourceData" 
+                :context-name="selectedContextName"
+                :kind="activeResourceKind"
+                @select-resource="(namespace, name, kind) => handleSelectResource(selectedContextName!, namespace, name, kind)" 
+              />
+            </div>
+          </div>
+
+          <!-- Bottom Bar / Inspector Panel -->
+          <div v-if="selectedResource" class="floating-inspector">
+             <InspectorPanel ref="inspectorPanelRef" :selected-resource="selectedResource" />
+          </div>
+        </section>
+      </div>
+    </main>
   </div>
 </template>
 
