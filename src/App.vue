@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import ActivityBar from './components/ActivityBar.vue';
@@ -11,6 +11,7 @@ import Gauge from './components/Gauge.vue';
 import TrendChart from './components/TrendChart.vue';
 import InspectorPanel from './components/InspectorPanel.vue';
 import AdviceBanner from './components/AdviceBanner.vue';
+import CommandPalette from './components/CommandPalette.vue';
 
 // Views
 import WelcomeView from './views/WelcomeView.vue';
@@ -42,6 +43,14 @@ const activeTab = ref('explorer');
 const currentView = ref<'welcome' | 'cluster' | 'settings'>('welcome');
 const sidebarWidth = ref(240);
 const isResizing = ref(false);
+const showCommandPalette = ref(false);
+
+const handleGlobalKeyDown = (e: KeyboardEvent) => {
+  if (e.ctrlKey && e.key === 'p') {
+    e.preventDefault();
+    showCommandPalette.value = !showCommandPalette.value;
+  }
+};
 
 const handleTabChange = (id: string) => {
   activeTab.value = id;
@@ -184,6 +193,7 @@ const ramHistory = ref<number[]>([]);
 const gpuHistory = ref<number[]>([]);
 
 onMounted(async () => {
+  window.addEventListener('keydown', handleGlobalKeyDown);
   await listen<Metrics>('hardware-update', (event) => {
     metrics.value = event.payload;
     const pushAndShift = (arr: number[], val: number) => {
@@ -216,6 +226,10 @@ onMounted(async () => {
   } catch (e) {
     console.error('Failed to fetch contexts or resources:', e);
   }
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleGlobalKeyDown);
 });
 </script>
 
@@ -311,6 +325,11 @@ onMounted(async () => {
         </section>
       </div>
     </main>
+    <CommandPalette 
+      v-if="showCommandPalette" 
+      @close="showCommandPalette = false" 
+      @select="(item: any) => console.log('Selected:', item)"
+    />
   </div>
 </template>
 
