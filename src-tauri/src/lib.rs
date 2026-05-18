@@ -33,7 +33,8 @@ pub fn run() {
             crate::k8s::resources::get_secrets,
             crate::k8s::ai::analyze_with_ai,
             crate::k8s::search::global_search,
-            crate::plugins::manager::get_installed_plugins
+            crate::plugins::manager::get_installed_plugins,
+            crate::plugins::manager::call_plugin_action
         ])
         .setup(|app| {
             let handle = app.handle().clone();

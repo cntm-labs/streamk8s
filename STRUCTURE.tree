@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-B-9nnBeS.js
-│   │   └── index-MrKqiHWK.css
+│   │   ├── index-CM0YUC9y.css
+│   │   └── index-HL3xTeWR.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -30,6 +30,7 @@
 │       │   ├── 2026-05-08-milestone-6-inspector.md
 │       │   ├── 2026-05-08-professional-layout.md
 │       │   ├── 2026-05-09-command-palette.md
+│       │   ├── 2026-05-09-marketplace-foundation.md
 │       │   ├── 2026-05-09-milestone-8-full-resources.md
 │       │   ├── 2026-05-09-milestone-9-ai-analyzer.md
 │       │   └── 2026-05-09-professional-ui-refactor.md
@@ -49,6 +50,7 @@
 │           ├── 2026-05-08-professional-layout-design.md
 │           ├── 2026-05-09-milestone-10-ui-refactor.md
 │           ├── 2026-05-09-milestone-11-command-palette.md
+│           ├── 2026-05-09-milestone-12-marketplace.md
 │           ├── 2026-05-09-milestone-8-full-resources.md
 │           └── 2026-05-09-milestone-9-ai-analyzer.md
 ├── FAQ.md
@@ -154,7 +156,10 @@
 │   │   │   ├── scaling.rs
 │   │   │   └── search.rs
 │   │   ├── lib.rs
-│   │   └── main.rs
+│   │   ├── main.rs
+│   │   └── plugins
+│   │       ├── manager.rs
+│   │       └── mod.rs
 │   └── tauri.conf.json
 ├── STRATEGY.md
 ├── STRUCTURE.tree
@@ -203,4 +208,4 @@
 └── .vscode
     └── extensions.json
 
-42 directories, 162 files
+43 directories, 166 files
