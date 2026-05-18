@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-Bk4IdrfX.css
-│   │   └── index-DoSk6URu.js
+│   │   ├── index-B-9nnBeS.js
+│   │   └── index-MrKqiHWK.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -92,6 +92,7 @@
 │   │   ├── ActivityBar.vue
 │   │   ├── AdviceBanner.vue
 │   │   ├── ClusterHotbar.vue
+│   │   ├── CommandPalette.vue
 │   │   ├── Gauge.vue
 │   │   ├── InspectorPanel.vue
 │   │   ├── PodList.vue
@@ -202,4 +203,4 @@
 └── .vscode
     └── extensions.json
 
-42 directories, 161 files
+42 directories, 162 files
