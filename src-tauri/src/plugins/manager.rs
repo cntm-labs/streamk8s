@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 use wasmer::{imports, Instance, Module, Store};
+use std::fs;
+use std::path::PathBuf;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ExtensionInfo {
@@ -29,9 +31,35 @@ pub struct PluginManifest {
     pub ui: UiConfig,
 }
 
+fn get_plugin_dir() -> PathBuf {
+    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    PathBuf::from(home).join(".config/streamk8s/plugins")
+}
+
 #[tauri::command]
 pub async fn get_installed_plugins() -> Result<Vec<PluginManifest>, String> {
-    Ok(vec![])
+    let plugin_dir = get_plugin_dir();
+    if !plugin_dir.exists() {
+        fs::create_dir_all(&plugin_dir).map_err(|e| e.to_string())?;
+    }
+
+    let mut plugins = Vec::new();
+    let entries = fs::read_dir(plugin_dir).map_err(|e| e.to_string())?;
+
+    for entry in entries {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let path = entry.path();
+        if path.is_dir() {
+            let manifest_path = path.join("extension.toml");
+            if manifest_path.exists() {
+                let content = fs::read_to_string(manifest_path).map_err(|e| e.to_string())?;
+                let manifest: PluginManifest = toml::from_str(&content).map_err(|e| e.to_string())?;
+                plugins.push(manifest);
+            }
+        }
+    }
+
+    Ok(plugins)
 }
 
 pub fn execute_wasm_action(
@@ -63,10 +91,17 @@ pub fn execute_wasm_action(
 
 #[tauri::command]
 pub async fn call_plugin_action(
-    wasm_path: String,
-    function_name: String,
-    payload_json: String,
+    plugin_id: String,
+    action_name: String,
+    payload: String,
 ) -> Result<String, String> {
+    let wasm_path = get_plugin_dir().join(&plugin_id).join("logic.wasm");
+    
+    // For now, if WASM doesn't exist, return a mock success for the dummy plugin
+    if !wasm_path.exists() {
+        return Ok(format!("Mock action '{}' executed for plugin '{}' with payload: {}", action_name, plugin_id, payload));
+    }
+
     let wasm_bytes = std::fs::read(&wasm_path).map_err(|e| e.to_string())?;
-    execute_wasm_action(&wasm_bytes, &function_name, &payload_json)
+    execute_wasm_action(&wasm_bytes, &action_name, &payload)
 }
