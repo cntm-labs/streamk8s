@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use wasmer::{imports, Instance, Module, Store};
+use wasmtime::{Engine, Module, Store, Linker};
 use std::fs;
 use std::path::PathBuf;
 
@@ -67,26 +67,23 @@ pub fn execute_wasm_action(
     function_name: &str,
     _payload_json: &str,
 ) -> Result<String, String> {
-    let mut store = Store::default();
-    let module = Module::new(&store, wasm_bytes).map_err(|e| e.to_string())?;
-
-    // Define a basic import object (empty for now, will expand in future milestones)
-    let import_object = imports! {};
-
-    let instance = Instance::new(&mut store, &module, &import_object).map_err(|e| e.to_string())?;
+    let engine = Engine::default();
+    let module = Module::from_binary(&engine, wasm_bytes).map_err(|e| e.to_string())?;
+    
+    let mut store = Store::new(&engine, ());
+    let linker = Linker::new(&engine);
+    
+    // In Milestone 12, we provide no host imports.
+    // Plugins must be self-contained or use standard WASI (not yet added).
+    let instance = linker.instantiate(&mut store, &module).map_err(|e| e.to_string())?;
 
     let func = instance
-        .exports
-        .get_function(function_name)
-        .map_err(|e| e.to_string())?;
+        .get_typed_func::<(), ()>(&mut store, function_name)
+        .map_err(|e| format!("Function '{}' not found or has wrong signature: {}", function_name, e))?;
 
-    // For simplicity in Milestone 12, we assume the function takes no args or we pass one string pointer
-    // Real implementation would use a more complex ABI.
-    // Let's just try to call a basic "init" or "run" function for now.
+    func.call(&mut store, ()).map_err(|e| e.to_string())?;
 
-    let result = func.call(&mut store, &[]).map_err(|e| e.to_string())?;
-
-    Ok(format!("Function executed. Result: {:?}", result))
+    Ok(format!("Function '{}' executed successfully.", function_name))
 }
 
 #[tauri::command]
@@ -97,7 +94,6 @@ pub async fn call_plugin_action(
 ) -> Result<String, String> {
     let wasm_path = get_plugin_dir().join(&plugin_id).join("logic.wasm");
     
-    // For now, if WASM doesn't exist, return a mock success for the dummy plugin
     if !wasm_path.exists() {
         return Ok(format!("Mock action '{}' executed for plugin '{}' with payload: {}", action_name, plugin_id, payload));
     }
