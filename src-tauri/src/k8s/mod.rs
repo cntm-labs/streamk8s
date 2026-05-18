@@ -5,3 +5,4 @@ pub mod logs;
 pub mod pods;
 pub mod resources;
 pub mod scaling;
+pub mod search;
