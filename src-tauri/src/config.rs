@@ -23,7 +23,10 @@ impl Default for AppConfig {
 }
 
 fn get_config_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
-    let mut path = app_handle.path().app_config_dir().map_err(|e| e.to_string())?;
+    let mut path = app_handle
+        .path()
+        .app_config_dir()
+        .map_err(|e| e.to_string())?;
     if !path.exists() {
         fs::create_dir_all(&path).map_err(|e| e.to_string())?;
     }

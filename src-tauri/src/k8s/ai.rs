@@ -13,7 +13,7 @@ impl AiProvider for OpenAiProvider {
     async fn analyze(&self, prompt: &str, config: &AppConfig) -> Result<String, String> {
         let client = reqwest::Client::new();
         let url = format!("{}/chat/completions", config.endpoint.trim_end_matches('/'));
-        
+
         let res = client.post(&url)
             .header("Authorization", format!("Bearer {}", config.api_key))
             .json(&json!({
@@ -27,7 +27,10 @@ impl AiProvider for OpenAiProvider {
             .await
             .map_err(|e| format!("OpenAI Request Error: {}", e))?;
 
-        let json: serde_json::Value = res.json().await.map_err(|e| format!("OpenAI JSON Error: {}", e))?;
+        let json: serde_json::Value = res
+            .json()
+            .await
+            .map_err(|e| format!("OpenAI JSON Error: {}", e))?;
 
         if let Some(err) = json["error"]["message"].as_str() {
             return Err(format!("AI Error: {}", err));
@@ -46,7 +49,7 @@ impl AiProvider for OllamaProvider {
     async fn analyze(&self, prompt: &str, config: &AppConfig) -> Result<String, String> {
         let client = reqwest::Client::new();
         let url = format!("{}/api/chat", config.endpoint.trim_end_matches('/'));
-        
+
         let res = client.post(&url)
             .json(&json!({
                 "model": config.model,
@@ -60,7 +63,10 @@ impl AiProvider for OllamaProvider {
             .await
             .map_err(|e| format!("Ollama Request Error: {}", e))?;
 
-        let json: serde_json::Value = res.json().await.map_err(|e| format!("Ollama JSON Error: {}", e))?;
+        let json: serde_json::Value = res
+            .json()
+            .await
+            .map_err(|e| format!("Ollama JSON Error: {}", e))?;
 
         if let Some(err) = json["error"].as_str() {
             return Err(format!("Ollama Error: {}", err));
