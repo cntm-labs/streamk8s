@@ -36,12 +36,15 @@
 <style scoped>
 .welcome-container {
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
   height: 100%;
   width: 100%;
   background: radial-gradient(circle at center, #111827 0%, #030712 100%);
   color: #f3f4f6;
+  margin: 0;
+  padding: 0;
 }
 
 .welcome-content {

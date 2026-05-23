@@ -318,7 +318,12 @@ body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-fa
   overflow: hidden;
 }
 
-.main-area {
+/* Explicit Grid Assignments for Shell Stability */
+.activity-bar { grid-column: 1; }
+.cluster-hotbar { grid-column: 2; }
+.sidebar { grid-column: 3; }
+.main-area { 
+  grid-column: 4;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -326,7 +331,7 @@ body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-fa
   background-color: #030712;
 }
 
-/* Persistent Header */
+/* Persistent Header Styling */
 .main-header {
   height: 40px;
   background-color: #111827;
@@ -336,6 +341,7 @@ body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-fa
   padding: 0 1rem;
   justify-content: space-between;
   flex-shrink: 0;
+  width: 100%;
 }
 
 .header-left { display: flex; align-items: center; gap: 10px; min-width: 150px; }
