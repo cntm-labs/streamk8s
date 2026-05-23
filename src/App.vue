@@ -91,6 +91,16 @@ const handleTabChange = (id: string) => {
   }
 };
 
+const showHotbar = computed(() => currentView.value === 'cluster' || currentView.value === 'marketplace');
+const showSidebar = computed(() => sidebarVisible.value && currentView.value === 'cluster');
+
+const gridColumns = computed(() => {
+  const activityBarWidth = '48px';
+  const hotbarWidth = showHotbar.value ? '48px' : '0px';
+  const sidebarWidthVal = showSidebar.value ? `${sidebarWidth.value}px` : '0px';
+  return `${activityBarWidth} ${hotbarWidth} ${sidebarWidthVal} 1fr`;
+});
+
 const handleSelectResource = (resource: any) => {
   selectedResource.value = { 
     contextName: selectedContextName.value, 
@@ -178,13 +188,6 @@ onMounted(async () => {
     console.error('Initial fetch failed:', e);
   }
 });
-
-const gridColumns = computed(() => {
-  if (sidebarVisible.value && currentView.value === 'cluster') {
-    return `48px 48px ${sidebarWidth.value}px 1fr`;
-  }
-  return `48px 1fr`;
-});
 </script>
 
 <template>
@@ -192,41 +195,47 @@ const gridColumns = computed(() => {
     <!-- pane 1: Activity Bar -->
     <ActivityBar :active-id="activeTab" @update:active-id="handleTabChange" />
     
-    <!-- pane 2 & 3: Only for Cluster View and if sidebar is visible -->
-    <template v-if="sidebarVisible && currentView === 'cluster'">
-      <ClusterHotbar 
-        :contexts="availableContexts" 
-        :active-name="selectedContextName" 
-        @select="(name) => { selectedContextName = name; fetchResources(name, activeResourceKind); }" 
-      />
-      
-      <Sidebar :title="activeTab" :width="sidebarWidth" @start-resize="handleStartResize">
-        <div v-if="activeTab === 'explorer'" class="explorer-content">
-          <div class="active-cluster-label" v-if="selectedContextName">
-            <span class="label-icon">⎈</span>
-            <span class="label-text">{{ selectedContextName }}</span>
-          </div>
-          <ResourceTree @select-resource-type="handleResourceTypeSelect" />
+    <!-- pane 2: Cluster Hotbar (Persistent for cluster/marketplace) -->
+    <ClusterHotbar 
+      v-if="showHotbar"
+      :contexts="availableContexts" 
+      :active-name="selectedContextName" 
+      @select="(name) => { selectedContextName = name; fetchResources(name, activeResourceKind); }" 
+    />
+    
+    <!-- pane 3: Sidebar (Independent Toggle, visible only for cluster) -->
+    <Sidebar 
+      v-if="currentView === 'cluster'"
+      v-show="sidebarVisible"
+      :title="activeTab" 
+      :width="sidebarWidth" 
+      @start-resize="handleStartResize"
+    >
+      <div v-if="activeTab === 'explorer'" class="explorer-content">
+        <div class="active-cluster-label" v-if="selectedContextName">
+          <span class="label-icon">⎈</span>
+          <span class="label-text">{{ selectedContextName }}</span>
         </div>
-        <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
-          <h3>System Telemetry</h3>
-          <div class="metric-group">
-            <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
-            <TrendChart :data="cpuHistory" color="#3b82f6" />
-          </div>
-          <div class="metric-group">
-            <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
-            <TrendChart :data="ramHistory" color="#10b981" />
-          </div>
-          <div v-if="metrics.gpu_usage !== null" class="metric-group">
-            <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
-            <TrendChart :data="gpuHistory" color="#f59e0b" />
-            <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
-          </div>
-          <div v-else class="gpu-not-found">No NVIDIA GPU Detected</div>
+        <ResourceTree @select-resource-type="handleResourceTypeSelect" />
+      </div>
+      <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
+        <h3>System Telemetry</h3>
+        <div class="metric-group">
+          <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
+          <TrendChart :data="cpuHistory" color="#3b82f6" />
         </div>
-      </Sidebar>
-    </template>
+        <div class="metric-group">
+          <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
+          <TrendChart :data="ramHistory" color="#10b981" />
+        </div>
+        <div v-if="metrics.gpu_usage !== null" class="metric-group">
+          <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
+          <TrendChart :data="gpuHistory" color="#f59e0b" />
+          <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
+        </div>
+        <div v-else class="gpu-not-found">No NVIDIA GPU Detected</div>
+      </div>
+    </Sidebar>
 
     <!-- pane 4: Main Workspace (Persistent across views) -->
     <main class="main-area">
