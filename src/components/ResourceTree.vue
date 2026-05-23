@@ -27,15 +27,15 @@ const handleItemClick = (type: string) => {
         <span class="label">Workloads</span>
       </div>
       <div v-if="expandedGroups.workloads" class="group-items">
-        <div class="tree-item" @click="handleItemClick('pods')">
+        <div class="tree-item" @click="handleItemClick('Pods')">
           <span class="icon pod-icon">P</span>
           <span class="label">Pods</span>
         </div>
-        <div class="tree-item" @click="handleItemClick('deployments')">
+        <div class="tree-item" @click="handleItemClick('Deployments')">
           <span class="icon deploy-icon">D</span>
           <span class="label">Deployments</span>
         </div>
-        <div class="tree-item" @click="handleItemClick('statefulsets')">
+        <div class="tree-item" @click="handleItemClick('StatefulSets')">
           <span class="icon ss-icon">S</span>
           <span class="label">StatefulSets</span>
         </div>
@@ -49,11 +49,11 @@ const handleItemClick = (type: string) => {
         <span class="label">Network</span>
       </div>
       <div v-if="expandedGroups.network" class="group-items">
-        <div class="tree-item" @click="handleItemClick('services')">
+        <div class="tree-item" @click="handleItemClick('Services')">
           <span class="icon svc-icon">S</span>
           <span class="label">Services</span>
         </div>
-        <div class="tree-item" @click="handleItemClick('ingresses')">
+        <div class="tree-item" @click="handleItemClick('Ingresses')">
           <span class="icon ing-icon">I</span>
           <span class="label">Ingresses</span>
         </div>
@@ -67,11 +67,11 @@ const handleItemClick = (type: string) => {
         <span class="label">Configuration</span>
       </div>
       <div v-if="expandedGroups.configuration" class="group-items">
-        <div class="tree-item" @click="handleItemClick('configmaps')">
+        <div class="tree-item" @click="handleItemClick('ConfigMaps')">
           <span class="icon cm-icon">C</span>
           <span class="label">ConfigMaps</span>
         </div>
-        <div class="tree-item" @click="handleItemClick('secrets')">
+        <div class="tree-item" @click="handleItemClick('Secrets')">
           <span class="icon sec-icon">S</span>
           <span class="label">Secrets</span>
         </div>
