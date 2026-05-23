@@ -316,6 +316,7 @@ body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-fa
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  transition: grid-template-columns 0.2s ease-out;
 }
 
 /* Explicit Grid Assignments for Shell Stability */
