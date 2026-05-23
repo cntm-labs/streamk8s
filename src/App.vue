@@ -77,6 +77,7 @@ const clusterResources = ref<Record<string, any[]>>({});
 const currentAdvice = ref<Advice | null>(null);
 const activeResourceKind = ref('Pods');
 const selectedResource = ref<any | null>(null);
+const inspectorPanelRef = ref<any | null>(null);
 
 const handleTabChange = (id: string) => {
   const config = navMap[id];
@@ -293,6 +294,7 @@ onMounted(async () => {
           <!-- Bottom Inspector Panel -->
           <div v-if="selectedResource" class="floating-inspector">
              <InspectorPanel 
+               ref="inspectorPanelRef"
                :selected-resource="selectedResource" 
                @close="selectedResource = null"
              />

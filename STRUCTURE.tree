@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-CM0YUC9y.css
-│   │   └── index-HL3xTeWR.js
+│   │   ├── index-DICQw7bs.css
+│   │   └── index-U1VRJ2LB.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -18,9 +18,13 @@
 │       │   ├── 2024-05-22-gemini-provider.md
 │       │   ├── 2025-01-24-ai-diagnostic-polish-pr.md
 │       │   ├── 2025-03-05-backend-config-ai-settings.md
+│       │   ├── 2025-03-24-consolidate-features.md
 │       │   ├── 2025-03-24-inspector-close-button.md
 │       │   ├── 2025-03-24-marketplace-integration.md
+│       │   ├── 2025-03-24-master-consolidation.md
 │       │   ├── 2025-03-24-multi-provider-ai-refactor.md
+│       │   ├── 2025-03-24-navigation-refactor.md
+│       │   ├── 2025-05-22-ui-polish-plan.md
 │       │   ├── 2026-05-04-streamk8s-init.md
 │       │   ├── 2026-05-06-github-repo-init.md
 │       │   ├── 2026-05-06-milestone-1-dashboard.md
@@ -36,13 +40,16 @@
 │       │   ├── 2026-05-09-milestone-8-full-resources.md
 │       │   ├── 2026-05-09-milestone-9-ai-analyzer.md
 │       │   ├── 2026-05-09-navigation-refactor.md
-│       │   └── 2026-05-09-professional-ui-refactor.md
+│       │   ├── 2026-05-09-professional-ui-refactor.md
+│       │   └── 2026-05-10-persistent-shell.md
 │       └── specs
 │           ├── 2024-05-22-gemini-provider-design.md
 │           ├── 2025-01-24-ai-diagnostic-ui-polish-design.md
 │           ├── 2025-03-05-backend-config-ai-settings-design.md
 │           ├── 2025-03-24-marketplace-integration-design.md
 │           ├── 2025-03-24-multi-provider-ai-refactor-design.md
+│           ├── 2025-03-24-navigation-refactor-design.md
+│           ├── 2025-05-22-ui-polish-design.md
 │           ├── 2026-05-04-streamk8s-design.md
 │           ├── 2026-05-06-github-repo-init-design.md
 │           ├── 2026-05-06-milestone-1-dashboard-design.md
@@ -58,7 +65,8 @@
 │           ├── 2026-05-09-milestone-12-marketplace.md
 │           ├── 2026-05-09-milestone-8-full-resources.md
 │           ├── 2026-05-09-milestone-9-ai-analyzer.md
-│           └── 2026-05-09-navigation-refactor-design.md
+│           ├── 2026-05-09-navigation-refactor-design.md
+│           └── 2026-05-10-persistent-shell-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -218,4 +226,4 @@
 └── .vscode
     └── extensions.json
 
-43 directories, 176 files
+43 directories, 184 files
