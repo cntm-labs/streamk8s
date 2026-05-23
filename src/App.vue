@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import ActivityBar from './components/ActivityBar.vue';
@@ -68,7 +68,6 @@ const clusterResources = ref<Record<string, any[]>>({});
 const currentAdvice = ref<Advice | null>(null);
 const activeResourceKind = ref('Pods');
 const selectedResource = ref<any | null>(null);
-const inspectorPanelRef = ref<any | null>(null);
 
 const handleTabChange = (id: string) => {
   activeTab.value = id;
@@ -164,56 +163,57 @@ onMounted(async () => {
 });
 
 const gridColumns = computed(() => {
+  // We use v-if to conditionally render sidebars.
+  // The number of columns in the grid MUST match the number of visible children.
   if (currentView.value === 'cluster') {
     return `48px 48px ${sidebarWidth.value}px 1fr`;
   }
-  // Use 0px tracks for hidden sidebars to keep 4-pane structure consistent in DOM
-  return `48px 0px 0px 1fr`;
+  return `48px 1fr`;
 });
 </script>
 
 <template>
   <div class="ide-container" :style="{ gridTemplateColumns: gridColumns }">
-    <!-- Pane 1: Activity Bar -->
+    <!-- pane 1: Activity Bar -->
     <ActivityBar :active-id="activeTab" @update:active-id="handleTabChange" />
     
-    <!-- Pane 2: Cluster Hotbar -->
-    <ClusterHotbar 
-      v-show="currentView === 'cluster'"
-      :contexts="availableContexts" 
-      :active-name="selectedContextName" 
-      @select="(name) => { selectedContextName = name; fetchResources(name, activeResourceKind); }" 
-    />
-    
-    <!-- Pane 3: Sidebar -->
-    <Sidebar v-show="currentView === 'cluster'" :title="activeTab" :width="sidebarWidth" @start-resize="handleStartResize">
-      <div v-if="activeTab === 'explorer'" class="explorer-content">
-        <div class="active-cluster-label" v-if="selectedContextName">
-          <span class="label-icon">⎈</span>
-          <span class="label-text">{{ selectedContextName }}</span>
+    <!-- pane 2 & 3: Only for Cluster View -->
+    <template v-if="currentView === 'cluster'">
+      <ClusterHotbar 
+        :contexts="availableContexts" 
+        :active-name="selectedContextName" 
+        @select="(name) => { selectedContextName = name; fetchResources(name, activeResourceKind); }" 
+      />
+      
+      <Sidebar :title="activeTab" :width="sidebarWidth" @start-resize="handleStartResize">
+        <div v-if="activeTab === 'explorer'" class="explorer-content">
+          <div class="active-cluster-label" v-if="selectedContextName">
+            <span class="label-icon">⎈</span>
+            <span class="label-text">{{ selectedContextName }}</span>
+          </div>
+          <ResourceTree @select-resource-type="handleResourceTypeSelect" />
         </div>
-        <ResourceTree @select-resource-type="handleResourceTypeSelect" />
-      </div>
-      <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
-        <h3>System Telemetry</h3>
-        <div class="metric-group">
-          <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
-          <TrendChart :data="cpuHistory" color="#3b82f6" />
+        <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
+          <h3>System Telemetry</h3>
+          <div class="metric-group">
+            <Gauge label="CPU Usage" :value="metrics.cpu_usage" color="#3b82f6" />
+            <TrendChart :data="cpuHistory" color="#3b82f6" />
+          </div>
+          <div class="metric-group">
+            <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
+            <TrendChart :data="ramHistory" color="#10b981" />
+          </div>
+          <div v-if="metrics.gpu_usage !== null" class="metric-group">
+            <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
+            <TrendChart :data="gpuHistory" color="#f59e0b" />
+            <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
+          </div>
+          <div v-else class="gpu-not-found">No NVIDIA GPU Detected</div>
         </div>
-        <div class="metric-group">
-          <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
-          <TrendChart :data="ramHistory" color="#10b981" />
-        </div>
-        <div v-if="metrics.gpu_usage !== null" class="metric-group">
-          <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
-          <TrendChart :data="gpuHistory" color="#f59e0b" />
-          <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>
-        </div>
-        <div v-else class="gpu-not-found">No NVIDIA GPU Detected</div>
-      </div>
-    </Sidebar>
+      </Sidebar>
+    </template>
 
-    <!-- Pane 4: Main Area -->
+    <!-- pane 4: Main Workspace (Persistent across views) -->
     <main class="main-area">
       <!-- Standardized Persistent Header -->
       <header class="main-header">
@@ -228,8 +228,8 @@ const gridColumns = computed(() => {
           </div>
         </div>
         <div class="header-right">
-          <div class="cluster-status" v-if="selectedContextName">
-            <span class="status-dot"></span>
+          <div class="cluster-status" v-if="selectedContextName && currentView === 'cluster'">
+            <span class="status-dot online"></span>
             {{ selectedContextName }}
           </div>
           <div class="time-display">{{ new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}</div>
@@ -237,7 +237,7 @@ const gridColumns = computed(() => {
       </header>
 
       <div class="content-viewport">
-        <!-- View Switcher -->
+        <!-- Views -->
         <WelcomeView v-if="currentView === 'welcome'" @start="handleTabChange('explorer')" />
         <SettingsView v-else-if="currentView === 'settings'" />
         <MarketplaceView v-else-if="currentView === 'marketplace'" />
@@ -266,10 +266,9 @@ const gridColumns = computed(() => {
             </div>
           </div>
 
-          <!-- Bottom Panel Integration -->
+          <!-- Bottom Inspector Panel -->
           <div v-if="selectedResource" class="floating-inspector">
              <InspectorPanel 
-               ref="inspectorPanelRef" 
                :selected-resource="selectedResource" 
                @close="selectedResource = null"
              />
@@ -289,7 +288,7 @@ const gridColumns = computed(() => {
 
 <style>
 /* Global Styles */
-body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-family: 'Inter', system-ui, sans-serif; overflow: hidden; }
+body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-family: 'Inter', sans-serif; overflow: hidden; }
 
 .ide-container {
   display: grid;
@@ -306,7 +305,7 @@ body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-fa
   background-color: #030712;
 }
 
-/* New Standardized Header */
+/* Persistent Header */
 .main-header {
   height: 40px;
   background-color: #111827;
@@ -315,17 +314,17 @@ body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-fa
   align-items: center;
   padding: 0 1rem;
   justify-content: space-between;
-  z-index: 100;
+  flex-shrink: 0;
 }
 
-.header-left { display: flex; align-items: center; gap: 10px; }
+.header-left { display: flex; align-items: center; gap: 10px; min-width: 150px; }
 .brand-text { font-weight: 900; font-size: 0.85rem; color: #3b82f6; letter-spacing: 0.5px; }
 .view-indicator { color: #6b7280; font-size: 0.7rem; text-transform: uppercase; font-weight: 600; }
 
 .header-center { flex: 1; display: flex; justify-content: center; }
 .search-box {
   width: 400px;
-  max-width: 50%;
+  max-width: 80%;
   height: 24px;
   background-color: #030712;
   border: 1px solid #374151;
@@ -335,15 +334,14 @@ body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-fa
   padding: 0 10px;
   justify-content: space-between;
   cursor: pointer;
-  transition: all 0.2s;
 }
-.search-box:hover { border-color: #3b82f6; background-color: #0a0f1e; }
-.search-text { font-size: 0.7rem; color: #6b7280; }
-.search-shortcut { font-size: 0.65rem; color: #4b5563; font-weight: 700; background: #111827; padding: 1px 4px; border-radius: 2px; }
+.search-box:hover { border-color: #3b82f6; }
+.search-text { font-size: 0.7rem; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-shortcut { font-size: 0.6rem; color: #4b5563; font-weight: 700; border: 1px solid #374151; padding: 0 3px; border-radius: 2px; }
 
-.header-right { display: flex; align-items: center; gap: 1.5rem; }
-.cluster-status { font-size: 0.75rem; color: #9ca3af; display: flex; align-items: center; gap: 8px; font-weight: 600; }
-.status-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
+.header-right { display: flex; align-items: center; gap: 1.5rem; min-width: 150px; justify-content: flex-end; }
+.cluster-status { font-size: 0.7rem; color: #9ca3af; display: flex; align-items: center; gap: 6px; font-weight: 600; }
+.status-dot { width: 6px; height: 6px; background-color: #10b981; border-radius: 50%; }
 .time-display { font-family: monospace; font-size: 0.75rem; color: #6b7280; }
 
 .content-viewport {
@@ -354,9 +352,9 @@ body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-fa
 }
 
 .workloads-panel {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
   overflow: hidden;
 }
 
@@ -372,38 +370,53 @@ body { margin: 0; padding: 0; background-color: #030712; color: #f3f4f6; font-fa
   align-items: center;
   margin-bottom: 1.5rem;
 }
-.view-title-bar h2 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.025em; }
+.view-title-bar h2 { margin: 0; font-size: 1.5rem; font-weight: 800; }
 
 .floating-inspector {
   height: 350px;
   border-top: 1px solid #1f2937;
+  flex-shrink: 0;
 }
+
+.explorer-content, .telemetry-panel {
+  padding: 1rem 8px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.active-cluster-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: rgba(59, 130, 246, 0.05);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  margin-bottom: 12px;
+  border-radius: 6px;
+}
+.label-text { font-size: 0.8rem; font-weight: 700; color: #9ca3af; }
 
 .btn-refresh {
   background-color: #1f2937;
   border: 1px solid #374151;
   color: #d1d5db;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
 }
-.btn-refresh:hover { background-color: #374151; color: white; }
 
-.no-cluster-selected {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.metric-group {
+  margin-bottom: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.02);
+  padding: 1rem;
+  border-radius: 8px;
 }
-.empty-state { text-align: center; color: #4b5563; }
-.empty-icon { font-size: 4rem; display: block; margin-bottom: 1rem; opacity: 0.5; }
+.sub-metric { font-size: 0.7rem; color: #9ca3af; margin-top: 0.5rem; text-align: right; }
+.gpu-not-found { font-size: 0.7rem; color: #6b7280; text-align: center; padding: 1rem; border: 1px dashed #374151; border-radius: 4px; }
 
-/* Scrollbar Customization */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 5px; border: 2px solid #030712; }
-::-webkit-scrollbar-thumb:hover { background: #374151; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
 </style>
