@@ -92,13 +92,11 @@ const handleTabChange = (id: string) => {
 };
 
 const showHotbar = computed(() => currentView.value === 'cluster' || currentView.value === 'marketplace');
-const showSidebar = computed(() => sidebarVisible.value && currentView.value === 'cluster');
 
 const gridColumns = computed(() => {
-  const activityBarWidth = '48px';
-  const hotbarWidth = showHotbar.value ? '48px' : '0px';
-  const sidebarWidthVal = sidebarVisible.value ? `${sidebarWidth.value}px` : '0px';
-  return `${activityBarWidth} ${hotbarWidth} ${sidebarWidthVal} 1fr`;
+  const hotbarWidth = (currentView.value === 'cluster' || currentView.value === 'marketplace') ? '48px' : '0px';
+  const sidebarWidthVal = (currentView.value === 'cluster' || currentView.value === 'marketplace') && sidebarVisible.value ? `${sidebarWidth.value}px` : '0px';
+  return `48px ${hotbarWidth} ${sidebarWidthVal} 1fr`;
 });
 
 const handleSelectResource = (resource: any) => {
@@ -197,7 +195,7 @@ onMounted(async () => {
     
     <!-- pane 2: Cluster Hotbar (Persistent for cluster/marketplace) -->
     <ClusterHotbar 
-      v-if="showHotbar"
+      v-show="showHotbar"
       :contexts="availableContexts" 
       :active-name="selectedContextName" 
       @select="(name) => { selectedContextName = name; fetchResources(name, activeResourceKind); }" 
@@ -205,8 +203,7 @@ onMounted(async () => {
     
     <!-- pane 3: Sidebar (Independent Toggle) -->
     <Sidebar 
-      v-if="currentView === 'cluster' || currentView === 'marketplace'"
-      v-show="sidebarVisible"
+      v-show="(currentView === 'cluster' || currentView === 'marketplace') && sidebarVisible"
       :title="activeTab" 
       :width="sidebarWidth" 
       @start-resize="handleStartResize"
