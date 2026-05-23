@@ -97,7 +97,7 @@ const showSidebar = computed(() => sidebarVisible.value && currentView.value ===
 const gridColumns = computed(() => {
   const activityBarWidth = '48px';
   const hotbarWidth = showHotbar.value ? '48px' : '0px';
-  const sidebarWidthVal = showSidebar.value ? `${sidebarWidth.value}px` : '0px';
+  const sidebarWidthVal = sidebarVisible.value ? `${sidebarWidth.value}px` : '0px';
   return `${activityBarWidth} ${hotbarWidth} ${sidebarWidthVal} 1fr`;
 });
 
@@ -203,9 +203,9 @@ onMounted(async () => {
       @select="(name) => { selectedContextName = name; fetchResources(name, activeResourceKind); }" 
     />
     
-    <!-- pane 3: Sidebar (Independent Toggle, visible only for cluster) -->
+    <!-- pane 3: Sidebar (Independent Toggle) -->
     <Sidebar 
-      v-if="currentView === 'cluster'"
+      v-if="currentView === 'cluster' || currentView === 'marketplace'"
       v-show="sidebarVisible"
       :title="activeTab" 
       :width="sidebarWidth" 
