@@ -35,9 +35,18 @@ interface Advice {
 
 const activeTab = ref('explorer');
 const currentView = ref<'welcome' | 'cluster' | 'settings' | 'marketplace'>('welcome');
+const sidebarVisible = ref(true);
 const sidebarWidth = ref(240);
 const isResizing = ref(false);
 const showCommandPalette = ref(false);
+
+const navMap: Record<string, { sidebar: boolean, view: 'welcome' | 'cluster' | 'settings' | 'marketplace' }> = {
+  explorer: { sidebar: true, view: 'cluster' },
+  hardware: { sidebar: true, view: 'cluster' },
+  ai: { sidebar: true, view: 'cluster' },
+  marketplace: { sidebar: true, view: 'marketplace' },
+  settings: { sidebar: false, view: 'settings' },
+};
 
 const handleStartResize = () => {
   isResizing.value = true;
@@ -70,11 +79,16 @@ const activeResourceKind = ref('Pods');
 const selectedResource = ref<any | null>(null);
 
 const handleTabChange = (id: string) => {
-  activeTab.value = id;
-  if (id === 'explorer') currentView.value = 'cluster';
-  else if (id === 'settings') currentView.value = 'settings';
-  else if (id === 'marketplace') currentView.value = 'marketplace';
-  else if (id === 'ai') currentView.value = 'cluster';
+  const config = navMap[id];
+  if (!config) return;
+
+  if (activeTab.value === id) {
+    sidebarVisible.value = !sidebarVisible.value;
+  } else {
+    activeTab.value = id;
+    currentView.value = config.view;
+    sidebarVisible.value = config.sidebar;
+  }
 };
 
 const handleSelectResource = (resource: any) => {
@@ -94,7 +108,10 @@ const handleCommandSelect = (result: any) => {
     else if (result.id === 'action_hardware') handleTabChange('hardware');
   } else if (result.kind === 'Cluster') {
     selectedContextName.value = result.context;
+    // Set state directly to ensure explorer view is shown with sidebar
+    activeTab.value = 'explorer';
     currentView.value = 'cluster';
+    sidebarVisible.value = true;
     if (selectedContextName.value) {
       fetchResources(selectedContextName.value, activeResourceKind.value);
     }
@@ -163,9 +180,7 @@ onMounted(async () => {
 });
 
 const gridColumns = computed(() => {
-  // We use v-if to conditionally render sidebars.
-  // The number of columns in the grid MUST match the number of visible children.
-  if (currentView.value === 'cluster') {
+  if (sidebarVisible.value && currentView.value === 'cluster') {
     return `48px 48px ${sidebarWidth.value}px 1fr`;
   }
   return `48px 1fr`;
@@ -177,8 +192,8 @@ const gridColumns = computed(() => {
     <!-- pane 1: Activity Bar -->
     <ActivityBar :active-id="activeTab" @update:active-id="handleTabChange" />
     
-    <!-- pane 2 & 3: Only for Cluster View -->
-    <template v-if="currentView === 'cluster'">
+    <!-- pane 2 & 3: Only for Cluster View and if sidebar is visible -->
+    <template v-if="sidebarVisible && currentView === 'cluster'">
       <ClusterHotbar 
         :contexts="availableContexts" 
         :active-name="selectedContextName" 
