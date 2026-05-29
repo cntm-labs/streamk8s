@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
-use wasmtime::{Engine, Module, Store, Linker};
+use wasmtime::{Engine, Module, Store, Linker, Caller};
 use std::fs;
 use std::path::PathBuf;
+use std::path::Path;
+use tauri::Manager;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ExtensionInfo {
@@ -62,6 +64,49 @@ pub async fn get_installed_plugins() -> Result<Vec<PluginManifest>, String> {
     Ok(plugins)
 }
 
+#[tauri::command]
+pub async fn install_plugin(source_path: String) -> Result<(), String> {
+    let source = Path::new(&source_path);
+    if !source.exists() {
+        return Err("Source path does not exist".to_string());
+    }
+
+    let plugin_id = source.file_name().ok_or("Invalid source path")?.to_str().unwrap();
+    let dest = get_plugin_dir().join(plugin_id);
+    
+    if !dest.exists() {
+        fs::create_dir_all(&dest).map_err(|e| e.to_string())?;
+    }
+
+    // Basic copy logic for files in the directory
+    for entry in fs::read_dir(source).map_err(|e| e.to_string())? {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let dest_file = dest.join(entry.file_name());
+        fs::copy(entry.path(), dest_file).map_err(|e| e.to_string())?;
+    }
+
+    Ok(())
+}
+
+pub fn create_linker(engine: &Engine) -> Linker<()> {
+    let mut linker = Linker::new(engine);
+    
+    // Import: get_k8s_resources(kind_ptr, kind_len) -> string (Simplified for demo)
+    linker.func_wrap("env", "get_k8s_resources", |_: Caller<'_, ()>| {
+        // In a real implementation, we would access the host's K8s client.
+        // For Milestone 15, we provide a mock JSON to demonstrate the ABI.
+        "{\"items\": [{\"name\": \"plugin-discovery-demo\"}]}".to_string()
+    }).unwrap();
+
+    // Import: show_notification(msg_ptr, msg_len)
+    linker.func_wrap("env", "show_notification", |msg: String| {
+        println!("PLUGIN NOTIFICATION: {}", msg);
+        // Real Tauri notification would be triggered here via AppHandle
+    }).unwrap();
+
+    linker
+}
+
 pub fn execute_wasm_action(
     wasm_bytes: &[u8],
     function_name: &str,
@@ -71,19 +116,18 @@ pub fn execute_wasm_action(
     let module = Module::from_binary(&engine, wasm_bytes).map_err(|e| e.to_string())?;
     
     let mut store = Store::new(&engine, ());
-    let linker = Linker::new(&engine);
+    let linker = create_linker(&engine);
     
-    // In Milestone 12, we provide no host imports.
-    // Plugins must be self-contained or use standard WASI (not yet added).
     let instance = linker.instantiate(&mut store, &module).map_err(|e| e.to_string())?;
 
+    // Attempt to call the function. Try both typed and untyped if needed.
     let func = instance
         .get_typed_func::<(), ()>(&mut store, function_name)
-        .map_err(|e| format!("Function '{}' not found or has wrong signature: {}", function_name, e))?;
+        .map_err(|e| format!("Function '{}' not found or wrong signature: {}", function_name, e))?;
 
     func.call(&mut store, ()).map_err(|e| e.to_string())?;
 
-    Ok(format!("Function '{}' executed successfully.", function_name))
+    Ok(format!("Action '{}' executed successfully via WASM ABI.", function_name))
 }
 
 #[tauri::command]

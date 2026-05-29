@@ -15,6 +15,7 @@ use tauri::Emitter;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             crate::config::get_config,
             crate::config::save_config,
@@ -34,7 +35,8 @@ pub fn run() {
             crate::k8s::ai::analyze_with_ai,
             crate::k8s::search::global_search,
             crate::plugins::manager::get_installed_plugins,
-            crate::plugins::manager::call_plugin_action
+            crate::plugins::manager::call_plugin_action,
+            crate::plugins::manager::install_plugin
         ])
         .setup(|app| {
             let handle = app.handle().clone();
