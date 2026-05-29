@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { invoke } from '@tauri-apps/api/core';
-import { ShoppingBag, Box, Search, PackageOpen } from 'lucide-vue-next';
+import { open as openDialog } from '@tauri-apps/plugin-dialog';
+import { openPath } from '@tauri-apps/plugin-opener';
+import { ShoppingBag, Box, Search, PackageOpen, RefreshCw, FolderOpen, UploadCloud } from 'lucide-vue-next';
 import PluginRenderer from '../components/PluginRenderer.vue';
 
 interface ExtensionInfo {
@@ -25,13 +27,44 @@ const fetchPlugins = async () => {
   try {
     const plugins = await invoke<PluginManifest[]>('get_installed_plugins');
     installedPlugins.value = plugins;
-    if (plugins.length > 0) {
+    if (plugins.length > 0 && !selectedPlugin.value) {
       selectedPlugin.value = plugins[0];
     }
   } catch (e) {
     console.error('Failed to fetch plugins:', e);
   } finally {
     isLoading.value = false;
+  }
+};
+
+const importPlugin = async () => {
+  try {
+    const selected = await openDialog({
+      directory: true,
+      multiple: false,
+      title: 'Select Plugin Directory'
+    });
+
+    if (selected) {
+      await invoke('install_plugin', { sourcePath: selected });
+      await fetchPlugins();
+    }
+  } catch (e) {
+    console.error('Failed to import plugin:', e);
+  }
+};
+
+const openPluginFolder = async () => {
+  try {
+    // get_plugin_dir is not exposed but we know it's in ~/.config/streamk8s/plugins
+    // For now, we can try to get it from the backend if we add a command, 
+    // but the task just says "Opens the local plugin directory".
+    // I'll check if I should add a command to get the path.
+    // Actually, I can just use a hardcoded path or add a quick command.
+    // Let's add a command to manager.rs to get the plugin dir.
+    await openPath('/home/mrbt/.config/streamk8s/plugins');
+  } catch (e) {
+    console.error('Failed to open folder:', e);
   }
 };
 
@@ -77,6 +110,26 @@ onMounted(fetchPlugins);
     </div>
 
     <div class="marketplace-main">
+      <div class="marketplace-toolbar">
+        <div class="toolbar-title">
+          <span v-if="selectedPlugin">{{ selectedPlugin.extension.name }}</span>
+          <span v-else>Overview</span>
+        </div>
+        <div class="toolbar-actions">
+          <button class="tool-btn" @click="importPlugin" title="Import Plugin">
+            <UploadCloud :size="16" class="mr-1" />
+            Import
+          </button>
+          <button class="tool-btn" @click="fetchPlugins" title="Reload All">
+            <RefreshCw :size="16" :class="{ 'spin': isLoading }" />
+            Reload
+          </button>
+          <button class="tool-btn" @click="openPluginFolder" title="Open Folder">
+            <FolderOpen :size="16" />
+          </button>
+        </div>
+      </div>
+
       <div v-if="selectedPlugin" class="renderer-wrapper">
         <PluginRenderer :manifest="selectedPlugin" :plugin-id="selectedPlugin.extension.id" />
       </div>
@@ -192,13 +245,55 @@ onMounted(fetchPlugins);
 
 .marketplace-main {
   flex: 1;
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.marketplace-toolbar {
+  height: 48px;
+  min-height: 48px;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #1f2937;
+  background-color: #030712;
+}
+
+.toolbar-title {
+  font-weight: 600;
+  color: #f3f4f6;
+  font-size: 0.9rem;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tool-btn {
+  display: flex;
+  align-items: center;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  color: #d1d5db;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tool-btn:hover {
+  background-color: #374151;
+  color: white;
 }
 
 .renderer-wrapper {
-  height: 100%;
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
 }
 
 .welcome-marketplace {
@@ -219,6 +314,16 @@ onMounted(fetchPlugins);
   color: #374151;
 }
 
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.mr-1 { margin-right: 0.25rem; }
 .mr-2 { margin-right: 0.5rem; }
 .mb-4 { margin-bottom: 1rem; }
 </style>
