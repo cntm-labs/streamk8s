@@ -3,7 +3,6 @@ use wasmtime::{Engine, Module, Store, Linker, Caller};
 use std::fs;
 use std::path::PathBuf;
 use std::path::Path;
-use tauri::Manager;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ExtensionInfo {
@@ -91,17 +90,17 @@ pub async fn install_plugin(source_path: String) -> Result<(), String> {
 pub fn create_linker(engine: &Engine) -> Linker<()> {
     let mut linker = Linker::new(engine);
     
-    // Import: get_k8s_resources(kind_ptr, kind_len) -> string (Simplified for demo)
-    linker.func_wrap("env", "get_k8s_resources", |_: Caller<'_, ()>| {
-        // In a real implementation, we would access the host's K8s client.
-        // For Milestone 15, we provide a mock JSON to demonstrate the ABI.
-        "{\"items\": [{\"name\": \"plugin-discovery-demo\"}]}".to_string()
+    // Import: get_k8s_resources_count() -> i32 (Simplified for demo)
+    // In raw WASM, passing strings requires complex memory management.
+    // For Milestone 15, we use i32 to demonstrate the linking capability.
+    linker.func_wrap("env", "get_k8s_resources_count", |_: Caller<'_, ()>| -> i32 {
+        // Return a mock count of resources
+        42
     }).unwrap();
 
-    // Import: show_notification(msg_ptr, msg_len)
-    linker.func_wrap("env", "show_notification", |msg: String| {
-        println!("PLUGIN NOTIFICATION: {}", msg);
-        // Real Tauri notification would be triggered here via AppHandle
+    // Import: show_notification(code: i32)
+    linker.func_wrap("env", "show_notification", |code: i32| {
+        println!("PLUGIN NOTIFICATION CODE: {}", code);
     }).unwrap();
 
     linker
