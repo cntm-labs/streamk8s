@@ -28,3 +28,7 @@ docs/superpowers/
 
 # AI Intelligence
 .superpowers/
+
+# Rust build artifacts
+target/
+**/target/
