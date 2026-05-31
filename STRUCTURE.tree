@@ -7,14 +7,16 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-CNEok-Bp.js
-│   │   └── index-DWeQgGJD.css
+│   │   ├── index-D536Sjl4.js
+│   │   └── index-Y1eHEbsi.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
 ├── docs
+│   ├── DEVELOPER_GUIDE.md
 │   └── superpowers
 │       ├── plans
+│       │   ├── 2023-10-27-plugin-sdk-docs.md
 │       │   ├── 2024-05-22-gemini-provider.md
 │       │   ├── 2025-01-24-ai-diagnostic-polish-pr.md
 │       │   ├── 2025-03-05-backend-config-ai-settings.md
@@ -25,6 +27,7 @@
 │       │   ├── 2025-03-24-multi-provider-ai-refactor.md
 │       │   ├── 2025-03-24-navigation-refactor.md
 │       │   ├── 2025-05-22-ui-polish-plan.md
+│       │   ├── 2025-05-24-rust-plugin-template.md
 │       │   ├── 2026-05-04-streamk8s-init.md
 │       │   ├── 2026-05-06-github-repo-init.md
 │       │   ├── 2026-05-06-milestone-1-dashboard.md
@@ -42,7 +45,8 @@
 │       │   ├── 2026-05-09-navigation-refactor.md
 │       │   ├── 2026-05-09-professional-ui-refactor.md
 │       │   ├── 2026-05-10-dev-sdk.md
-│       │   └── 2026-05-10-persistent-shell.md
+│       │   ├── 2026-05-10-persistent-shell.md
+│       │   └── 2026-05-11-plugin-sdk.md
 │       └── specs
 │           ├── 2024-05-22-gemini-provider-design.md
 │           ├── 2025-01-24-ai-diagnostic-ui-polish-design.md
@@ -68,7 +72,8 @@
 │           ├── 2026-05-09-milestone-9-ai-analyzer.md
 │           ├── 2026-05-09-navigation-refactor-design.md
 │           ├── 2026-05-10-dev-sdk-design.md
-│           └── 2026-05-10-persistent-shell-design.md
+│           ├── 2026-05-10-persistent-shell-design.md
+│           └── 2026-05-11-plugin-sdk-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -105,6 +110,12 @@
 │   └── vite.svg
 ├── README.md
 ├── ROADMAP.md
+├── sdk
+│   └── rust
+│       ├── Cargo.lock
+│       ├── Cargo.toml
+│       └── src
+│           └── lib.rs
 ├── SECURITY.md
 ├── src
 │   ├── App.vue
@@ -222,6 +233,13 @@
 │               ├── server.pid
 │               └── server-stopped
 ├── SUPPORT.md
+├── templates
+│   └── rust-plugin
+│       ├── build.sh
+│       ├── Cargo.lock
+│       ├── Cargo.toml
+│       └── src
+│           └── lib.rs
 ├── .todos.md
 ├── TROUBLESHOOTING.md
 ├── tsconfig.json
@@ -231,4 +249,4 @@
 └── .vscode
     └── extensions.json
 
-44 directories, 188 files
+50 directories, 200 files
