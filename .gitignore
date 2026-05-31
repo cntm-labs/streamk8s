@@ -32,3 +32,4 @@ docs/superpowers/
 # Rust build artifacts
 target/
 **/target/
+**/Cargo.lock
