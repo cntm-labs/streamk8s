@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-CNEok-Bp.js
-│   │   └── index-DWeQgGJD.css
+│   │   ├── index-D536Sjl4.js
+│   │   └── index-Y1eHEbsi.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -42,7 +42,8 @@
 │       │   ├── 2026-05-09-navigation-refactor.md
 │       │   ├── 2026-05-09-professional-ui-refactor.md
 │       │   ├── 2026-05-10-dev-sdk.md
-│       │   └── 2026-05-10-persistent-shell.md
+│       │   ├── 2026-05-10-persistent-shell.md
+│       │   └── 2026-05-11-plugin-sdk.md
 │       └── specs
 │           ├── 2024-05-22-gemini-provider-design.md
 │           ├── 2025-01-24-ai-diagnostic-ui-polish-design.md
@@ -68,7 +69,8 @@
 │           ├── 2026-05-09-milestone-9-ai-analyzer.md
 │           ├── 2026-05-09-navigation-refactor-design.md
 │           ├── 2026-05-10-dev-sdk-design.md
-│           └── 2026-05-10-persistent-shell-design.md
+│           ├── 2026-05-10-persistent-shell-design.md
+│           └── 2026-05-11-plugin-sdk-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -105,6 +107,12 @@
 │   └── vite.svg
 ├── README.md
 ├── ROADMAP.md
+├── sdk
+│   └── rust
+│       ├── Cargo.lock
+│       ├── Cargo.toml
+│       └── src
+│           └── lib.rs
 ├── SECURITY.md
 ├── src
 │   ├── App.vue
@@ -231,4 +239,4 @@
 └── .vscode
     └── extensions.json
 
-44 directories, 188 files
+47 directories, 193 files
