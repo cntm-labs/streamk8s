@@ -3,6 +3,7 @@ use wasmtime::{Engine, Module, Store, Linker, Caller};
 use std::fs;
 use std::path::PathBuf;
 use std::path::Path;
+use std::io::Cursor;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ExtensionInfo {
@@ -32,9 +33,32 @@ pub struct PluginManifest {
     pub ui: UiConfig,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct RemotePlugin {
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    pub author: String,
+    pub version: String,
+    pub url: String,
+    pub category: String,
+    pub sha256: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct RegistryContent {
+    pub version: String,
+    pub plugins: Vec<RemotePlugin>,
+}
+
 fn get_plugin_dir() -> PathBuf {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
     PathBuf::from(home).join(".config/streamk8s/plugins")
+}
+
+fn get_registry_cache_path() -> PathBuf {
+    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    PathBuf::from(home).join(".config/streamk8s/registry_cache.json")
 }
 
 #[tauri::command]
@@ -64,6 +88,72 @@ pub async fn get_installed_plugins() -> Result<Vec<PluginManifest>, String> {
 }
 
 #[tauri::command]
+pub async fn get_remote_registry() -> Result<Vec<RemotePlugin>, String> {
+    let url = "https://raw.githubusercontent.com/cntm-labs/streamk8s/master/registry.json";
+    let cache_path = get_registry_cache_path();
+
+    match reqwest::get(url).await {
+        Ok(response) => {
+            if response.status().is_success() {
+                let content = response.text().await.map_err(|e| e.to_string())?;
+                let registry: RegistryContent = serde_json::from_str(&content).map_err(|e| e.to_string())?;
+                
+                if let Some(parent) = cache_path.parent() {
+                    fs::create_dir_all(parent).ok();
+                }
+                fs::write(&cache_path, &content).ok();
+                
+                return Ok(registry.plugins);
+            }
+        }
+        Err(_) => {
+            if cache_path.exists() {
+                let content = fs::read_to_string(&cache_path).map_err(|e| e.to_string())?;
+                let registry: RegistryContent = serde_json::from_str(&content).map_err(|e| e.to_string())?;
+                return Ok(registry.plugins);
+            }
+        }
+    }
+
+    Ok(Vec::new())
+}
+
+#[tauri::command]
+pub async fn install_remote_plugin(id: String, url: String) -> Result<(), String> {
+    let response = reqwest::get(url).await.map_err(|e| e.to_string())?;
+    let bytes = response.bytes().await.map_err(|e| e.to_string())?;
+
+    let plugin_dir = get_plugin_dir().join(&id);
+    if !plugin_dir.exists() {
+        fs::create_dir_all(&plugin_dir).map_err(|e| e.to_string())?;
+    }
+
+    let mut archive = zip::ZipArchive::new(Cursor::new(bytes)).map_err(|e| e.to_string())?;
+
+    for i in 0..archive.len() {
+        let mut file = archive.by_index(i).map_err(|e| e.to_string())?;
+        let outpath = match file.enclosed_name() {
+            Some(path) => plugin_dir.join(path),
+            None => continue,
+        };
+
+        if file.is_dir() {
+            fs::create_dir_all(&outpath).map_err(|e| e.to_string())?;
+        } else {
+            if let Some(p) = outpath.parent() {
+                if !p.exists() {
+                    fs::create_dir_all(p).map_err(|e| e.to_string())?;
+                }
+            }
+            let mut outfile = fs::File::create(&outpath).map_err(|e| e.to_string())?;
+            std::io::copy(&mut file, &mut outfile).map_err(|e| e.to_string())?;
+        }
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
 pub async fn install_plugin(source_path: String) -> Result<(), String> {
     let source = Path::new(&source_path);
     if !source.exists() {
@@ -77,7 +167,6 @@ pub async fn install_plugin(source_path: String) -> Result<(), String> {
         fs::create_dir_all(&dest).map_err(|e| e.to_string())?;
     }
 
-    // Basic copy logic for files in the directory
     for entry in fs::read_dir(source).map_err(|e| e.to_string())? {
         let entry = entry.map_err(|e| e.to_string())?;
         let dest_file = dest.join(entry.file_name());
@@ -90,15 +179,10 @@ pub async fn install_plugin(source_path: String) -> Result<(), String> {
 pub fn create_linker(engine: &Engine) -> Linker<()> {
     let mut linker = Linker::new(engine);
     
-    // Import: get_k8s_resources_count() -> i32 (Simplified for demo)
-    // In raw WASM, passing strings requires complex memory management.
-    // For Milestone 15, we use i32 to demonstrate the linking capability.
     linker.func_wrap("env", "get_k8s_resources_count", |_: Caller<'_, ()>| -> i32 {
-        // Return a mock count of resources
         42
     }).unwrap();
 
-    // Import: show_notification(code: i32)
     linker.func_wrap("env", "show_notification", |code: i32| {
         println!("PLUGIN NOTIFICATION CODE: {}", code);
     }).unwrap();
@@ -119,7 +203,6 @@ pub fn execute_wasm_action(
     
     let instance = linker.instantiate(&mut store, &module).map_err(|e| e.to_string())?;
 
-    // Attempt to call the function. Try both typed and untyped if needed.
     let func = instance
         .get_typed_func::<(), ()>(&mut store, function_name)
         .map_err(|e| format!("Function '{}' not found or wrong signature: {}", function_name, e))?;

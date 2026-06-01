@@ -36,7 +36,8 @@ pub fn run() {
             crate::k8s::search::global_search,
             crate::plugins::manager::get_installed_plugins,
             crate::plugins::manager::call_plugin_action,
-            crate::plugins::manager::install_plugin
+            crate::plugins::manager::install_plugin,
+            crate::plugins::manager::get_remote_registry
         ])
         .setup(|app| {
             let handle = app.handle().clone();
