@@ -1,1 +1,0 @@
-{"nodes": [{"id": "plugins_mod", "label": "plugins/mod.rs", "file_type": "code", "source_file": "src-tauri/src/plugins/mod.rs"}], "edges": [{"source": "plugins_mod", "target": "plugins_manager", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "src-tauri/src/plugins/mod.rs"}], "hyperedges": []}

@@ -25,9 +25,11 @@ dist-ssr
 
 # Documentation
 docs/superpowers/
+docs/plans/
 
 # AI Intelligence
 .superpowers/
+graphify-out/
 
 # Rust build artifacts
 target/
