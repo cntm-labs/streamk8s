@@ -1,0 +1,522 @@
+{
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/tsconfig.json": {
+    "mtime": 1778060368.2291753,
+    "ast_hash": "15398dc2e42da0fce01897272dd53811",
+    "semantic_hash": "15398dc2e42da0fce01897272dd53811"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/tsconfig.node.json": {
+    "mtime": 1778060368.2291753,
+    "ast_hash": "767b2e9abe6452170cdc399ca052cfbc",
+    "semantic_hash": "767b2e9abe6452170cdc399ca052cfbc"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/vite.config.ts": {
+    "mtime": 1778060368.2291753,
+    "ast_hash": "54d1a2c5f9a1456ca93aa64f709bd78d",
+    "semantic_hash": "54d1a2c5f9a1456ca93aa64f709bd78d"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/package.json": {
+    "mtime": 1780056902.3726978,
+    "ast_hash": "d13d72e1a3cf76c6b8093c262668087b",
+    "semantic_hash": "d13d72e1a3cf76c6b8093c262668087b"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/main.ts": {
+    "mtime": 1778060793.0859444,
+    "ast_hash": "288ab84d409ae93acb0588f9fff731a4",
+    "semantic_hash": "288ab84d409ae93acb0588f9fff731a4"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/vite-env.d.ts": {
+    "mtime": 1778060368.2288773,
+    "ast_hash": "0bfbbe31f28c43d77593b123e61d2f04",
+    "semantic_hash": "0bfbbe31f28c43d77593b123e61d2f04"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/App.vue": {
+    "mtime": 1779526640.7871547,
+    "ast_hash": "7966f4e0c45c6a548969a9b10e80eacc",
+    "semantic_hash": "7966f4e0c45c6a548969a9b10e80eacc"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/Gauge.vue": {
+    "mtime": 1778070699.5539606,
+    "ast_hash": "dfe37dbb0dedf9c0066602340ba787ff",
+    "semantic_hash": "dfe37dbb0dedf9c0066602340ba787ff"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/TrendChart.vue": {
+    "mtime": 1778073167.4443047,
+    "ast_hash": "a656bfa401afe8256f5f5406f9b70c7f",
+    "semantic_hash": "a656bfa401afe8256f5f5406f9b70c7f"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/AdviceBanner.vue": {
+    "mtime": 1778325101.255255,
+    "ast_hash": "70c5714ec837b387b43f01d300cb2139",
+    "semantic_hash": "70c5714ec837b387b43f01d300cb2139"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/PodList.vue": {
+    "mtime": 1778335963.9929597,
+    "ast_hash": "329d7e2dfb8fba004539c3c7a449690e",
+    "semantic_hash": "329d7e2dfb8fba004539c3c7a449690e"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/ClusterHotbar.vue": {
+    "mtime": 1778698907.7459495,
+    "ast_hash": "14ad64e286e4dcd5cbf485bb78820419",
+    "semantic_hash": "14ad64e286e4dcd5cbf485bb78820419"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/ResourceTable.vue": {
+    "mtime": 1778938980.4582586,
+    "ast_hash": "c211aaa251f4d0624cff9a31b8d92d13",
+    "semantic_hash": "c211aaa251f4d0624cff9a31b8d92d13"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/ResourceTree.vue": {
+    "mtime": 1779523781.7131913,
+    "ast_hash": "d89bdd2546e1705a29f4db91d63ca1f0",
+    "semantic_hash": "d89bdd2546e1705a29f4db91d63ca1f0"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/Sidebar.vue": {
+    "mtime": 1778938980.4592588,
+    "ast_hash": "07ed1a790c445558fc36be182f7083bc",
+    "semantic_hash": "07ed1a790c445558fc36be182f7083bc"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/ActivityBar.vue": {
+    "mtime": 1779017514.6678262,
+    "ast_hash": "fcba179811c7fccc1e5e3f2d890afa83",
+    "semantic_hash": "fcba179811c7fccc1e5e3f2d890afa83"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/CommandPalette.vue": {
+    "mtime": 1779128188.0562212,
+    "ast_hash": "9be6426dc20734e51e2ccb90ee8108a2",
+    "semantic_hash": "9be6426dc20734e51e2ccb90ee8108a2"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/InspectorPanel.vue": {
+    "mtime": 1779526767.9835193,
+    "ast_hash": "7cb87bcfd33ce9cdfc6a9bc807b4a807",
+    "semantic_hash": "7cb87bcfd33ce9cdfc6a9bc807b4a807"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/components/PluginRenderer.vue": {
+    "mtime": 1780056902.3731546,
+    "ast_hash": "f30db3eaf52e4f1c6a085c77e61344ab",
+    "semantic_hash": "f30db3eaf52e4f1c6a085c77e61344ab"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/views/ClusterView.vue": {
+    "mtime": 1779017514.6678262,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/views/SettingsView.vue": {
+    "mtime": 1779017514.6689432,
+    "ast_hash": "4b9af2c44fe9e6abc510c534647c9b2c",
+    "semantic_hash": "4b9af2c44fe9e6abc510c534647c9b2c"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/views/WelcomeView.vue": {
+    "mtime": 1779526098.227113,
+    "ast_hash": "400e66e7b1bd8cbccc6cff8f09ebc3f3",
+    "semantic_hash": "400e66e7b1bd8cbccc6cff8f09ebc3f3"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/views/MarketplaceView.vue": {
+    "mtime": 1780056902.3731546,
+    "ast_hash": "c1a698d8813e2f6f4b5df589f2e880f8",
+    "semantic_hash": "c1a698d8813e2f6f4b5df589f2e880f8"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/tauri.conf.json": {
+    "mtime": 1778060368.22892,
+    "ast_hash": "a8f4fe6a18c3aac6cde6761da3078a3d",
+    "semantic_hash": "a8f4fe6a18c3aac6cde6761da3078a3d"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/build.rs": {
+    "mtime": 1778060368.22892,
+    "ast_hash": "1be34a5c61c2c35365de3dab14298f0b",
+    "semantic_hash": "1be34a5c61c2c35365de3dab14298f0b"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/capabilities/default.json": {
+    "mtime": 1778060368.2289596,
+    "ast_hash": "d2b1ea61ac2075eb0d44587bf81ee127",
+    "semantic_hash": "d2b1ea61ac2075eb0d44587bf81ee127"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/main.rs": {
+    "mtime": 1778072100.6184452,
+    "ast_hash": "d0a1ce7604557578848fdeac28a55385",
+    "semantic_hash": "d0a1ce7604557578848fdeac28a55385"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/config.rs": {
+    "mtime": 1779128188.0562212,
+    "ast_hash": "6338206a01b60fdd6521ea0e566e58b1",
+    "semantic_hash": "6338206a01b60fdd6521ea0e566e58b1"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/lib.rs": {
+    "mtime": 1780056902.3731546,
+    "ast_hash": "c0c24cc1cbce110e3c2e289e28041eb6",
+    "semantic_hash": "c0c24cc1cbce110e3c2e289e28041eb6"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/hardware/collector.rs": {
+    "mtime": 1778072866.0115423,
+    "ast_hash": "3bf36da5894501f7757d43797a4a59ef",
+    "semantic_hash": "3bf36da5894501f7757d43797a4a59ef"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/hardware/mod.rs": {
+    "mtime": 1778325101.255255,
+    "ast_hash": "4d03c8215d0811e5c8e0cbaaa131ec65",
+    "semantic_hash": "4d03c8215d0811e5c8e0cbaaa131ec65"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/hardware/profiler.rs": {
+    "mtime": 1778325101.255255,
+    "ast_hash": "4637c14e7432df2af63c81bf4284bc49",
+    "semantic_hash": "4637c14e7432df2af63c81bf4284bc49"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/k8s/contexts.rs": {
+    "mtime": 1778335963.9919598,
+    "ast_hash": "71198184df855bddd870440234848fe0",
+    "semantic_hash": "71198184df855bddd870440234848fe0"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/k8s/logs.rs": {
+    "mtime": 1778335963.9919598,
+    "ast_hash": "c2d0494c61bfb65aa1f45786972e3ff8",
+    "semantic_hash": "c2d0494c61bfb65aa1f45786972e3ff8"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/k8s/pods.rs": {
+    "mtime": 1778335963.9919598,
+    "ast_hash": "91c5c2bab508caa05481d6953a980c8f",
+    "semantic_hash": "91c5c2bab508caa05481d6953a980c8f"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/k8s/scaling.rs": {
+    "mtime": 1778335963.9919598,
+    "ast_hash": "18834d1bd3ba6490f0d58ff2be382709",
+    "semantic_hash": "18834d1bd3ba6490f0d58ff2be382709"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/k8s/inspector.rs": {
+    "mtime": 1778938980.4582586,
+    "ast_hash": "d5fbdbb7563146e1e64c50e423a6db38",
+    "semantic_hash": "d5fbdbb7563146e1e64c50e423a6db38"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/k8s/resources.rs": {
+    "mtime": 1778938980.4582586,
+    "ast_hash": "9a8e04540a313bfe0adbb7d1c53e02c9",
+    "semantic_hash": "9a8e04540a313bfe0adbb7d1c53e02c9"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/k8s/mod.rs": {
+    "mtime": 1779128188.0562212,
+    "ast_hash": "d8347530f9cb3a77261c528440e2c011",
+    "semantic_hash": "d8347530f9cb3a77261c528440e2c011"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/k8s/search.rs": {
+    "mtime": 1779128188.0562212,
+    "ast_hash": "74bfabcdca44844eee5f6ae3fb19a5f3",
+    "semantic_hash": "74bfabcdca44844eee5f6ae3fb19a5f3"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/k8s/ai.rs": {
+    "mtime": 1779526767.9835193,
+    "ast_hash": "b1d1bd9e5b5fce30533c19aa5b658a42",
+    "semantic_hash": "b1d1bd9e5b5fce30533c19aa5b658a42"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/plugins/mod.rs": {
+    "mtime": 1779521763.9811537,
+    "ast_hash": "accb6a4b9dc4794ea97d977a80546c15",
+    "semantic_hash": "accb6a4b9dc4794ea97d977a80546c15"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/src/plugins/manager.rs": {
+    "mtime": 1780209815.664802,
+    "ast_hash": "864f50944aa520a68e5313bfa781d027",
+    "semantic_hash": "864f50944aa520a68e5313bfa781d027"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/gen/schemas/acl-manifests.json": {
+    "mtime": 1780209461.149852,
+    "ast_hash": "5dc1febef9c810ffc2e2ed05ab3e6ca4",
+    "semantic_hash": "5dc1febef9c810ffc2e2ed05ab3e6ca4"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/gen/schemas/linux-schema.json": {
+    "mtime": 1780209461.1538515,
+    "ast_hash": "178d41a2338178040f1e32a71157035e",
+    "semantic_hash": "178d41a2338178040f1e32a71157035e"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/gen/schemas/desktop-schema.json": {
+    "mtime": 1780209461.1548426,
+    "ast_hash": "178d41a2338178040f1e32a71157035e",
+    "semantic_hash": "178d41a2338178040f1e32a71157035e"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/gen/schemas/capabilities.json": {
+    "mtime": 1778070641.3215454,
+    "ast_hash": "b4b4509fac6d93c938aeea37674d7c0e",
+    "semantic_hash": "b4b4509fac6d93c938aeea37674d7c0e"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.vscode/extensions.json": {
+    "mtime": 1778060368.229729,
+    "ast_hash": "eb2c2ee189cde9172a7e808857d8dc92",
+    "semantic_hash": "eb2c2ee189cde9172a7e808857d8dc92"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/sdk/rust/src/lib.rs": {
+    "mtime": 1780213110.656397,
+    "ast_hash": "b28f18e40046772ff1ed19f47f82caf1",
+    "semantic_hash": "b28f18e40046772ff1ed19f47f82caf1"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/templates/rust-plugin/build.sh": {
+    "mtime": 1780213110.656397,
+    "ast_hash": "a0efee9977e71c110c93e843f4c47fc4",
+    "semantic_hash": "a0efee9977e71c110c93e843f4c47fc4"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/templates/rust-plugin/src/lib.rs": {
+    "mtime": 1780213110.656397,
+    "ast_hash": "5471aa5d3db3fd1c42eae1fcc75ef216",
+    "semantic_hash": "5471aa5d3db3fd1c42eae1fcc75ef216"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/ARCHITECTURE.md": {
+    "mtime": 1778065908.7012331,
+    "ast_hash": "510b5ebb7e98e547128f51aff1b44981",
+    "semantic_hash": "510b5ebb7e98e547128f51aff1b44981"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/CLAUDE.md": {
+    "mtime": 1778066148.6861162,
+    "ast_hash": "e0d41546979b56a10bdf87a807e9b980",
+    "semantic_hash": "e0d41546979b56a10bdf87a807e9b980"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/CODE_OF_CONDUCT.md": {
+    "mtime": 1777902291.2177672,
+    "ast_hash": "1d33551c2ffd73fc5222955fe94be241",
+    "semantic_hash": "1d33551c2ffd73fc5222955fe94be241"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/CONTRIBUTING.md": {
+    "mtime": 1778066101.1007118,
+    "ast_hash": "8557e594b2550586808048673556776c",
+    "semantic_hash": "8557e594b2550586808048673556776c"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/DEPLOYMENT_GUIDE.md": {
+    "mtime": 1778066106.3596454,
+    "ast_hash": "cbc9f416effe69673a6ca23184b187a6",
+    "semantic_hash": "cbc9f416effe69673a6ca23184b187a6"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/DESIGN_DECISIONS.md": {
+    "mtime": 1778066117.0375113,
+    "ast_hash": "407868a1651bfe2c58b33eaef526df93",
+    "semantic_hash": "407868a1651bfe2c58b33eaef526df93"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/FAQ.md": {
+    "mtime": 1778066126.9293873,
+    "ast_hash": "5375b4e08a6975be510163f1fad1d8a5",
+    "semantic_hash": "5375b4e08a6975be510163f1fad1d8a5"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/GEMINI.md": {
+    "mtime": 1777902291.3597655,
+    "ast_hash": "c2e1d18c8995b763797b0646d79cf31e",
+    "semantic_hash": "c2e1d18c8995b763797b0646d79cf31e"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/GOVERNANCE.md": {
+    "mtime": 1777902291.3877654,
+    "ast_hash": "ef9fc162fc72021414b778b555e62b83",
+    "semantic_hash": "ef9fc162fc72021414b778b555e62b83"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/LICENSE.md": {
+    "mtime": 1777902291.416765,
+    "ast_hash": "cec075afcc06941eecb1be40f4506f9d",
+    "semantic_hash": "cec075afcc06941eecb1be40f4506f9d"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/MANIFESTO.md": {
+    "mtime": 1778066086.1889005,
+    "ast_hash": "c9aaacc6b04ff5b5f0bd8f48c59f97aa",
+    "semantic_hash": "c9aaacc6b04ff5b5f0bd8f48c59f97aa"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/PHILOSOPHY.md": {
+    "mtime": 1778066090.8998408,
+    "ast_hash": "fc64a8abd7cd00e90a40a8bdd9ffffd5",
+    "semantic_hash": "fc64a8abd7cd00e90a40a8bdd9ffffd5"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/PRINCIPLES.md": {
+    "mtime": 1778066080.5809717,
+    "ast_hash": "84ebad8db507b359c34c8c322bf363b3",
+    "semantic_hash": "84ebad8db507b359c34c8c322bf363b3"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/README.md": {
+    "mtime": 1778065819.0834506,
+    "ast_hash": "9b11f8829c1f8cce471d8c878cbdd5b7",
+    "semantic_hash": "9b11f8829c1f8cce471d8c878cbdd5b7"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/ROADMAP.md": {
+    "mtime": 1778066075.0130424,
+    "ast_hash": "bbd6c5863146f18ec63b234780355657",
+    "semantic_hash": "bbd6c5863146f18ec63b234780355657"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/SECURITY.md": {
+    "mtime": 1778066111.5185807,
+    "ast_hash": "07b438239b38064d7ca5b262266ce93d",
+    "semantic_hash": "07b438239b38064d7ca5b262266ce93d"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/STRATEGY.md": {
+    "mtime": 1778066069.649111,
+    "ast_hash": "8b7f5388df6d4665d43715a6725a0eec",
+    "semantic_hash": "8b7f5388df6d4665d43715a6725a0eec"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/SUPPORT.md": {
+    "mtime": 1778066136.9982617,
+    "ast_hash": "23415b7cab3dd6e9858692e6a2468c8a",
+    "semantic_hash": "23415b7cab3dd6e9858692e6a2468c8a"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/TROUBLESHOOTING.md": {
+    "mtime": 1778066132.7463145,
+    "ast_hash": "6574557e78f86df2bf8fb2550c830003",
+    "semantic_hash": "6574557e78f86df2bf8fb2550c830003"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/VISION.md": {
+    "mtime": 1778066064.636175,
+    "ast_hash": "6e0a29a1b830bf201fc00b0add8abfc5",
+    "semantic_hash": "6e0a29a1b830bf201fc00b0add8abfc5"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.pre-commit-config.yaml": {
+    "mtime": 1777902291.8207605,
+    "ast_hash": "67add0e4e723141a12f25b4414b79f44",
+    "semantic_hash": "67add0e4e723141a12f25b4414b79f44"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/index.html": {
+    "mtime": 1778060368.2278948,
+    "ast_hash": "ff7b0ebb08db66466d683a7a83c09c4e",
+    "semantic_hash": "ff7b0ebb08db66466d683a7a83c09c4e"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/pr_body.md": {
+    "mtime": 1779521763.9802039,
+    "ast_hash": "48d086c233264a918053efd1b4c5bc61",
+    "semantic_hash": "48d086c233264a918053efd1b4c5bc61"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.todos.md": {
+    "mtime": 1780043587.5213213,
+    "ast_hash": "6cd509f854a5cdb377c429b27f64b9e5",
+    "semantic_hash": "6cd509f854a5cdb377c429b27f64b9e5"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.github/PULL_REQUEST_TEMPLATE.md": {
+    "mtime": 1778066160.2949722,
+    "ast_hash": "7285baf72391367ebf8c3fedbec6865d",
+    "semantic_hash": "7285baf72391367ebf8c3fedbec6865d"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.github/labeler.yml": {
+    "mtime": 1778325101.255255,
+    "ast_hash": "79d323a51d7b995978eb2aa04c28fc92",
+    "semantic_hash": "79d323a51d7b995978eb2aa04c28fc92"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.github/workflows/ci.yml": {
+    "mtime": 1777902290.9013295,
+    "ast_hash": "5ecc0cc93e1d129bf85824497833bc72",
+    "semantic_hash": "5ecc0cc93e1d129bf85824497833bc72"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.github/workflows/security.yml": {
+    "mtime": 1777902290.9020963,
+    "ast_hash": "3f97dc282fa0b3265cfaff0b2aa35865",
+    "semantic_hash": "3f97dc282fa0b3265cfaff0b2aa35865"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.github/workflows/pr_automation.yml": {
+    "mtime": 1777902290.9024615,
+    "ast_hash": "31097a9069c1d6ecc1d28d37cd337487",
+    "semantic_hash": "31097a9069c1d6ecc1d28d37cd337487"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.github/workflows/badges.yml": {
+    "mtime": 1777902290.9027295,
+    "ast_hash": "78cf1650bbd389f44f6962456d8ef6c0",
+    "semantic_hash": "78cf1650bbd389f44f6962456d8ef6c0"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.github/ISSUE_TEMPLATE/bug_report.yml": {
+    "mtime": 1777902291.8229463,
+    "ast_hash": "b437429a328244384fae935d5bca1bb9",
+    "semantic_hash": "b437429a328244384fae935d5bca1bb9"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/.github/ISSUE_TEMPLATE/feature_request.yml": {
+    "mtime": 1777902291.823646,
+    "ast_hash": "3d531bff02fa8ddd37b281125530583d",
+    "semantic_hash": "3d531bff02fa8ddd37b281125530583d"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/locales/README.th.md": {
+    "mtime": 1778065819.0834506,
+    "ast_hash": "b62df8dfeffc70ca255ac2b9305ef09c",
+    "semantic_hash": "b62df8dfeffc70ca255ac2b9305ef09c"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/locales/README.ja.md": {
+    "mtime": 1778065819.0834506,
+    "ast_hash": "b28deef47b6dc610616cf25ca1e6184b",
+    "semantic_hash": "b28deef47b6dc610616cf25ca1e6184b"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/locales/README.zh.md": {
+    "mtime": 1778065819.0834506,
+    "ast_hash": "b09479d5ef311210311d405c3494f406",
+    "semantic_hash": "b09479d5ef311210311d405c3494f406"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/docs/DEVELOPER_GUIDE.md": {
+    "mtime": 1780213110.656397,
+    "ast_hash": "950d72b49f993798c8b5a4b8328364f4",
+    "semantic_hash": "950d72b49f993798c8b5a4b8328364f4"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/public/tauri.svg": {
+    "mtime": 1778060368.228851,
+    "ast_hash": "f49b888a6830a38f02ffeb65891186b1",
+    "semantic_hash": "f49b888a6830a38f02ffeb65891186b1"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/public/vite.svg": {
+    "mtime": 1778060368.228851,
+    "ast_hash": "8e3a10e157f75ada21ab742c022d5430",
+    "semantic_hash": "8e3a10e157f75ada21ab742c022d5430"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src/assets/vue.svg": {
+    "mtime": 1778060368.2289042,
+    "ast_hash": "081c348d068770af78fcd90980521318",
+    "semantic_hash": "081c348d068770af78fcd90980521318"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/128x128.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "fdd248e915476e6212afcb096c330992",
+    "semantic_hash": "fdd248e915476e6212afcb096c330992"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/128x128@2x.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "fd32cf41af4c52d279b92e9c61676130",
+    "semantic_hash": "fd32cf41af4c52d279b92e9c61676130"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/32x32.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "1344a8f2569a67c695807140fb49cf10",
+    "semantic_hash": "1344a8f2569a67c695807140fb49cf10"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/Square107x107Logo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "24754965fb63f23a0fad45db0ef2554b",
+    "semantic_hash": "24754965fb63f23a0fad45db0ef2554b"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/Square142x142Logo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "55d92879c6bd61fc7e79a84e1dcc51f6",
+    "semantic_hash": "55d92879c6bd61fc7e79a84e1dcc51f6"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/Square150x150Logo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "6e41a89b0a2b484f3e7f1b3a5db65730",
+    "semantic_hash": "6e41a89b0a2b484f3e7f1b3a5db65730"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/Square284x284Logo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "b5f57838809a4d93eed8ef656ce7c2c4",
+    "semantic_hash": "b5f57838809a4d93eed8ef656ce7c2c4"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/Square30x30Logo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "7a18f38b895070303fda351bd8ae757d",
+    "semantic_hash": "7a18f38b895070303fda351bd8ae757d"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/Square310x310Logo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "eeabbd0c2b13960e089e468c20f99e51",
+    "semantic_hash": "eeabbd0c2b13960e089e468c20f99e51"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/Square44x44Logo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "42c67a38757b409cec4b6eb0c25c714c",
+    "semantic_hash": "42c67a38757b409cec4b6eb0c25c714c"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/Square71x71Logo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "0670843e2fc39a0e53817a47b2b3399d",
+    "semantic_hash": "0670843e2fc39a0e53817a47b2b3399d"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/Square89x89Logo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "2bfa099bf584686f0dd98cfafb10bda3",
+    "semantic_hash": "2bfa099bf584686f0dd98cfafb10bda3"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/StoreLogo.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "02859e2326344ae7c9559f1af0abba34",
+    "semantic_hash": "02859e2326344ae7c9559f1af0abba34"
+  },
+  "/home/mrbt/Desktop/workspaces/k8s-IDE/repositories/streamk8s/src-tauri/icons/icon.png": {
+    "mtime": 1778060368.229,
+    "ast_hash": "3fa4420986811b429d7f1654da77ac3b",
+    "semantic_hash": "3fa4420986811b429d7f1654da77ac3b"
+  }
+}

@@ -1,0 +1,1 @@
+{"nodes": [{"id": "src_main", "label": "Frontend Entry Point", "file_type": "code", "source_file": "src/main.ts"}], "edges": [{"source": "src_main", "target": "src_app", "relation": "calls", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "src/main.ts"}], "hyperedges": []}

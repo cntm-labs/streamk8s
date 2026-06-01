@@ -1,0 +1,211 @@
+{
+  "nodes": [
+    {
+      "id": "github_pull_request_template",
+      "label": "Pull Request Template",
+      "file_type": "document",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md"
+    },
+    {
+      "id": "github_labeler",
+      "label": "GitHub Labeler Configuration",
+      "file_type": "code",
+      "source_file": ".github/labeler.yml"
+    },
+    {
+      "id": "github_workflows_ci",
+      "label": "CI Workflow",
+      "file_type": "code",
+      "source_file": ".github/workflows/ci.yml"
+    },
+    {
+      "id": "github_workflows_security",
+      "label": "Security Audit Workflow",
+      "file_type": "code",
+      "source_file": ".github/workflows/security.yml"
+    },
+    {
+      "id": "github_workflows_pr_automation",
+      "label": "PR Automation Workflow",
+      "file_type": "code",
+      "source_file": ".github/workflows/pr_automation.yml"
+    },
+    {
+      "id": "github_workflows_badges",
+      "label": "Update Badges Workflow",
+      "file_type": "code",
+      "source_file": ".github/workflows/badges.yml"
+    },
+    {
+      "id": "github_issue_template_bug_report",
+      "label": "Bug Report Issue Template",
+      "file_type": "code",
+      "source_file": ".github/ISSUE_TEMPLATE/bug_report.yml"
+    },
+    {
+      "id": "github_issue_template_feature_request",
+      "label": "Feature Request Issue Template",
+      "file_type": "code",
+      "source_file": ".github/ISSUE_TEMPLATE/feature_request.yml"
+    },
+    {
+      "id": "locales_readme_th",
+      "label": "README Thai Translation",
+      "file_type": "document",
+      "source_file": "locales/README.th.md"
+    },
+    {
+      "id": "locales_readme_ja",
+      "label": "README Japanese Translation",
+      "file_type": "document",
+      "source_file": "locales/README.ja.md"
+    },
+    {
+      "id": "locales_readme_zh",
+      "label": "README Chinese Translation",
+      "file_type": "document",
+      "source_file": "locales/README.zh.md"
+    },
+    {
+      "id": "docs_developer_guide",
+      "label": "Extension Developer Guide",
+      "file_type": "document",
+      "source_file": "docs/DEVELOPER_GUIDE.md"
+    },
+    {
+      "id": "rationale_monkey_proof",
+      "label": "Monkey-Proof Principle",
+      "file_type": "rationale",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md"
+    },
+    {
+      "id": "rationale_os_k8s_bridge",
+      "label": "OS-K8s Bridge Concept",
+      "file_type": "rationale",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md"
+    },
+    {
+      "id": "rationale_extension_abi",
+      "label": "Extension ABI Specification",
+      "file_type": "rationale",
+      "source_file": "docs/DEVELOPER_GUIDE.md"
+    },
+    {
+      "id": "concept_wasm_plugin",
+      "label": "WASM-based Plugin System",
+      "file_type": "concept",
+      "source_file": "docs/DEVELOPER_GUIDE.md"
+    },
+    {
+      "id": "public_tauri_svg",
+      "label": "Tauri Logo",
+      "file_type": "image",
+      "source_file": "public/tauri.svg"
+    },
+    {
+      "id": "public_vite_svg",
+      "label": "Vite Logo",
+      "file_type": "image",
+      "source_file": "public/vite.svg"
+    },
+    {
+      "id": "src_assets_vue_svg",
+      "label": "Vue Logo",
+      "file_type": "image",
+      "source_file": "src/assets/vue.svg"
+    }
+  ],
+  "edges": [
+    {
+      "source": "github_workflows_badges",
+      "target": "locales_readme_th",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/badges.yml"
+    },
+    {
+      "source": "github_workflows_badges",
+      "target": "locales_readme_ja",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/badges.yml"
+    },
+    {
+      "source": "github_workflows_badges",
+      "target": "locales_readme_zh",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/workflows/badges.yml"
+    },
+    {
+      "source": "docs_developer_guide",
+      "target": "concept_wasm_plugin",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/DEVELOPER_GUIDE.md"
+    },
+    {
+      "source": "docs_developer_guide",
+      "target": "rationale_extension_abi",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/DEVELOPER_GUIDE.md"
+    },
+    {
+      "source": "github_pull_request_template",
+      "target": "rationale_monkey_proof",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md"
+    },
+    {
+      "source": "github_pull_request_template",
+      "target": "rationale_os_k8s_bridge",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md"
+    },
+    {
+      "source": "github_workflows_pr_automation",
+      "target": "github_labeler",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": ".github/workflows/pr_automation.yml"
+    },
+    {
+      "source": "locales_readme_th",
+      "target": "locales_readme_ja",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "locales/README.th.md"
+    },
+    {
+      "source": "locales_readme_th",
+      "target": "locales_readme_zh",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "locales/README.th.md"
+    },
+    {
+      "source": "github_issue_template_bug_report",
+      "target": "github_issue_template_feature_request",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": ".github/ISSUE_TEMPLATE/bug_report.yml"
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

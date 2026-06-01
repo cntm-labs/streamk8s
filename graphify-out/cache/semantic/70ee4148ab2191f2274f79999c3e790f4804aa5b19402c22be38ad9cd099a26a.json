@@ -1,0 +1,1 @@
+{"nodes": [{"id": "k8s_resources", "label": "resources.rs", "file_type": "code", "source_file": "src-tauri/src/k8s/resources.rs"}], "edges": [{"source": "k8s_resources", "target": "k8s_inspector", "relation": "calls", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "src-tauri/src/k8s/resources.rs"}], "hyperedges": []}

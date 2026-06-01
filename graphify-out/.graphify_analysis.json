@@ -1,0 +1,1391 @@
+{
+  "communities": {
+    "0": [
+      "schemas_acl_manifests_allow_from_bytes_commands",
+      "schemas_acl_manifests_allow_from_bytes_description",
+      "schemas_acl_manifests_allow_from_bytes_identifier",
+      "schemas_acl_manifests_allow_from_path_commands",
+      "schemas_acl_manifests_allow_from_path_description",
+      "schemas_acl_manifests_allow_from_path_identifier",
+      "schemas_acl_manifests_allow_rgba_commands",
+      "schemas_acl_manifests_allow_rgba_description",
+      "schemas_acl_manifests_allow_rgba_identifier",
+      "schemas_acl_manifests_allow_size_commands",
+      "schemas_acl_manifests_allow_size_description",
+      "schemas_acl_manifests_allow_size_identifier",
+      "schemas_acl_manifests_core_image_permissions",
+      "schemas_acl_manifests_deny_from_bytes_commands",
+      "schemas_acl_manifests_deny_from_bytes_description",
+      "schemas_acl_manifests_deny_from_bytes_identifier",
+      "schemas_acl_manifests_deny_from_path_commands",
+      "schemas_acl_manifests_deny_from_path_description",
+      "schemas_acl_manifests_deny_from_path_identifier",
+      "schemas_acl_manifests_deny_new_commands",
+      "schemas_acl_manifests_deny_new_description",
+      "schemas_acl_manifests_deny_new_identifier",
+      "schemas_acl_manifests_deny_rgba_commands",
+      "schemas_acl_manifests_deny_rgba_description",
+      "schemas_acl_manifests_deny_rgba_identifier",
+      "schemas_acl_manifests_deny_size_commands",
+      "schemas_acl_manifests_deny_size_description",
+      "schemas_acl_manifests_deny_size_identifier",
+      "schemas_acl_manifests_permissions_allow_from_bytes",
+      "schemas_acl_manifests_permissions_allow_from_path",
+      "schemas_acl_manifests_permissions_allow_rgba",
+      "schemas_acl_manifests_permissions_allow_size",
+      "schemas_acl_manifests_permissions_deny_from_bytes",
+      "schemas_acl_manifests_permissions_deny_from_path",
+      "schemas_acl_manifests_permissions_deny_new",
+      "schemas_acl_manifests_permissions_deny_rgba",
+      "schemas_acl_manifests_permissions_deny_size"
+    ],
+    "1": [
+      "schemas_acl_manifests_allow_emit_commands",
+      "schemas_acl_manifests_allow_emit_description",
+      "schemas_acl_manifests_allow_emit_identifier",
+      "schemas_acl_manifests_allow_emit_to_commands",
+      "schemas_acl_manifests_allow_emit_to_description",
+      "schemas_acl_manifests_allow_emit_to_identifier",
+      "schemas_acl_manifests_allow_listen_commands",
+      "schemas_acl_manifests_allow_listen_description",
+      "schemas_acl_manifests_allow_listen_identifier",
+      "schemas_acl_manifests_allow_unlisten_commands",
+      "schemas_acl_manifests_allow_unlisten_description",
+      "schemas_acl_manifests_allow_unlisten_identifier",
+      "schemas_acl_manifests_core_event",
+      "schemas_acl_manifests_core_event_global_scope_schema",
+      "schemas_acl_manifests_core_event_permission_sets",
+      "schemas_acl_manifests_core_event_permissions",
+      "schemas_acl_manifests_deny_emit_commands",
+      "schemas_acl_manifests_deny_emit_description",
+      "schemas_acl_manifests_deny_emit_identifier",
+      "schemas_acl_manifests_deny_emit_to_commands",
+      "schemas_acl_manifests_deny_emit_to_description",
+      "schemas_acl_manifests_deny_emit_to_identifier",
+      "schemas_acl_manifests_deny_listen_commands",
+      "schemas_acl_manifests_deny_listen_description",
+      "schemas_acl_manifests_deny_listen_identifier",
+      "schemas_acl_manifests_deny_unlisten_commands",
+      "schemas_acl_manifests_deny_unlisten_description",
+      "schemas_acl_manifests_deny_unlisten_identifier",
+      "schemas_acl_manifests_permissions_allow_emit",
+      "schemas_acl_manifests_permissions_allow_emit_to",
+      "schemas_acl_manifests_permissions_allow_listen",
+      "schemas_acl_manifests_permissions_allow_unlisten",
+      "schemas_acl_manifests_permissions_deny_emit",
+      "schemas_acl_manifests_permissions_deny_emit_to",
+      "schemas_acl_manifests_permissions_deny_listen",
+      "schemas_acl_manifests_permissions_deny_unlisten"
+    ],
+    "2": [
+      "appconfig",
+      "geminicandidate",
+      "geminicontent",
+      "geminierror",
+      "geminipart",
+      "k8s_ai_aiprovider",
+      "k8s_ai_analyze_with_ai",
+      "k8s_ai_geminicandidate",
+      "k8s_ai_geminicontent",
+      "k8s_ai_geminierror",
+      "k8s_ai_geminipart",
+      "k8s_ai_geminiprovider",
+      "k8s_ai_geminiprovider_analyze",
+      "k8s_ai_geminirequest",
+      "k8s_ai_geminiresponse",
+      "k8s_ai_ollamaprovider",
+      "k8s_ai_ollamaprovider_analyze",
+      "k8s_ai_openaiprovider",
+      "k8s_ai_openaiprovider_analyze",
+      "src_tauri_src_k8s_ai_rs",
+      "src_tauri_src_k8s_ai_rs_apphandle",
+      "src_tauri_src_k8s_ai_rs_option",
+      "src_tauri_src_k8s_ai_rs_result",
+      "src_tauri_src_k8s_ai_rs_string",
+      "src_tauri_src_k8s_ai_rs_vec"
+    ],
+    "3": [
+      "package_json",
+      "streamk8s_package_dependencies",
+      "streamk8s_package_dependencies_lucide_vue_next",
+      "streamk8s_package_dependencies_marked",
+      "streamk8s_package_dependencies_tauri_apps_api",
+      "streamk8s_package_dependencies_tauri_apps_plugin_dialog",
+      "streamk8s_package_dependencies_tauri_apps_plugin_opener",
+      "streamk8s_package_dependencies_vue",
+      "streamk8s_package_devdependencies",
+      "streamk8s_package_devdependencies_tauri_apps_cli",
+      "streamk8s_package_devdependencies_typescript",
+      "streamk8s_package_devdependencies_vite",
+      "streamk8s_package_devdependencies_vitejs_plugin_vue",
+      "streamk8s_package_devdependencies_vue_tsc",
+      "streamk8s_package_name",
+      "streamk8s_package_private",
+      "streamk8s_package_scripts",
+      "streamk8s_package_scripts_build",
+      "streamk8s_package_scripts_dev",
+      "streamk8s_package_scripts_preview",
+      "streamk8s_package_scripts_tauri",
+      "streamk8s_package_scripts_tauri_linux",
+      "streamk8s_package_type",
+      "streamk8s_package_version"
+    ],
+    "4": [
+      "client",
+      "k8s_inspector_apply_resource_manifest",
+      "k8s_inspector_create_client",
+      "k8s_inspector_get_pod_events",
+      "k8s_inspector_get_resource_manifest",
+      "k8s_inspector_read_pod_file",
+      "k8s_inspector_write_pod_file",
+      "k8s_resources_get_configmaps",
+      "k8s_resources_get_deployments",
+      "k8s_resources_get_secrets",
+      "k8s_resources_get_services",
+      "k8s_resources_normalizedresource",
+      "src_tauri_src_k8s_inspector_rs",
+      "src_tauri_src_k8s_inspector_rs_option",
+      "src_tauri_src_k8s_inspector_rs_result",
+      "src_tauri_src_k8s_inspector_rs_string",
+      "src_tauri_src_k8s_resources_rs",
+      "src_tauri_src_k8s_resources_rs_option",
+      "src_tauri_src_k8s_resources_rs_result",
+      "src_tauri_src_k8s_resources_rs_string",
+      "src_tauri_src_k8s_resources_rs_vec",
+      "value"
+    ],
+    "5": [
+      "concept_ai_analysis",
+      "concept_smart_suspension",
+      "concept_wasm_plugin_system",
+      "hardware_collector",
+      "hardware_mod",
+      "hardware_profiler",
+      "k8s_ai",
+      "k8s_contexts",
+      "k8s_inspector",
+      "k8s_logs",
+      "k8s_mod",
+      "k8s_pods",
+      "k8s_resources",
+      "k8s_scaling",
+      "k8s_search",
+      "plugins_manager",
+      "plugins_mod",
+      "sdk_rust_lib",
+      "src_config",
+      "src_lib",
+      "src_main"
+    ],
+    "6": [
+      "streamk8s_tsconfig_compileroptions",
+      "streamk8s_tsconfig_compileroptions_allowimportingtsextensions",
+      "streamk8s_tsconfig_compileroptions_isolatedmodules",
+      "streamk8s_tsconfig_compileroptions_jsx",
+      "streamk8s_tsconfig_compileroptions_lib",
+      "streamk8s_tsconfig_compileroptions_module",
+      "streamk8s_tsconfig_compileroptions_moduleresolution",
+      "streamk8s_tsconfig_compileroptions_noemit",
+      "streamk8s_tsconfig_compileroptions_nofallthroughcasesinswitch",
+      "streamk8s_tsconfig_compileroptions_nounusedlocals",
+      "streamk8s_tsconfig_compileroptions_nounusedparameters",
+      "streamk8s_tsconfig_compileroptions_resolvejsonmodule",
+      "streamk8s_tsconfig_compileroptions_skiplibcheck",
+      "streamk8s_tsconfig_compileroptions_strict",
+      "streamk8s_tsconfig_compileroptions_target",
+      "streamk8s_tsconfig_compileroptions_usedefineforclassfields",
+      "streamk8s_tsconfig_include",
+      "streamk8s_tsconfig_references",
+      "tsconfig_json"
+    ],
+    "7": [
+      "engine",
+      "linker",
+      "plugins_manager_call_plugin_action",
+      "plugins_manager_create_linker",
+      "plugins_manager_execute_wasm_action",
+      "plugins_manager_extensioninfo",
+      "plugins_manager_get_installed_plugins",
+      "plugins_manager_get_plugin_dir",
+      "plugins_manager_install_plugin",
+      "plugins_manager_pluginmanifest",
+      "plugins_manager_uicomponent",
+      "plugins_manager_uiconfig",
+      "src_tauri_src_plugins_manager_rs",
+      "src_tauri_src_plugins_manager_rs_option",
+      "src_tauri_src_plugins_manager_rs_pathbuf",
+      "src_tauri_src_plugins_manager_rs_result",
+      "src_tauri_src_plugins_manager_rs_string",
+      "src_tauri_src_plugins_manager_rs_vec"
+    ],
+    "8": [
+      "rationale_ai_diagnostics",
+      "rationale_tauri_vue_bridge",
+      "rationale_wasm_plugins",
+      "src_app",
+      "src_components_activity_bar",
+      "src_components_advice_banner",
+      "src_components_cluster_hotbar",
+      "src_components_command_palette",
+      "src_components_gauge",
+      "src_components_inspector_panel",
+      "src_components_plugin_renderer",
+      "src_components_resource_table",
+      "src_components_resource_tree",
+      "src_components_sidebar",
+      "src_components_trend_chart",
+      "src_views_marketplace_view",
+      "src_views_settings_view",
+      "src_views_welcome_view"
+    ],
+    "9": [
+      "src_tauri_tauri_conf_app",
+      "src_tauri_tauri_conf_app_security",
+      "src_tauri_tauri_conf_app_windows",
+      "src_tauri_tauri_conf_build",
+      "src_tauri_tauri_conf_build_beforebuildcommand",
+      "src_tauri_tauri_conf_build_beforedevcommand",
+      "src_tauri_tauri_conf_build_devurl",
+      "src_tauri_tauri_conf_build_frontenddist",
+      "src_tauri_tauri_conf_bundle",
+      "src_tauri_tauri_conf_bundle_active",
+      "src_tauri_tauri_conf_bundle_icon",
+      "src_tauri_tauri_conf_bundle_targets",
+      "src_tauri_tauri_conf_identifier",
+      "src_tauri_tauri_conf_json",
+      "src_tauri_tauri_conf_productname",
+      "src_tauri_tauri_conf_schema",
+      "src_tauri_tauri_conf_security_csp",
+      "src_tauri_tauri_conf_version"
+    ],
+    "10": [
+      "schemas_acl_manifests_core",
+      "schemas_acl_manifests_core_app_default_permission",
+      "schemas_acl_manifests_core_default_permission",
+      "schemas_acl_manifests_core_event_default_permission",
+      "schemas_acl_manifests_core_global_scope_schema",
+      "schemas_acl_manifests_core_image",
+      "schemas_acl_manifests_core_image_default_permission",
+      "schemas_acl_manifests_core_image_global_scope_schema",
+      "schemas_acl_manifests_core_image_permission_sets",
+      "schemas_acl_manifests_core_menu",
+      "schemas_acl_manifests_core_menu_default_permission",
+      "schemas_acl_manifests_core_permission_sets",
+      "schemas_acl_manifests_core_permissions",
+      "schemas_acl_manifests_default_permission_description",
+      "schemas_acl_manifests_default_permission_identifier",
+      "schemas_acl_manifests_default_permission_permissions",
+      "src_tauri_gen_schemas_acl_manifests_json"
+    ],
+    "11": [
+      "doc_architecture",
+      "doc_claude",
+      "doc_contributing",
+      "doc_design_decisions",
+      "doc_faq",
+      "doc_gemini",
+      "doc_principles",
+      "doc_readme",
+      "doc_roadmap",
+      "doc_security",
+      "doc_structure",
+      "doc_support",
+      "root_architecture_bridge_pattern",
+      "root_architecture_command_query_separation",
+      "root_architecture_kiss",
+      "root_design_decisions_adr002"
+    ],
+    "12": [
+      "schemas_desktop_schema_application_anyof",
+      "schemas_desktop_schema_application_description",
+      "schemas_desktop_schema_definitions",
+      "schemas_desktop_schema_definitions_application",
+      "schemas_desktop_schema_definitions_number",
+      "schemas_desktop_schema_definitions_permissionentry",
+      "schemas_desktop_schema_definitions_target",
+      "schemas_desktop_schema_definitions_value",
+      "schemas_desktop_schema_number_anyof",
+      "schemas_desktop_schema_number_description",
+      "schemas_desktop_schema_permissionentry_anyof",
+      "schemas_desktop_schema_permissionentry_description",
+      "schemas_desktop_schema_target_description",
+      "schemas_desktop_schema_target_oneof",
+      "schemas_desktop_schema_value_anyof",
+      "schemas_desktop_schema_value_description"
+    ],
+    "13": [
+      "schemas_linux_schema_application_anyof",
+      "schemas_linux_schema_application_description",
+      "schemas_linux_schema_definitions",
+      "schemas_linux_schema_definitions_application",
+      "schemas_linux_schema_definitions_number",
+      "schemas_linux_schema_definitions_permissionentry",
+      "schemas_linux_schema_definitions_target",
+      "schemas_linux_schema_definitions_value",
+      "schemas_linux_schema_number_anyof",
+      "schemas_linux_schema_number_description",
+      "schemas_linux_schema_permissionentry_anyof",
+      "schemas_linux_schema_permissionentry_description",
+      "schemas_linux_schema_target_description",
+      "schemas_linux_schema_target_oneof",
+      "schemas_linux_schema_value_anyof",
+      "schemas_linux_schema_value_description"
+    ],
+    "14": [
+      "schemas_desktop_schema_capability_properties",
+      "schemas_desktop_schema_definitions_identifier",
+      "schemas_desktop_schema_description_default",
+      "schemas_desktop_schema_description_description",
+      "schemas_desktop_schema_description_type",
+      "schemas_desktop_schema_identifier_description",
+      "schemas_desktop_schema_identifier_oneof",
+      "schemas_desktop_schema_identifier_type",
+      "schemas_desktop_schema_properties_description",
+      "schemas_desktop_schema_properties_identifier",
+      "schemas_desktop_schema_properties_remote",
+      "schemas_desktop_schema_remote_anyof",
+      "schemas_desktop_schema_remote_description"
+    ],
+    "15": [
+      "schemas_linux_schema_capability_properties",
+      "schemas_linux_schema_definitions_identifier",
+      "schemas_linux_schema_description_default",
+      "schemas_linux_schema_description_description",
+      "schemas_linux_schema_description_type",
+      "schemas_linux_schema_identifier_description",
+      "schemas_linux_schema_identifier_oneof",
+      "schemas_linux_schema_identifier_type",
+      "schemas_linux_schema_properties_description",
+      "schemas_linux_schema_properties_identifier",
+      "schemas_linux_schema_properties_remote",
+      "schemas_linux_schema_remote_anyof",
+      "schemas_linux_schema_remote_description"
+    ],
+    "16": [
+      "plugin",
+      "sdk_rust_src_lib_rs",
+      "src_lib_get_resource_count",
+      "src_lib_myplugin",
+      "src_lib_myplugin_init",
+      "src_lib_myplugin_on_action",
+      "src_lib_notify",
+      "src_lib_plugin",
+      "streamk8s_sdk_get_resource_count",
+      "streamk8s_sdk_notify",
+      "streamk8s_sdk_plugin",
+      "streamk8s_sdk_register_plugin",
+      "templates_rust_plugin_src_lib_rs"
+    ],
+    "17": [
+      "default",
+      "self",
+      "src_config_appconfig",
+      "src_config_appconfig_default",
+      "src_config_get_config",
+      "src_config_get_config_path",
+      "src_config_save_config",
+      "src_tauri_src_config_rs",
+      "src_tauri_src_config_rs_apphandle",
+      "src_tauri_src_config_rs_pathbuf",
+      "src_tauri_src_config_rs_result",
+      "src_tauri_src_config_rs_string"
+    ],
+    "18": [
+      "schemas_acl_manifests_allow_create_default_commands",
+      "schemas_acl_manifests_allow_set_dock_visibility_commands",
+      "schemas_acl_manifests_allow_set_dock_visibility_description",
+      "schemas_acl_manifests_allow_set_dock_visibility_identifier",
+      "schemas_acl_manifests_commands_allow",
+      "schemas_acl_manifests_deny_items_commands",
+      "schemas_acl_manifests_deny_items_description",
+      "schemas_acl_manifests_deny_items_identifier",
+      "schemas_acl_manifests_permissions_allow_set_dock_visibility",
+      "schemas_acl_manifests_permissions_deny_items"
+    ],
+    "19": [
+      "schemas_desktop_schema_items_ref",
+      "schemas_desktop_schema_permissions_description",
+      "schemas_desktop_schema_permissions_items",
+      "schemas_desktop_schema_permissions_type",
+      "schemas_desktop_schema_permissions_uniqueitems",
+      "schemas_desktop_schema_platforms_description",
+      "schemas_desktop_schema_platforms_items",
+      "schemas_desktop_schema_platforms_type",
+      "schemas_desktop_schema_properties_permissions",
+      "schemas_desktop_schema_properties_platforms"
+    ],
+    "20": [
+      "schemas_desktop_schema_items_type",
+      "schemas_desktop_schema_properties_webviews",
+      "schemas_desktop_schema_properties_windows",
+      "schemas_desktop_schema_urls_items",
+      "schemas_desktop_schema_webviews_description",
+      "schemas_desktop_schema_webviews_items",
+      "schemas_desktop_schema_webviews_type",
+      "schemas_desktop_schema_windows_description",
+      "schemas_desktop_schema_windows_items",
+      "schemas_desktop_schema_windows_type"
+    ],
+    "21": [
+      "schemas_linux_schema_items_ref",
+      "schemas_linux_schema_permissions_description",
+      "schemas_linux_schema_permissions_items",
+      "schemas_linux_schema_permissions_type",
+      "schemas_linux_schema_permissions_uniqueitems",
+      "schemas_linux_schema_platforms_description",
+      "schemas_linux_schema_platforms_items",
+      "schemas_linux_schema_platforms_type",
+      "schemas_linux_schema_properties_permissions",
+      "schemas_linux_schema_properties_platforms"
+    ],
+    "22": [
+      "schemas_linux_schema_items_type",
+      "schemas_linux_schema_properties_webviews",
+      "schemas_linux_schema_properties_windows",
+      "schemas_linux_schema_urls_items",
+      "schemas_linux_schema_webviews_description",
+      "schemas_linux_schema_webviews_items",
+      "schemas_linux_schema_webviews_type",
+      "schemas_linux_schema_windows_description",
+      "schemas_linux_schema_windows_items",
+      "schemas_linux_schema_windows_type"
+    ],
+    "23": [
+      "schemas_acl_manifests_allow_app_hide_commands",
+      "schemas_acl_manifests_allow_app_hide_description",
+      "schemas_acl_manifests_allow_app_hide_identifier",
+      "schemas_acl_manifests_allow_app_show_commands",
+      "schemas_acl_manifests_allow_app_show_description",
+      "schemas_acl_manifests_allow_app_show_identifier",
+      "schemas_acl_manifests_commands_deny",
+      "schemas_acl_manifests_permissions_allow_app_hide",
+      "schemas_acl_manifests_permissions_allow_app_show"
+    ],
+    "24": [
+      "schemas_acl_manifests_allow_register_listener_commands",
+      "schemas_acl_manifests_allow_register_listener_description",
+      "schemas_acl_manifests_allow_register_listener_identifier",
+      "schemas_acl_manifests_deny_set_app_theme_commands",
+      "schemas_acl_manifests_deny_set_app_theme_description",
+      "schemas_acl_manifests_deny_set_app_theme_identifier",
+      "schemas_acl_manifests_permissions_allow_register_listener",
+      "schemas_acl_manifests_permissions_deny_set_app_theme"
+    ],
+    "25": [
+      "schemas_acl_manifests_allow_create_default_description",
+      "schemas_acl_manifests_allow_create_default_identifier",
+      "schemas_acl_manifests_allow_prepend_commands",
+      "schemas_acl_manifests_allow_prepend_description",
+      "schemas_acl_manifests_allow_prepend_identifier",
+      "schemas_acl_manifests_core_menu_permissions",
+      "schemas_acl_manifests_permissions_allow_create_default",
+      "schemas_acl_manifests_permissions_allow_prepend"
+    ],
+    "26": [
+      "schemas_desktop_schema_capabilityremote_description",
+      "schemas_desktop_schema_capabilityremote_properties",
+      "schemas_desktop_schema_capabilityremote_required",
+      "schemas_desktop_schema_capabilityremote_type",
+      "schemas_desktop_schema_definitions_capabilityremote",
+      "schemas_desktop_schema_properties_urls",
+      "schemas_desktop_schema_urls_description",
+      "schemas_desktop_schema_urls_type"
+    ],
+    "27": [
+      "schemas_linux_schema_capabilityremote_description",
+      "schemas_linux_schema_capabilityremote_properties",
+      "schemas_linux_schema_capabilityremote_required",
+      "schemas_linux_schema_capabilityremote_type",
+      "schemas_linux_schema_definitions_capabilityremote",
+      "schemas_linux_schema_properties_urls",
+      "schemas_linux_schema_urls_description",
+      "schemas_linux_schema_urls_type"
+    ],
+    "28": [
+      "hardware_collector_collect_metrics",
+      "hardware_collector_systemmetrics",
+      "nvml",
+      "src_lib_run",
+      "src_tauri_src_hardware_collector_rs",
+      "src_tauri_src_hardware_collector_rs_option",
+      "src_tauri_src_hardware_collector_rs_system",
+      "src_tauri_src_lib_rs"
+    ],
+    "29": [
+      "streamk8s_tsconfig_node_compileroptions",
+      "streamk8s_tsconfig_node_compileroptions_allowsyntheticdefaultimports",
+      "streamk8s_tsconfig_node_compileroptions_composite",
+      "streamk8s_tsconfig_node_compileroptions_module",
+      "streamk8s_tsconfig_node_compileroptions_moduleresolution",
+      "streamk8s_tsconfig_node_compileroptions_skiplibcheck",
+      "streamk8s_tsconfig_node_include",
+      "tsconfig_node_json"
+    ],
+    "30": [
+      "k8s_pods_get_pods",
+      "k8s_pods_podinfo",
+      "src_tauri_src_k8s_pods_rs",
+      "src_tauri_src_k8s_pods_rs_option",
+      "src_tauri_src_k8s_pods_rs_result",
+      "src_tauri_src_k8s_pods_rs_string",
+      "src_tauri_src_k8s_pods_rs_vec"
+    ],
+    "31": [
+      "schemas_capabilities_default",
+      "schemas_capabilities_default_description",
+      "schemas_capabilities_default_identifier",
+      "schemas_capabilities_default_local",
+      "schemas_capabilities_default_permissions",
+      "schemas_capabilities_default_windows",
+      "src_tauri_gen_schemas_capabilities_json"
+    ],
+    "32": [
+      "k8s_search_global_search",
+      "k8s_search_searchresult",
+      "src_tauri_src_k8s_search_rs",
+      "src_tauri_src_k8s_search_rs_option",
+      "src_tauri_src_k8s_search_rs_result",
+      "src_tauri_src_k8s_search_rs_string",
+      "src_tauri_src_k8s_search_rs_vec"
+    ],
+    "33": [
+      "k8s_logs_start_log_stream",
+      "src_tauri_src_k8s_logs_rs",
+      "src_tauri_src_k8s_logs_rs_apphandle",
+      "src_tauri_src_k8s_logs_rs_option",
+      "src_tauri_src_k8s_logs_rs_result",
+      "src_tauri_src_k8s_logs_rs_string"
+    ],
+    "34": [
+      "capabilities_default_description",
+      "capabilities_default_identifier",
+      "capabilities_default_permissions",
+      "capabilities_default_schema",
+      "capabilities_default_windows",
+      "src_tauri_capabilities_default_json"
+    ],
+    "35": [
+      "hardware_profiler_profiler",
+      "hardware_profiler_profiler_scan_heavy_apps",
+      "src_tauri_src_hardware_profiler_rs",
+      "src_tauri_src_hardware_profiler_rs_string",
+      "src_tauri_src_hardware_profiler_rs_system",
+      "src_tauri_src_hardware_profiler_rs_vec"
+    ],
+    "36": [
+      "k8s_contexts_clustercontext",
+      "k8s_contexts_get_available_contexts",
+      "src_tauri_src_k8s_contexts_rs",
+      "src_tauri_src_k8s_contexts_rs_result",
+      "src_tauri_src_k8s_contexts_rs_string",
+      "src_tauri_src_k8s_contexts_rs_vec"
+    ],
+    "37": [
+      "schemas_desktop_schema_anyof",
+      "schemas_desktop_schema_description",
+      "schemas_desktop_schema_schema",
+      "schemas_desktop_schema_title",
+      "src_tauri_gen_schemas_desktop_schema_json"
+    ],
+    "38": [
+      "schemas_linux_schema_anyof",
+      "schemas_linux_schema_description",
+      "schemas_linux_schema_schema",
+      "schemas_linux_schema_title",
+      "src_tauri_gen_schemas_linux_schema_json"
+    ],
+    "39": [
+      "k8s_scaling_scale_workload",
+      "src_tauri_src_k8s_scaling_rs",
+      "src_tauri_src_k8s_scaling_rs_option",
+      "src_tauri_src_k8s_scaling_rs_result",
+      "src_tauri_src_k8s_scaling_rs_string"
+    ],
+    "40": [
+      "github_workflows_badges",
+      "locales_readme_ja",
+      "locales_readme_th",
+      "locales_readme_zh"
+    ],
+    "41": [
+      "schemas_acl_manifests_allow_bundle_type_commands",
+      "schemas_acl_manifests_allow_bundle_type_description",
+      "schemas_acl_manifests_allow_bundle_type_identifier",
+      "schemas_acl_manifests_permissions_allow_bundle_type"
+    ],
+    "42": [
+      "schemas_acl_manifests_allow_default_window_icon_commands",
+      "schemas_acl_manifests_allow_default_window_icon_description",
+      "schemas_acl_manifests_allow_default_window_icon_identifier",
+      "schemas_acl_manifests_permissions_allow_default_window_icon"
+    ],
+    "43": [
+      "schemas_acl_manifests_allow_fetch_data_store_identifiers_commands",
+      "schemas_acl_manifests_allow_fetch_data_store_identifiers_description",
+      "schemas_acl_manifests_allow_fetch_data_store_identifiers_identifier",
+      "schemas_acl_manifests_permissions_allow_fetch_data_store_identifiers"
+    ],
+    "44": [
+      "schemas_acl_manifests_allow_name_commands",
+      "schemas_acl_manifests_allow_name_description",
+      "schemas_acl_manifests_allow_name_identifier",
+      "schemas_acl_manifests_permissions_allow_name"
+    ],
+    "45": [
+      "schemas_acl_manifests_allow_tauri_version_commands",
+      "schemas_acl_manifests_allow_tauri_version_description",
+      "schemas_acl_manifests_allow_tauri_version_identifier",
+      "schemas_acl_manifests_permissions_allow_tauri_version"
+    ],
+    "46": [
+      "schemas_acl_manifests_core_app",
+      "schemas_acl_manifests_core_app_global_scope_schema",
+      "schemas_acl_manifests_core_app_permission_sets",
+      "schemas_acl_manifests_core_app_permissions"
+    ],
+    "47": [
+      "schemas_acl_manifests_deny_identifier_commands",
+      "schemas_acl_manifests_deny_identifier_description",
+      "schemas_acl_manifests_deny_identifier_identifier",
+      "schemas_acl_manifests_permissions_deny_identifier"
+    ],
+    "48": [
+      "schemas_acl_manifests_deny_name_commands",
+      "schemas_acl_manifests_deny_name_description",
+      "schemas_acl_manifests_deny_name_identifier",
+      "schemas_acl_manifests_permissions_deny_name"
+    ],
+    "49": [
+      "schemas_acl_manifests_deny_set_dock_visibility_commands",
+      "schemas_acl_manifests_deny_set_dock_visibility_description",
+      "schemas_acl_manifests_deny_set_dock_visibility_identifier",
+      "schemas_acl_manifests_permissions_deny_set_dock_visibility"
+    ],
+    "50": [
+      "schemas_acl_manifests_allow_identifier_commands",
+      "schemas_acl_manifests_allow_identifier_description",
+      "schemas_acl_manifests_allow_identifier_identifier",
+      "schemas_acl_manifests_permissions_allow_identifier"
+    ],
+    "51": [
+      "schemas_acl_manifests_allow_remove_data_store_commands",
+      "schemas_acl_manifests_allow_remove_data_store_description",
+      "schemas_acl_manifests_allow_remove_data_store_identifier",
+      "schemas_acl_manifests_permissions_allow_remove_data_store"
+    ],
+    "52": [
+      "schemas_acl_manifests_allow_remove_listener_commands",
+      "schemas_acl_manifests_allow_remove_listener_description",
+      "schemas_acl_manifests_allow_remove_listener_identifier",
+      "schemas_acl_manifests_permissions_allow_remove_listener"
+    ],
+    "53": [
+      "schemas_acl_manifests_allow_set_app_theme_commands",
+      "schemas_acl_manifests_allow_set_app_theme_description",
+      "schemas_acl_manifests_allow_set_app_theme_identifier",
+      "schemas_acl_manifests_permissions_allow_set_app_theme"
+    ],
+    "54": [
+      "schemas_acl_manifests_allow_supports_multiple_windows_commands",
+      "schemas_acl_manifests_allow_supports_multiple_windows_description",
+      "schemas_acl_manifests_allow_supports_multiple_windows_identifier",
+      "schemas_acl_manifests_permissions_allow_supports_multiple_windows"
+    ],
+    "55": [
+      "schemas_acl_manifests_allow_version_commands",
+      "schemas_acl_manifests_allow_version_description",
+      "schemas_acl_manifests_allow_version_identifier",
+      "schemas_acl_manifests_permissions_allow_version"
+    ],
+    "56": [
+      "schemas_acl_manifests_deny_app_hide_commands",
+      "schemas_acl_manifests_deny_app_hide_description",
+      "schemas_acl_manifests_deny_app_hide_identifier",
+      "schemas_acl_manifests_permissions_deny_app_hide"
+    ],
+    "57": [
+      "schemas_acl_manifests_deny_bundle_type_commands",
+      "schemas_acl_manifests_deny_bundle_type_description",
+      "schemas_acl_manifests_deny_bundle_type_identifier",
+      "schemas_acl_manifests_permissions_deny_bundle_type"
+    ],
+    "58": [
+      "schemas_acl_manifests_deny_default_window_icon_commands",
+      "schemas_acl_manifests_deny_default_window_icon_description",
+      "schemas_acl_manifests_deny_default_window_icon_identifier",
+      "schemas_acl_manifests_permissions_deny_default_window_icon"
+    ],
+    "59": [
+      "schemas_acl_manifests_deny_fetch_data_store_identifiers_commands",
+      "schemas_acl_manifests_deny_fetch_data_store_identifiers_description",
+      "schemas_acl_manifests_deny_fetch_data_store_identifiers_identifier",
+      "schemas_acl_manifests_permissions_deny_fetch_data_store_identifiers"
+    ],
+    "60": [
+      "schemas_acl_manifests_deny_register_listener_commands",
+      "schemas_acl_manifests_deny_register_listener_description",
+      "schemas_acl_manifests_deny_register_listener_identifier",
+      "schemas_acl_manifests_permissions_deny_register_listener"
+    ],
+    "61": [
+      "schemas_acl_manifests_deny_remove_data_store_commands",
+      "schemas_acl_manifests_deny_remove_data_store_description",
+      "schemas_acl_manifests_deny_remove_data_store_identifier",
+      "schemas_acl_manifests_permissions_deny_remove_data_store"
+    ],
+    "62": [
+      "schemas_acl_manifests_deny_remove_listener_commands",
+      "schemas_acl_manifests_deny_remove_listener_description",
+      "schemas_acl_manifests_deny_remove_listener_identifier",
+      "schemas_acl_manifests_permissions_deny_remove_listener"
+    ],
+    "63": [
+      "schemas_acl_manifests_deny_supports_multiple_windows_commands",
+      "schemas_acl_manifests_deny_supports_multiple_windows_description",
+      "schemas_acl_manifests_deny_supports_multiple_windows_identifier",
+      "schemas_acl_manifests_permissions_deny_supports_multiple_windows"
+    ],
+    "64": [
+      "schemas_acl_manifests_deny_tauri_version_commands",
+      "schemas_acl_manifests_deny_tauri_version_description",
+      "schemas_acl_manifests_deny_tauri_version_identifier",
+      "schemas_acl_manifests_permissions_deny_tauri_version"
+    ],
+    "65": [
+      "schemas_acl_manifests_deny_version_commands",
+      "schemas_acl_manifests_deny_version_description",
+      "schemas_acl_manifests_deny_version_identifier",
+      "schemas_acl_manifests_permissions_deny_version"
+    ],
+    "66": [
+      "schemas_acl_manifests_allow_append_commands",
+      "schemas_acl_manifests_allow_append_description",
+      "schemas_acl_manifests_allow_append_identifier",
+      "schemas_acl_manifests_permissions_allow_append"
+    ],
+    "67": [
+      "schemas_acl_manifests_allow_is_checked_commands",
+      "schemas_acl_manifests_allow_is_checked_description",
+      "schemas_acl_manifests_allow_is_checked_identifier",
+      "schemas_acl_manifests_permissions_allow_is_checked"
+    ],
+    "68": [
+      "schemas_acl_manifests_allow_is_enabled_commands",
+      "schemas_acl_manifests_allow_is_enabled_description",
+      "schemas_acl_manifests_allow_is_enabled_identifier",
+      "schemas_acl_manifests_permissions_allow_is_enabled"
+    ],
+    "69": [
+      "schemas_acl_manifests_allow_items_commands",
+      "schemas_acl_manifests_allow_items_description",
+      "schemas_acl_manifests_allow_items_identifier",
+      "schemas_acl_manifests_permissions_allow_items"
+    ],
+    "70": [
+      "schemas_acl_manifests_allow_new_commands",
+      "schemas_acl_manifests_allow_new_description",
+      "schemas_acl_manifests_allow_new_identifier",
+      "schemas_acl_manifests_permissions_allow_new"
+    ],
+    "71": [
+      "schemas_acl_manifests_allow_remove_at_commands",
+      "schemas_acl_manifests_allow_remove_at_description",
+      "schemas_acl_manifests_allow_remove_at_identifier",
+      "schemas_acl_manifests_permissions_allow_remove_at"
+    ],
+    "72": [
+      "schemas_acl_manifests_allow_set_accelerator_commands",
+      "schemas_acl_manifests_allow_set_accelerator_description",
+      "schemas_acl_manifests_allow_set_accelerator_identifier",
+      "schemas_acl_manifests_permissions_allow_set_accelerator"
+    ],
+    "73": [
+      "schemas_acl_manifests_allow_set_as_app_menu_commands",
+      "schemas_acl_manifests_allow_set_as_app_menu_description",
+      "schemas_acl_manifests_allow_set_as_app_menu_identifier",
+      "schemas_acl_manifests_permissions_allow_set_as_app_menu"
+    ],
+    "74": [
+      "schemas_acl_manifests_allow_set_as_window_menu_commands",
+      "schemas_acl_manifests_allow_set_as_window_menu_description",
+      "schemas_acl_manifests_allow_set_as_window_menu_identifier",
+      "schemas_acl_manifests_permissions_allow_set_as_window_menu"
+    ],
+    "75": [
+      "schemas_acl_manifests_allow_set_text_commands",
+      "schemas_acl_manifests_allow_set_text_description",
+      "schemas_acl_manifests_allow_set_text_identifier",
+      "schemas_acl_manifests_permissions_allow_set_text"
+    ],
+    "76": [
+      "schemas_acl_manifests_deny_append_commands",
+      "schemas_acl_manifests_deny_append_description",
+      "schemas_acl_manifests_deny_append_identifier",
+      "schemas_acl_manifests_permissions_deny_append"
+    ],
+    "77": [
+      "schemas_acl_manifests_deny_insert_commands",
+      "schemas_acl_manifests_deny_insert_description",
+      "schemas_acl_manifests_deny_insert_identifier",
+      "schemas_acl_manifests_permissions_deny_insert"
+    ],
+    "78": [
+      "schemas_acl_manifests_deny_is_enabled_commands",
+      "schemas_acl_manifests_deny_is_enabled_description",
+      "schemas_acl_manifests_deny_is_enabled_identifier",
+      "schemas_acl_manifests_permissions_deny_is_enabled"
+    ],
+    "79": [
+      "schemas_acl_manifests_allow_get_commands",
+      "schemas_acl_manifests_allow_get_description",
+      "schemas_acl_manifests_allow_get_identifier",
+      "schemas_acl_manifests_permissions_allow_get"
+    ],
+    "80": [
+      "schemas_acl_manifests_allow_insert_commands",
+      "schemas_acl_manifests_allow_insert_description",
+      "schemas_acl_manifests_allow_insert_identifier",
+      "schemas_acl_manifests_permissions_allow_insert"
+    ],
+    "81": [
+      "schemas_acl_manifests_allow_popup_commands",
+      "schemas_acl_manifests_allow_popup_description",
+      "schemas_acl_manifests_allow_popup_identifier",
+      "schemas_acl_manifests_permissions_allow_popup"
+    ],
+    "82": [
+      "schemas_acl_manifests_allow_remove_commands",
+      "schemas_acl_manifests_allow_remove_description",
+      "schemas_acl_manifests_allow_remove_identifier",
+      "schemas_acl_manifests_permissions_allow_remove"
+    ],
+    "83": [
+      "schemas_acl_manifests_allow_set_as_help_menu_for_nsapp_commands",
+      "schemas_acl_manifests_allow_set_as_help_menu_for_nsapp_description",
+      "schemas_acl_manifests_allow_set_as_help_menu_for_nsapp_identifier",
+      "schemas_acl_manifests_permissions_allow_set_as_help_menu_for_nsapp"
+    ],
+    "84": [
+      "schemas_acl_manifests_allow_set_as_windows_menu_for_nsapp_commands",
+      "schemas_acl_manifests_allow_set_as_windows_menu_for_nsapp_description",
+      "schemas_acl_manifests_allow_set_as_windows_menu_for_nsapp_identifier",
+      "schemas_acl_manifests_permissions_allow_set_as_windows_menu_for_nsapp"
+    ],
+    "85": [
+      "schemas_acl_manifests_allow_set_checked_commands",
+      "schemas_acl_manifests_allow_set_checked_description",
+      "schemas_acl_manifests_allow_set_checked_identifier",
+      "schemas_acl_manifests_permissions_allow_set_checked"
+    ],
+    "86": [
+      "schemas_acl_manifests_allow_set_enabled_commands",
+      "schemas_acl_manifests_allow_set_enabled_description",
+      "schemas_acl_manifests_allow_set_enabled_identifier",
+      "schemas_acl_manifests_permissions_allow_set_enabled"
+    ],
+    "87": [
+      "schemas_acl_manifests_allow_set_icon_commands",
+      "schemas_acl_manifests_allow_set_icon_description",
+      "schemas_acl_manifests_allow_set_icon_identifier",
+      "schemas_acl_manifests_permissions_allow_set_icon"
+    ],
+    "88": [
+      "schemas_acl_manifests_allow_text_commands",
+      "schemas_acl_manifests_allow_text_description",
+      "schemas_acl_manifests_allow_text_identifier",
+      "schemas_acl_manifests_permissions_allow_text"
+    ],
+    "89": [
+      "schemas_acl_manifests_deny_app_show_commands",
+      "schemas_acl_manifests_deny_app_show_description",
+      "schemas_acl_manifests_deny_app_show_identifier",
+      "schemas_acl_manifests_permissions_deny_app_show"
+    ],
+    "90": [
+      "schemas_acl_manifests_deny_create_default_commands",
+      "schemas_acl_manifests_deny_create_default_description",
+      "schemas_acl_manifests_deny_create_default_identifier",
+      "schemas_acl_manifests_permissions_deny_create_default"
+    ],
+    "91": [
+      "schemas_acl_manifests_deny_get_commands",
+      "schemas_acl_manifests_deny_get_description",
+      "schemas_acl_manifests_deny_get_identifier",
+      "schemas_acl_manifests_permissions_deny_get"
+    ],
+    "92": [
+      "schemas_acl_manifests_deny_is_checked_commands",
+      "schemas_acl_manifests_deny_is_checked_description",
+      "schemas_acl_manifests_deny_is_checked_identifier",
+      "schemas_acl_manifests_permissions_deny_is_checked"
+    ],
+    "93": [
+      "schemas_desktop_schema_capability_description",
+      "schemas_desktop_schema_capability_required",
+      "schemas_desktop_schema_capability_type",
+      "schemas_desktop_schema_definitions_capability"
+    ],
+    "94": [
+      "schemas_desktop_schema_local_default",
+      "schemas_desktop_schema_local_description",
+      "schemas_desktop_schema_local_type",
+      "schemas_desktop_schema_properties_local"
+    ],
+    "95": [
+      "schemas_linux_schema_capability_description",
+      "schemas_linux_schema_capability_required",
+      "schemas_linux_schema_capability_type",
+      "schemas_linux_schema_definitions_capability"
+    ],
+    "96": [
+      "schemas_linux_schema_local_default",
+      "schemas_linux_schema_local_description",
+      "schemas_linux_schema_local_type",
+      "schemas_linux_schema_properties_local"
+    ],
+    "97": [
+      "srctauri_icons_icon_icon",
+      "srctauri_icons_square71x71logo_icon",
+      "srctauri_icons_square89x89logo_icon",
+      "srctauri_icons_storelogo_icon"
+    ],
+    "98": [
+      "concept_wasm_plugin",
+      "docs_developer_guide",
+      "rationale_extension_abi"
+    ],
+    "99": [
+      "github_pull_request_template",
+      "rationale_monkey_proof",
+      "rationale_os_k8s_bridge"
+    ],
+    "100": [
+      "root_package_json",
+      "root_vite_config",
+      "src_tauri_tauri_conf"
+    ],
+    "101": [
+      "root_index_html",
+      "src_app_vue",
+      "src_main_ts"
+    ],
+    "102": [
+      "components_commandpalette_if",
+      "src_components_commandpalette_vue"
+    ],
+    "103": [
+      "doc_deployment_guide",
+      "doc_troubleshooting"
+    ],
+    "104": [
+      "github_issue_template_bug_report",
+      "github_issue_template_feature_request"
+    ],
+    "105": [
+      "github_labeler",
+      "github_workflows_pr_automation"
+    ],
+    "106": [
+      "home_mrbt_desktop_workspaces_k8s_ide_repositories_streamk8s_templates_rust_plugin_build_sh__entry",
+      "templates_rust_plugin_build_sh"
+    ],
+    "107": [
+      "src_main_main",
+      "src_tauri_src_main_rs"
+    ],
+    "108": [
+      "src_tauri_build_main",
+      "src_tauri_build_rs"
+    ],
+    "109": [
+      "vscode_extensions_json",
+      "vscode_extensions_recommendations"
+    ],
+    "110": [
+      "vite_config_ts"
+    ],
+    "111": [
+      "src_vite_env_d_ts"
+    ],
+    "112": [
+      "src_components_gauge_vue"
+    ],
+    "113": [
+      "src_components_trendchart_vue"
+    ],
+    "114": [
+      "src_components_advicebanner_vue"
+    ],
+    "115": [
+      "src_components_podlist_vue"
+    ],
+    "116": [
+      "src_components_clusterhotbar_vue"
+    ],
+    "117": [
+      "src_components_resourcetable_vue"
+    ],
+    "118": [
+      "src_components_resourcetree_vue"
+    ],
+    "119": [
+      "src_components_sidebar_vue"
+    ],
+    "120": [
+      "src_components_activitybar_vue"
+    ],
+    "121": [
+      "src_components_inspectorpanel_vue"
+    ],
+    "122": [
+      "src_components_pluginrenderer_vue"
+    ],
+    "123": [
+      "src_views_clusterview_vue"
+    ],
+    "124": [
+      "src_views_settingsview_vue"
+    ],
+    "125": [
+      "src_views_welcomeview_vue"
+    ],
+    "126": [
+      "src_views_marketplaceview_vue"
+    ],
+    "127": [
+      "src_tauri_src_hardware_mod_rs"
+    ],
+    "128": [
+      "src_tauri_src_k8s_mod_rs"
+    ],
+    "129": [
+      "src_tauri_src_plugins_mod_rs"
+    ],
+    "130": [
+      "root_design_decisions_adr001"
+    ],
+    "131": [
+      "root_manifesto_monkey_proof"
+    ],
+    "132": [
+      "root_manifesto_intelligent_bridge"
+    ],
+    "133": [
+      "root_pr_body_pluginmanager"
+    ],
+    "134": [
+      "root_pr_body_geminiprovider"
+    ],
+    "135": [
+      "root_pr_body_marketplaceview"
+    ],
+    "136": [
+      "root_pr_body_pluginrenderer"
+    ],
+    "137": [
+      "github_workflows_ci"
+    ],
+    "138": [
+      "github_workflows_security"
+    ],
+    "139": [
+      "public_tauri_svg"
+    ],
+    "140": [
+      "public_vite_svg"
+    ],
+    "141": [
+      "src_assets_vue_svg"
+    ]
+  },
+  "cohesion": {
+    "0": 0.05405405405405406,
+    "1": 0.05555555555555555,
+    "2": 0.14333333333333334,
+    "3": 0.08333333333333333,
+    "4": 0.2683982683982684,
+    "5": 0.14761904761904762,
+    "6": 0.10526315789473684,
+    "7": 0.23529411764705882,
+    "8": 0.1111111111111111,
+    "9": 0.1111111111111111,
+    "10": 0.19117647058823528,
+    "11": 0.15833333333333333,
+    "12": 0.125,
+    "13": 0.125,
+    "14": 0.15384615384615385,
+    "15": 0.15384615384615385,
+    "16": 0.1794871794871795,
+    "17": 0.36363636363636365,
+    "18": 0.2,
+    "19": 0.2,
+    "20": 0.2,
+    "21": 0.2,
+    "22": 0.2,
+    "23": 0.2222222222222222,
+    "24": 0.21428571428571427,
+    "25": 0.25,
+    "26": 0.25,
+    "27": 0.25,
+    "28": 0.42857142857142855,
+    "29": 0.25,
+    "30": 0.38095238095238093,
+    "31": 0.2857142857142857,
+    "32": 0.38095238095238093,
+    "33": 0.3333333333333333,
+    "34": 0.3333333333333333,
+    "35": 0.4,
+    "36": 0.4666666666666667,
+    "37": 0.4,
+    "38": 0.4,
+    "39": 0.4,
+    "40": 0.8333333333333334,
+    "41": 0.5,
+    "42": 0.5,
+    "43": 0.5,
+    "44": 0.5,
+    "45": 0.5,
+    "46": 0.5,
+    "47": 0.5,
+    "48": 0.5,
+    "49": 0.5,
+    "50": 0.5,
+    "51": 0.5,
+    "52": 0.5,
+    "53": 0.5,
+    "54": 0.5,
+    "55": 0.5,
+    "56": 0.5,
+    "57": 0.5,
+    "58": 0.5,
+    "59": 0.5,
+    "60": 0.5,
+    "61": 0.5,
+    "62": 0.5,
+    "63": 0.5,
+    "64": 0.5,
+    "65": 0.5,
+    "66": 0.5,
+    "67": 0.5,
+    "68": 0.5,
+    "69": 0.5,
+    "70": 0.5,
+    "71": 0.5,
+    "72": 0.5,
+    "73": 0.5,
+    "74": 0.5,
+    "75": 0.5,
+    "76": 0.5,
+    "77": 0.5,
+    "78": 0.5,
+    "79": 0.5,
+    "80": 0.5,
+    "81": 0.5,
+    "82": 0.5,
+    "83": 0.5,
+    "84": 0.5,
+    "85": 0.5,
+    "86": 0.5,
+    "87": 0.5,
+    "88": 0.5,
+    "89": 0.5,
+    "90": 0.5,
+    "91": 0.5,
+    "92": 0.5,
+    "93": 0.5,
+    "94": 0.5,
+    "95": 0.5,
+    "96": 0.5,
+    "97": 0.5,
+    "98": 0.6666666666666666,
+    "99": 0.6666666666666666,
+    "100": 0.6666666666666666,
+    "101": 0.6666666666666666,
+    "102": 1.0,
+    "103": 1.0,
+    "104": 1.0,
+    "105": 1.0,
+    "106": 1.0,
+    "107": 1.0,
+    "108": 1.0,
+    "109": 1.0,
+    "110": 1.0,
+    "111": 1.0,
+    "112": 1.0,
+    "113": 1.0,
+    "114": 1.0,
+    "115": 1.0,
+    "116": 1.0,
+    "117": 1.0,
+    "118": 1.0,
+    "119": 1.0,
+    "120": 1.0,
+    "121": 1.0,
+    "122": 1.0,
+    "123": 1.0,
+    "124": 1.0,
+    "125": 1.0,
+    "126": 1.0,
+    "127": 1.0,
+    "128": 1.0,
+    "129": 1.0,
+    "130": 1.0,
+    "131": 1.0,
+    "132": 1.0,
+    "133": 1.0,
+    "134": 1.0,
+    "135": 1.0,
+    "136": 1.0,
+    "137": 1.0,
+    "138": 1.0,
+    "139": 1.0,
+    "140": 1.0,
+    "141": 1.0
+  },
+  "gods": [
+    {
+      "id": "schemas_acl_manifests_commands_allow",
+      "label": "allow",
+      "degree": 76
+    },
+    {
+      "id": "schemas_acl_manifests_commands_deny",
+      "label": "deny",
+      "degree": 76
+    },
+    {
+      "id": "schemas_acl_manifests_core_app_permissions",
+      "label": "permissions",
+      "degree": 31
+    },
+    {
+      "id": "schemas_acl_manifests_core_menu_permissions",
+      "label": "permissions",
+      "degree": 30
+    },
+    {
+      "id": "streamk8s_tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 16
+    },
+    {
+      "id": "src_app",
+      "label": "App Root Component",
+      "degree": 15
+    },
+    {
+      "id": "k8s_inspector_create_client",
+      "label": "create_client()",
+      "degree": 14
+    },
+    {
+      "id": "src_lib",
+      "label": "lib.rs (streamk8s_lib)",
+      "degree": 14
+    },
+    {
+      "id": "schemas_acl_manifests_core_image_permissions",
+      "label": "permissions",
+      "degree": 11
+    },
+    {
+      "id": "schemas_acl_manifests_core_event_permissions",
+      "label": "permissions",
+      "degree": 9
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Package Manifest",
+      "target": "Tauri Configuration",
+      "source_files": [
+        "package.json",
+        "src-tauri/tauri.conf.json"
+      ],
+      "confidence": "INFERRED",
+      "relation": "conceptually_related_to",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "Vite Configuration",
+      "target": "Tauri Configuration",
+      "source_files": [
+        "vite.config.ts",
+        "src-tauri/tauri.conf.json"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "Frontend Entry Point",
+      "target": "lib.rs (streamk8s_lib)",
+      "source_files": [
+        "src/main.ts",
+        "src-tauri/src/lib.rs"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "connects across different repos/directories; peripheral node `Frontend Entry Point` unexpectedly reaches hub `lib.rs (streamk8s_lib)`"
+    },
+    {
+      "source": "sdk/rust/lib.rs",
+      "target": "WASM Plugin Execution",
+      "source_files": [
+        "sdk/rust/src/lib.rs",
+        "src-tauri/src/plugins/manager.rs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "conceptually_related_to",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "run()",
+      "target": "collect_metrics()",
+      "source_files": [
+        "src-tauri/src/lib.rs",
+        "src-tauri/src/hardware/collector.rs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; peripheral node `run()` unexpectedly reaches hub `collect_metrics()`"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `allow` connect `Community 18` to `Community 0`, `Community 1`, `Community 23`, `Community 24`, `Community 25`, `Community 41`, `Community 42`, `Community 43`, `Community 44`, `Community 45`, `Community 47`, `Community 48`, `Community 49`, `Community 50`, `Community 51`, `Community 52`, `Community 53`, `Community 54`, `Community 55`, `Community 56`, `Community 57`, `Community 58`, `Community 59`, `Community 60`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 66`, `Community 67`, `Community 68`, `Community 69`, `Community 70`, `Community 71`, `Community 72`, `Community 73`, `Community 74`, `Community 75`, `Community 76`, `Community 77`, `Community 78`, `Community 79`, `Community 80`, `Community 81`, `Community 82`, `Community 83`, `Community 84`, `Community 85`, `Community 86`, `Community 87`, `Community 88`, `Community 89`, `Community 90`, `Community 91`, `Community 92`?",
+      "why": "High betweenness centrality (0.055) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `deny` connect `Community 23` to `Community 0`, `Community 1`, `Community 18`, `Community 24`, `Community 25`, `Community 41`, `Community 42`, `Community 43`, `Community 44`, `Community 45`, `Community 47`, `Community 48`, `Community 49`, `Community 50`, `Community 51`, `Community 52`, `Community 53`, `Community 54`, `Community 55`, `Community 56`, `Community 57`, `Community 58`, `Community 59`, `Community 60`, `Community 61`, `Community 62`, `Community 63`, `Community 64`, `Community 65`, `Community 66`, `Community 67`, `Community 68`, `Community 69`, `Community 70`, `Community 71`, `Community 72`, `Community 73`, `Community 74`, `Community 75`, `Community 76`, `Community 77`, `Community 78`, `Community 79`, `Community 80`, `Community 81`, `Community 82`, `Community 83`, `Community 84`, `Community 85`, `Community 86`, `Community 87`, `Community 88`, `Community 89`, `Community 90`, `Community 91`, `Community 92`?",
+      "why": "High betweenness centrality (0.055) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `permissions` connect `Community 25` to `Community 10`, `Community 18`, `Community 66`, `Community 67`, `Community 68`, `Community 69`, `Community 70`, `Community 71`, `Community 72`, `Community 73`, `Community 74`, `Community 75`, `Community 76`, `Community 77`, `Community 78`, `Community 79`, `Community 80`, `Community 81`, `Community 82`, `Community 83`, `Community 84`, `Community 85`, `Community 86`, `Community 87`, `Community 88`, `Community 90`, `Community 91`, `Community 92`?",
+      "why": "High betweenness centrality (0.024) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `target`, `useDefineForClassFields`, `module` to the rest of the system?",
+      "why": "391 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.05555555555555555 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 2` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14333333333333334 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

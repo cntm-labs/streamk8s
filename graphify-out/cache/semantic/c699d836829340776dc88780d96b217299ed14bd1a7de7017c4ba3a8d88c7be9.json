@@ -1,0 +1,1 @@
+{"nodes": [{"id": "k8s_inspector", "label": "inspector.rs", "file_type": "code", "source_file": "src-tauri/src/k8s/inspector.rs"}], "edges": [], "hyperedges": []}

@@ -32,9 +32,32 @@ pub struct PluginManifest {
     pub ui: UiConfig,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct RemotePlugin {
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    pub author: String,
+    pub version: String,
+    pub url: String,
+    pub category: String,
+    pub sha256: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct RegistryContent {
+    pub version: String,
+    pub plugins: Vec<RemotePlugin>,
+}
+
 fn get_plugin_dir() -> PathBuf {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
     PathBuf::from(home).join(".config/streamk8s/plugins")
+}
+
+fn get_registry_cache_path() -> PathBuf {
+    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
+    PathBuf::from(home).join(".config/streamk8s/registry_cache.json")
 }
 
 #[tauri::command]
@@ -61,6 +84,40 @@ pub async fn get_installed_plugins() -> Result<Vec<PluginManifest>, String> {
     }
 
     Ok(plugins)
+}
+
+#[tauri::command]
+pub async fn get_remote_registry() -> Result<Vec<RemotePlugin>, String> {
+    let url = "https://raw.githubusercontent.com/cntm-labs/streamk8s/master/registry.json";
+    let cache_path = get_registry_cache_path();
+
+    match reqwest::get(url).await {
+        Ok(response) => {
+            if response.status().is_success() {
+                let content = response.text().await.map_err(|e| e.to_string())?;
+                let registry: RegistryContent = serde_json::from_str(&content).map_err(|e| e.to_string())?;
+                
+                // Save to cache
+                if let Some(parent) = cache_path.parent() {
+                    fs::create_dir_all(parent).ok();
+                }
+                fs::write(&cache_path, &content).ok();
+                
+                return Ok(registry.plugins);
+            }
+        }
+        Err(_) => {
+            // Fallback to cache if request fails
+            if cache_path.exists() {
+                let content = fs::read_to_string(&cache_path).map_err(|e| e.to_string())?;
+                let registry: RegistryContent = serde_json::from_str(&content).map_err(|e| e.to_string())?;
+                return Ok(registry.plugins);
+            }
+        }
+    }
+
+    // If both fetch and cache fail, return empty list or error
+    Ok(Vec::new())
 }
 
 #[tauri::command]
@@ -91,10 +148,7 @@ pub fn create_linker(engine: &Engine) -> Linker<()> {
     let mut linker = Linker::new(engine);
     
     // Import: get_k8s_resources_count() -> i32 (Simplified for demo)
-    // In raw WASM, passing strings requires complex memory management.
-    // For Milestone 15, we use i32 to demonstrate the linking capability.
     linker.func_wrap("env", "get_k8s_resources_count", |_: Caller<'_, ()>| -> i32 {
-        // Return a mock count of resources
         42
     }).unwrap();
 
@@ -119,7 +173,6 @@ pub fn execute_wasm_action(
     
     let instance = linker.instantiate(&mut store, &module).map_err(|e| e.to_string())?;
 
-    // Attempt to call the function. Try both typed and untyped if needed.
     let func = instance
         .get_typed_func::<(), ()>(&mut store, function_name)
         .map_err(|e| format!("Function '{}' not found or wrong signature: {}", function_name, e))?;
