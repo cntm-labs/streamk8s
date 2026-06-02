@@ -10,10 +10,10 @@
 [![Status](https://img.shields.io/badge/status-active-success)](./)
 
 <!-- LOD Badges -->
-![Rust LOD](https://img.shields.io/badge/Rust_LOD-23-orange)
-![Vue LOD](https://img.shields.io/badge/Vue_LOD-61-4FC08D)
-![TypeScript LOD](https://img.shields.io/badge/TypeScript_LOD-12-3178C6)
-![Total LOD](https://img.shields.io/badge/Total_LOD-96-blue)
+![Rust LOD](https://img.shields.io/badge/Rust_LOD-1054-orange)
+![Vue LOD](https://img.shields.io/badge/Vue_LOD-102-4FC08D)
+![TypeScript LOD](https://img.shields.io/badge/TypeScript_LOD-31-3178C6)
+![Total LOD](https://img.shields.io/badge/Total_LOD-6614-blue)
 
 <!-- Language Badges -->
 [![Rust](https://img.shields.io/badge/Rust-2021-orange?logo=rust)](https://www.rust-lang.org/)
