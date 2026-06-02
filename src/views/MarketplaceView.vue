@@ -9,6 +9,7 @@ import {
   Download, CheckCircle2
 } from 'lucide-vue-next';
 import PluginRenderer from '../components/PluginRenderer.vue';
+import Toast from '../components/Toast.vue';
 
 interface ExtensionInfo {
   id: string;
@@ -32,6 +33,18 @@ const selectedPluginId = ref<string | null>(null);
 const isLoading = ref(true);
 const searchQuerry = ref('');
 const activeCategory = ref('All');
+
+// Task 3: Marketplace UI Polish
+const installingPlugins = ref<Map<string, number>>(new Map());
+const toast = ref({
+  message: '',
+  type: 'success' as 'success' | 'error',
+  visible: false
+});
+
+const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+  toast.value = { message, type, visible: true };
+};
 
 const fetchPlugins = async () => {
   isLoading.value = true;
@@ -88,16 +101,37 @@ const selectedPlugin = computed(() => {
 });
 
 const installRemotePlugin = async (plugin: PluginManifest) => {
-  if (!plugin.url) return;
+  if (!plugin.url || installingPlugins.value.has(plugin.extension.id)) return;
+  
+  const pluginId = plugin.extension.id;
+  installingPlugins.value.set(pluginId, 0);
+
   try {
-    isLoading.value = true;
-    await invoke('install_remote_plugin', { id: plugin.extension.id, url: plugin.url });
-    await fetchPlugins();
-    selectedPluginId.value = plugin.extension.id;
+    // Simulate progress updates
+    const interval = setInterval(() => {
+      const current = installingPlugins.value.get(pluginId) || 0;
+      if (current < 90) {
+        installingPlugins.value.set(pluginId, current + Math.floor(Math.random() * 15));
+      }
+    }, 400);
+
+    await invoke('install_remote_plugin', { id: pluginId, url: plugin.url });
+    
+    clearInterval(interval);
+    installingPlugins.value.set(pluginId, 100);
+    
+    // Smooth transition before refreshing
+    setTimeout(async () => {
+      await fetchPlugins();
+      installingPlugins.value.delete(pluginId);
+      showToast(`Successfully installed ${plugin.extension.name}`);
+      selectedPluginId.value = pluginId;
+    }, 500);
+
   } catch (e) {
     console.error('Failed to install plugin:', e);
-  } finally {
-    isLoading.value = false;
+    installingPlugins.value.delete(pluginId);
+    showToast(`Failed to install ${plugin.extension.name}`, 'error');
   }
 };
 
@@ -211,40 +245,58 @@ onMounted(fetchPlugins);
             <span class="count">{{ allPlugins.length }} found</span>
           </div>
 
-          <div v-if="allPlugins.length > 0" class="plugin-grid">
-            <div 
-              v-for="plugin in allPlugins" 
-              :key="plugin.extension.id"
-              class="plugin-card"
-              @click="plugin.source === 'local' ? selectedPluginId = plugin.extension.id : null"
-            >
-              <div class="card-icon" :class="plugin.source">
-                <Globe v-if="plugin.source === 'online'" :size="24" />
-                <Box v-else :size="24" />
-              </div>
-              <div class="card-content">
-                <div class="card-header">
-                  <h4>{{ plugin.extension.name }}</h4>
-                  <span class="badge" :class="'badge-' + plugin.source">{{ plugin.source }}</span>
+          <div v-if="allPlugins.length > 0">
+            <TransitionGroup name="list" tag="div" class="plugin-grid">
+              <div 
+                v-for="plugin in allPlugins" 
+                :key="plugin.extension.id"
+                class="plugin-card"
+                :class="{ 'is-installing': installingPlugins.has(plugin.extension.id) }"
+                @click="plugin.source === 'local' ? selectedPluginId = plugin.extension.id : null"
+              >
+                <div class="card-icon" :class="plugin.source">
+                  <Globe v-if="plugin.source === 'online'" :size="24" />
+                  <Box v-else :size="24" />
                 </div>
-                <p class="desc">{{ plugin.extension.description }}</p>
-                <div class="card-footer">
-                  <span class="author">by {{ plugin.extension.author || 'Anonymous' }}</span>
-                  <div class="actions">
-                    <button 
-                      v-if="plugin.source === 'online'" 
-                      class="btn-install"
-                      @click.stop="installRemotePlugin(plugin)"
-                    >
-                      <Download :size="14" class="mr-1" /> Install
-                    </button>
-                    <button v-else class="btn-installed" disabled>
-                      <CheckCircle2 :size="14" class="mr-1" /> Installed
-                    </button>
+                <div class="card-content">
+                  <div class="card-header">
+                    <h4>{{ plugin.extension.name }}</h4>
+                    <span class="badge" :class="'badge-' + plugin.source">{{ plugin.source }}</span>
+                  </div>
+                  <p class="desc">{{ plugin.extension.description }}</p>
+                  
+                  <!-- Progress Bar for installation -->
+                  <div v-if="installingPlugins.has(plugin.extension.id)" class="install-progress-container">
+                    <div class="progress-info">
+                      <span>Installing...</span>
+                      <span>{{ installingPlugins.get(plugin.extension.id) }}%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                      <div 
+                        class="progress-bar-fill" 
+                        :style="{ width: installingPlugins.get(plugin.extension.id) + '%' }"
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div v-else class="card-footer">
+                    <span class="author">by {{ plugin.extension.author || 'Anonymous' }}</span>
+                    <div class="actions">
+                      <button 
+                        v-if="plugin.source === 'online'" 
+                        class="btn-install"
+                        @click.stop="installRemotePlugin(plugin)"
+                      >
+                        <Download :size="14" class="mr-1" /> Install
+                      </button>
+                      <button v-else class="btn-installed" disabled>
+                        <CheckCircle2 :size="14" class="mr-1" /> Installed
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </TransitionGroup>
           </div>
 
           <div v-else-if="!isLoading" class="empty-state">
@@ -254,6 +306,12 @@ onMounted(fetchPlugins);
         </div>
       </div>
     </div>
+    
+    <Toast 
+      v-model:visible="toast.visible" 
+      :message="toast.message" 
+      :type="toast.type" 
+    />
   </div>
 </template>
 
@@ -390,6 +448,34 @@ onMounted(fetchPlugins);
 }
 
 .plugin-card:hover { border-color: #3b82f6; transform: translateY(-2px); }
+.plugin-card.is-installing { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); cursor: default; transform: none; }
+
+.install-progress-container {
+  margin-top: 0.5rem;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #60a5fa;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.progress-bar-bg {
+  height: 4px;
+  background: #1f2937;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: #3b82f6;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+  transition: width 0.3s ease;
+}
 
 .card-icon {
   width: 54px;
@@ -449,4 +535,18 @@ onMounted(fetchPlugins);
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .mr-1 { margin-right: 0.25rem; }
+
+/* List Transitions */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.4s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+.list-move {
+  transition: transform 0.4s ease;
+}
 </style>

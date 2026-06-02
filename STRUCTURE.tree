@@ -7,16 +7,19 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-D536Sjl4.js
-│   │   └── index-Y1eHEbsi.css
+│   │   ├── index-7B_hBqBl.css
+│   │   └── index-Bhaqxepq.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
 ├── docs
 │   ├── DEVELOPER_GUIDE.md
+│   ├── plans
+│   │   └── 2026-05-31-online-registry-task-1.md
 │   └── superpowers
 │       ├── plans
 │       │   ├── 2023-10-27-plugin-sdk-docs.md
+│       │   ├── 2024-05-21-deep-abi-hooks.md
 │       │   ├── 2024-05-22-gemini-provider.md
 │       │   ├── 2025-01-24-ai-diagnostic-polish-pr.md
 │       │   ├── 2025-03-05-backend-config-ai-settings.md
@@ -46,8 +49,11 @@
 │       │   ├── 2026-05-09-professional-ui-refactor.md
 │       │   ├── 2026-05-10-dev-sdk.md
 │       │   ├── 2026-05-10-persistent-shell.md
-│       │   └── 2026-05-11-plugin-sdk.md
+│       │   ├── 2026-05-11-plugin-sdk.md
+│       │   ├── 2026-05-31-online-registry.md
+│       │   └── 2026-06-02-professional-expansion.md
 │       └── specs
+│           ├── 2024-05-21-deep-abi-hooks-design.md
 │           ├── 2024-05-22-gemini-provider-design.md
 │           ├── 2025-01-24-ai-diagnostic-ui-polish-design.md
 │           ├── 2025-03-05-backend-config-ai-settings-design.md
@@ -73,7 +79,9 @@
 │           ├── 2026-05-09-navigation-refactor-design.md
 │           ├── 2026-05-10-dev-sdk-design.md
 │           ├── 2026-05-10-persistent-shell-design.md
-│           └── 2026-05-11-plugin-sdk-design.md
+│           ├── 2026-05-11-plugin-sdk-design.md
+│           ├── 2026-05-31-online-registry-design.md
+│           └── 2026-06-02-professional-expansion-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -89,9 +97,6 @@
 │       └── security.yml
 ├── .gitignore
 ├── GOVERNANCE.md
-├── graphify-out
-│   ├── .graphify_detect.json
-│   └── .graphify_python
 ├── index.html
 ├── LICENSE.md
 ├── locales
@@ -133,6 +138,7 @@
 │   │   ├── ResourceTable.vue
 │   │   ├── ResourceTree.vue
 │   │   ├── Sidebar.vue
+│   │   ├── Toast.vue
 │   │   └── TrendChart.vue
 │   ├── main.ts
 │   ├── style.css
@@ -198,6 +204,17 @@
 ├── STRUCTURE.tree
 ├── .superpowers
 │   └── brainstorm
+│       ├── 1069705-1780310161
+│       │   ├── content
+│       │   │   ├── architecture-deep-dive.html
+│       │   │   ├── catalog-ui-options.html
+│       │   │   ├── final-marketplace-mockup.html
+│       │   │   ├── milestone-18-concepts.html
+│       │   │   └── registry-options.html
+│       │   └── state
+│       │       ├── server-info
+│       │       ├── server.log
+│       │       └── server.pid
 │       ├── 187396-1778415162
 │       │   ├── content
 │       │   │   └── inspector-design.html
@@ -249,4 +266,4 @@
 └── .vscode
     └── extensions.json
 
-50 directories, 200 files
+53 directories, 214 files

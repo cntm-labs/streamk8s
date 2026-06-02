@@ -1,7 +1,8 @@
 use super::inspector::create_client;
 use k8s_openapi::api::apps::v1::Deployment;
 use k8s_openapi::api::core::v1::{ConfigMap, Secret, Service};
-use kube::Api;
+use kube::api::{Api, DynamicObject};
+use kube::discovery::{Discovery, Scope};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -10,6 +11,35 @@ pub struct NormalizedResource {
     pub namespace: String,
     pub status: String,
     pub kind: String,
+}
+
+#[tauri::command]
+pub async fn get_k8s_resource_details(
+    context_name: Option<String>,
+    kind: String,
+    namespace: String,
+    name: String,
+) -> Result<String, String> {
+    let client = create_client(context_name).await?;
+    let discovery = Discovery::new(client.clone())
+        .run()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    for group in discovery.groups() {
+        if let Some((ar, caps)) = group.recommended_kind(&kind) {
+            let api: Api<DynamicObject> = if caps.scope == Scope::Namespaced {
+                Api::namespaced_with(client.clone(), &namespace, &ar)
+            } else {
+                Api::all_with(client.clone(), &ar)
+            };
+            
+            let obj = api.get(&name).await.map_err(|e| e.to_string())?;
+            return serde_yaml::to_string(&obj).map_err(|e| e.to_string());
+        }
+    }
+    
+    Err(format!("Resource kind '{}' not found", kind))
 }
 
 #[tauri::command]

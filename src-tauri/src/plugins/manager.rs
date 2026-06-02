@@ -187,6 +187,13 @@ pub fn create_linker(engine: &Engine) -> Linker<()> {
         println!("PLUGIN NOTIFICATION CODE: {}", code);
     }).unwrap();
 
+    // New Deep Hook for Milestone 18
+    linker.func_wrap("env", "get_resource_details_len", |_: Caller<'_, ()>, _kind_ptr: i32, _kind_len: i32, _ns_ptr: i32, _ns_len: i32, _name_ptr: i32, _name_len: i32| -> i32 {
+        // Mocking return length as required for Task 1
+        println!("Plugin requested resource details length via ABI.");
+        1024
+    }).unwrap();
+
     linker
 }
 
