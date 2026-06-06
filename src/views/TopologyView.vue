@@ -4,17 +4,18 @@ import { VueFlow, useVueFlow, MarkerType } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { invoke } from '@tauri-apps/api/core';
 import dagre from 'dagre';
-import { Box, Server, Globe, Cpu, RefreshCw, AlertTriangle } from 'lucide-vue-next';
+import { Box, Server, Globe, Cpu, RefreshCw, AlertTriangle, Layers } from 'lucide-vue-next';
 
 const props = defineProps<{
   contextName: string | null;
-  namespace?: string;
 }>();
 
 const { onPaneReady, fitView } = useVueFlow();
 
 const nodes = ref<any[]>([]);
 const edges = ref<any[]>([]);
+const namespaces = ref<string[]>([]);
+const selectedNamespace = ref('default');
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 
@@ -69,6 +70,19 @@ const getLayoutedElements = (nodes: any[], edges: any[]) => {
   });
 };
 
+const fetchNamespaces = async () => {
+  if (!props.contextName) return;
+  try {
+    const list = await invoke<string[]>('get_namespaces', { contextName: props.contextName });
+    namespaces.value = list;
+    if (!list.includes(selectedNamespace.value) && list.length > 0) {
+      selectedNamespace.value = list.includes('default') ? 'default' : list[0];
+    }
+  } catch (e) {
+    console.error('Failed to fetch namespaces:', e);
+  }
+};
+
 const fetchTopology = async () => {
   if (!props.contextName) return;
   
@@ -78,7 +92,7 @@ const fetchTopology = async () => {
   try {
     const graph = await invoke<any>('get_namespace_topology', { 
       contextName: props.contextName, 
-      namespace: props.namespace || 'default' 
+      namespace: selectedNamespace.value 
     });
     
     if (!graph.nodes || graph.nodes.length === 0) {
@@ -118,14 +132,21 @@ const fetchTopology = async () => {
   }
 };
 
-watch(() => props.contextName, fetchTopology);
-watch(() => props.namespace, fetchTopology);
+watch(() => props.contextName, () => {
+  fetchNamespaces();
+  fetchTopology();
+});
+
+watch(selectedNamespace, fetchTopology);
 
 onPaneReady(() => {
   fitView();
 });
 
-onMounted(fetchTopology);
+onMounted(() => {
+  fetchNamespaces();
+  fetchTopology();
+});
 </script>
 
 <template>
@@ -135,8 +156,15 @@ onMounted(fetchTopology);
       <div class="status-indicator">
         <div class="dot" :class="{ active: props.contextName }"></div>
         <span>{{ props.contextName || 'No Context' }}</span>
-        <span class="ns-badge">ns: {{ props.namespace || 'default' }}</span>
       </div>
+      
+      <div class="ns-selector">
+        <Layers :size="14" />
+        <select v-model="selectedNamespace">
+          <option v-for="ns in namespaces" :key="ns" :value="ns">{{ ns }}</option>
+        </select>
+      </div>
+
       <button class="refresh-btn" @click="fetchTopology" :disabled="isLoading">
         <RefreshCw :size="14" :class="{ spin: isLoading }" />
         Refresh
@@ -153,7 +181,7 @@ onMounted(fetchTopology);
     <div v-else-if="nodes.length === 0 && !isLoading" class="overlay-state empty">
       <Box :size="48" style="opacity: 0.2" />
       <h3>No Resources Found</h3>
-      <p>There are no Ingresses, Services, or Pods in the <b>{{ props.namespace || 'default' }}</b> namespace.</p>
+      <p>There are no Ingresses, Services, or Pods in the <b>{{ selectedNamespace }}</b> namespace.</p>
     </div>
 
     <VueFlow :nodes="nodes" :edges="edges" :node-types="nodeTypes" :fit-view-on-init="true">
@@ -197,12 +225,25 @@ onMounted(fetchTopology);
   color: #9ca3af;
 }
 
-.ns-badge {
-  background: #374151;
-  color: #f3f4f6;
-  padding: 1px 6px;
+.ns-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #0f172a;
+  border: 1px solid #374151;
+  padding: 2px 8px;
   border-radius: 4px;
-  font-family: monospace;
+  color: #9ca3af;
+}
+
+.ns-selector select {
+  background: transparent;
+  border: none;
+  color: #f3f4f6;
+  font-size: 0.75rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
 }
 
 .dot {
@@ -246,7 +287,6 @@ onMounted(fetchTopology);
 .overlay-state.error { color: #ef4444; }
 .overlay-state.empty { color: #4b5563; }
 
-/* Custom Node Styling */
 .custom-node-container {
   display: flex;
   align-items: center;
