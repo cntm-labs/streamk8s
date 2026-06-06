@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-7B_hBqBl.css
-│   │   └── index-Bhaqxepq.js
+│   │   ├── index-CHqpfqvy.js
+│   │   └── index-DPqG7B3k.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -7489,6 +7489,7 @@
 │   │   ├── ClusterView.vue
 │   │   ├── MarketplaceView.vue
 │   │   ├── SettingsView.vue
+│   │   ├── TopologyView.vue
 │   │   └── WelcomeView.vue
 │   └── vite-env.d.ts
 ├── src-tauri
@@ -7618,4 +7619,4 @@
 └── .vscode
     └── extensions.json
 
-821 directories, 6798 files
+821 directories, 6799 files
