@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-CHqpfqvy.js
-│   │   └── index-DPqG7B3k.css
+│   │   ├── index-BghxFE1z.css
+│   │   └── index-CsFK-nyK.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -21,6 +21,7 @@
 │       │   ├── 2023-10-27-plugin-sdk-docs.md
 │       │   ├── 2024-05-21-deep-abi-hooks.md
 │       │   ├── 2024-05-22-gemini-provider.md
+│       │   ├── 2024-05-24-semantic-backend-rust.md
 │       │   ├── 2025-01-24-ai-diagnostic-polish-pr.md
 │       │   ├── 2025-03-05-backend-config-ai-settings.md
 │       │   ├── 2025-03-24-consolidate-features.md
@@ -52,7 +53,8 @@
 │       │   ├── 2026-05-11-plugin-sdk.md
 │       │   ├── 2026-05-31-online-registry.md
 │       │   ├── 2026-06-02-professional-expansion.md
-│       │   └── 2026-06-03-connectivity-topology.md
+│       │   ├── 2026-06-03-connectivity-topology.md
+│       │   └── 2026-06-03-semantic-topology.md
 │       └── specs
 │           ├── 2024-05-21-deep-abi-hooks-design.md
 │           ├── 2024-05-22-gemini-provider-design.md
@@ -7619,4 +7621,4 @@
 └── .vscode
     └── extensions.json
 
-821 directories, 6799 files
+821 directories, 6801 files

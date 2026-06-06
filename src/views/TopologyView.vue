@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, markRaw } from 'vue';
-import { VueFlow, useVueFlow } from '@vue-flow/core';
+import { VueFlow, useVueFlow, MarkerType } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { invoke } from '@tauri-apps/api/core';
 import dagre from 'dagre';
@@ -75,7 +75,9 @@ const fetchTopology = async () => {
       id: e.id,
       source: e.source,
       target: e.target,
+      label: e.label,
       animated: true,
+      markerEnd: MarkerType.ArrowClosed,
       style: { stroke: '#3b82f6' }
     }));
 
@@ -160,6 +162,17 @@ onMounted(fetchTopology);
 
 .vue-flow__edge.animated .vue-flow__edge-path {
   stroke: #3b82f6 !important;
+}
+
+.vue-flow__edge-label {
+  background: #111827;
+  color: #9ca3af;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid #374151;
+  pointer-events: none;
 }
 
 .vue-flow__handle {
