@@ -1,5 +1,5 @@
 use serde::Serialize;
-use kube::Api;
+use kube::{Api};
 use k8s_openapi::api::core::v1::{Service, Pod};
 use k8s_openapi::api::networking::v1::Ingress;
 use crate::k8s::inspector::create_client;
@@ -35,14 +35,15 @@ pub async fn get_namespace_topology(
     let mut nodes = Vec::new();
     let mut edges = Vec::new();
 
-    // 1. Fetch Resources
+    // 1. Fetch Resources with individual error handling
     let svc_api: Api<Service> = Api::namespaced(client.clone(), &namespace);
     let pod_api: Api<Pod> = Api::namespaced(client.clone(), &namespace);
     let ingress_api: Api<Ingress> = Api::namespaced(client.clone(), &namespace);
 
-    let services = svc_api.list(&Default::default()).await.map_err(|e| e.to_string())?;
-    let pods = pod_api.list(&Default::default()).await.map_err(|e| e.to_string())?;
-    let ingresses = ingress_api.list(&Default::default()).await.map_err(|e| e.to_string())?;
+    // kube-rs list returns ObjectList, we want the items Vec
+    let services = svc_api.list(&Default::default()).await.map(|l| l.items).unwrap_or_default();
+    let pods = pod_api.list(&Default::default()).await.map(|l| l.items).unwrap_or_default();
+    let ingresses = ingress_api.list(&Default::default()).await.map(|l| l.items).unwrap_or_default();
 
     // 2. Map Services to Nodes and build Selector Map
     for svc in &services {
@@ -63,11 +64,15 @@ pub async fn get_namespace_topology(
 
                 // Check if all selector labels match pod labels
                 let mut matches = true;
-                for (key, value) in selector {
-                    if pod_labels.and_then(|l| l.get(key)) != Some(value) {
-                        matches = false;
-                        break;
+                if let Some(p_labels) = pod_labels {
+                    for (key, value) in selector {
+                        if p_labels.get(key) != Some(value) {
+                            matches = false;
+                            break;
+                        }
                     }
+                } else {
+                    matches = false;
                 }
 
                 if matches {
@@ -86,7 +91,6 @@ pub async fn get_namespace_topology(
     for pod in &pods {
         let name = pod.metadata.name.clone().unwrap_or_default();
         let id = format!("pod-{}", name);
-        // Avoid duplicates if any
         if !nodes.iter().any(|n| n.id == id) {
             nodes.push(TopologyNode {
                 id,
