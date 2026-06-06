@@ -1,4 +1,8 @@
 use serde::Serialize;
+use kube::{Api, Client};
+use k8s_openapi::api::core::v1::{Service, Pod};
+use k8s_openapi::api::networking::v1::Ingress;
+use crate::k8s::inspector::create_client;
 
 #[derive(Serialize, Clone, Debug)]
 pub struct TopologyNode {
@@ -23,52 +27,105 @@ pub struct TopologyGraph {
 
 #[tauri::command]
 pub async fn get_namespace_topology(
-    _context_name: String,
-    _namespace: String,
+    context_name: Option<String>,
+    namespace: String,
 ) -> Result<TopologyGraph, String> {
-    // Return a mock graph for now to unblock frontend development.
-    Ok(TopologyGraph {
-        nodes: vec![
-            TopologyNode {
-                id: "ingress-1".into(),
-                kind: "Ingress".into(),
-                name: "api-gateway".into(),
-            },
-            TopologyNode {
-                id: "svc-1".into(),
-                kind: "Service".into(),
-                name: "web-svc".into(),
-            },
-            TopologyNode {
-                id: "pod-1".into(),
+    let client = create_client(context_name).await?;
+    
+    let mut nodes = Vec::new();
+    let mut edges = Vec::new();
+
+    // 1. Fetch Resources
+    let svc_api: Api<Service> = Api::namespaced(client.clone(), &namespace);
+    let pod_api: Api<Pod> = Api::namespaced(client.clone(), &namespace);
+    let ingress_api: Api<Ingress> = Api::namespaced(client.clone(), &namespace);
+
+    let services = svc_api.list(&Default::default()).await.map_err(|e| e.to_string())?;
+    let pods = pod_api.list(&Default::default()).await.map_err(|e| e.to_string())?;
+    let ingresses = ingress_api.list(&Default::default()).await.map_err(|e| e.to_string())?;
+
+    // 2. Map Services to Nodes and build Selector Map
+    for svc in &services {
+        let name = svc.metadata.name.clone().unwrap_or_default();
+        let id = format!("svc-{}", name);
+        nodes.push(TopologyNode {
+            id: id.clone(),
+            kind: "Service".into(),
+            name: name.clone(),
+        });
+
+        // Match Pods by Selector
+        if let Some(selector) = svc.spec.as_ref().and_then(|s| s.selector.as_ref()) {
+            for pod in &pods {
+                let pod_labels = pod.metadata.labels.as_ref();
+                let pod_name = pod.metadata.name.clone().unwrap_or_default();
+                let pod_id = format!("pod-{}", pod_name);
+
+                // Check if all selector labels match pod labels
+                let mut matches = true;
+                for (key, value) in selector {
+                    if pod_labels.and_then(|l| l.get(key)) != Some(value) {
+                        matches = false;
+                        break;
+                    }
+                }
+
+                if matches {
+                    edges.push(TopologyEdge {
+                        id: format!("e-{}-{}", name, pod_name),
+                        source: id.clone(),
+                        target: pod_id,
+                        label: "selects".into(),
+                    });
+                }
+            }
+        }
+    }
+
+    // 3. Map Pods to Nodes (Only those not already implicit, but let's add all in namespace)
+    for pod in &pods {
+        let name = pod.metadata.name.clone().unwrap_or_default();
+        let id = format!("pod-{}", name);
+        // Avoid duplicates if any
+        if !nodes.iter().any(|n| n.id == id) {
+            nodes.push(TopologyNode {
+                id,
                 kind: "Pod".into(),
-                name: "web-pod-a".into(),
-            },
-            TopologyNode {
-                id: "pod-2".into(),
-                kind: "Pod".into(),
-                name: "web-pod-b".into(),
-            },
-        ],
-        edges: vec![
-            TopologyEdge {
-                id: "e1".into(),
-                source: "ingress-1".into(),
-                target: "svc-1".into(),
-                label: "routes".into(),
-            },
-            TopologyEdge {
-                id: "e2".into(),
-                source: "svc-1".into(),
-                target: "pod-1".into(),
-                label: "selects".into(),
-            },
-            TopologyEdge {
-                id: "e3".into(),
-                source: "svc-1".into(),
-                target: "pod-2".into(),
-                label: "selects".into(),
-            },
-        ],
-    })
+                name,
+            });
+        }
+    }
+
+    // 4. Map Ingresses to Services
+    for ing in &ingresses {
+        let name = ing.metadata.name.clone().unwrap_or_default();
+        let id = format!("ing-{}", name);
+        nodes.push(TopologyNode {
+            id: id.clone(),
+            kind: "Ingress".into(),
+            name: name.clone(),
+        });
+
+        if let Some(spec) = &ing.spec {
+            if let Some(rules) = &spec.rules {
+                for rule in rules {
+                    if let Some(http) = &rule.http {
+                        for path in &http.paths {
+                            if let Some(backend_svc) = &path.backend.service {
+                                let target_svc_id = format!("svc-{}", backend_svc.name);
+                                edges.push(TopologyEdge {
+                                    id: format!("e-{}-{}", name, backend_svc.name),
+                                    source: id.clone(),
+                                    target: target_svc_id,
+                                    label: "routes".into(),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(TopologyGraph { nodes, edges })
 }
