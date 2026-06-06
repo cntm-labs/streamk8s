@@ -14,6 +14,14 @@ pub struct NormalizedResource {
 }
 
 #[tauri::command]
+pub async fn get_namespaces(context_name: Option<String>) -> Result<Vec<String>, String> {
+    let client = create_client(context_name).await?;
+    let ns_api: Api<k8s_openapi::api::core::v1::Namespace> = Api::all(client);
+    let list = ns_api.list(&Default::default()).await.map_err(|e| e.to_string())?;
+    Ok(list.items.into_iter().filter_map(|ns| ns.metadata.name).collect())
+}
+
+#[tauri::command]
 pub async fn get_k8s_resource_details(
     context_name: Option<String>,
     kind: String,

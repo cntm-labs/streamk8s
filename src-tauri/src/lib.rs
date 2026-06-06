@@ -33,6 +33,7 @@ pub fn run() {
             crate::k8s::resources::get_configmaps,
             crate::k8s::resources::get_secrets,
             crate::k8s::resources::get_k8s_resource_details,
+            crate::k8s::resources::get_namespaces,
             crate::k8s::ai::analyze_with_ai,
             crate::k8s::search::global_search,
             crate::k8s::topology::get_namespace_topology,
