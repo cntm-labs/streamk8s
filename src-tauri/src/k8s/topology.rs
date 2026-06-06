@@ -1,5 +1,5 @@
 use serde::Serialize;
-use kube::{Api, Client};
+use kube::Api;
 use k8s_openapi::api::core::v1::{Service, Pod};
 use k8s_openapi::api::networking::v1::Ingress;
 use crate::k8s::inspector::create_client;
