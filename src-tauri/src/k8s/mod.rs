@@ -6,3 +6,4 @@ pub mod pods;
 pub mod resources;
 pub mod scaling;
 pub mod search;
+pub mod topology;

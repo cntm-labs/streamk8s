@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
-use wasmtime::{Engine, Module, Store, Linker, Caller};
 use std::fs;
-use std::path::PathBuf;
-use std::path::Path;
 use std::io::Cursor;
+use std::path::Path;
+use std::path::PathBuf;
+use wasmtime::{Caller, Engine, Linker, Module, Store};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ExtensionInfo {
@@ -78,7 +78,8 @@ pub async fn get_installed_plugins() -> Result<Vec<PluginManifest>, String> {
             let manifest_path = path.join("extension.toml");
             if manifest_path.exists() {
                 let content = fs::read_to_string(manifest_path).map_err(|e| e.to_string())?;
-                let manifest: PluginManifest = toml::from_str(&content).map_err(|e| e.to_string())?;
+                let manifest: PluginManifest =
+                    toml::from_str(&content).map_err(|e| e.to_string())?;
                 plugins.push(manifest);
             }
         }
@@ -96,20 +97,22 @@ pub async fn get_remote_registry() -> Result<Vec<RemotePlugin>, String> {
         Ok(response) => {
             if response.status().is_success() {
                 let content = response.text().await.map_err(|e| e.to_string())?;
-                let registry: RegistryContent = serde_json::from_str(&content).map_err(|e| e.to_string())?;
-                
+                let registry: RegistryContent =
+                    serde_json::from_str(&content).map_err(|e| e.to_string())?;
+
                 if let Some(parent) = cache_path.parent() {
                     fs::create_dir_all(parent).ok();
                 }
                 fs::write(&cache_path, &content).ok();
-                
+
                 return Ok(registry.plugins);
             }
         }
         Err(_) => {
             if cache_path.exists() {
                 let content = fs::read_to_string(&cache_path).map_err(|e| e.to_string())?;
-                let registry: RegistryContent = serde_json::from_str(&content).map_err(|e| e.to_string())?;
+                let registry: RegistryContent =
+                    serde_json::from_str(&content).map_err(|e| e.to_string())?;
                 return Ok(registry.plugins);
             }
         }
@@ -160,9 +163,13 @@ pub async fn install_plugin(source_path: String) -> Result<(), String> {
         return Err("Source path does not exist".to_string());
     }
 
-    let plugin_id = source.file_name().ok_or("Invalid source path")?.to_str().unwrap();
+    let plugin_id = source
+        .file_name()
+        .ok_or("Invalid source path")?
+        .to_str()
+        .unwrap();
     let dest = get_plugin_dir().join(plugin_id);
-    
+
     if !dest.exists() {
         fs::create_dir_all(&dest).map_err(|e| e.to_string())?;
     }
@@ -178,21 +185,40 @@ pub async fn install_plugin(source_path: String) -> Result<(), String> {
 
 pub fn create_linker(engine: &Engine) -> Linker<()> {
     let mut linker = Linker::new(engine);
-    
-    linker.func_wrap("env", "get_k8s_resources_count", |_: Caller<'_, ()>| -> i32 {
-        42
-    }).unwrap();
 
-    linker.func_wrap("env", "show_notification", |code: i32| {
-        println!("PLUGIN NOTIFICATION CODE: {}", code);
-    }).unwrap();
+    linker
+        .func_wrap(
+            "env",
+            "get_k8s_resources_count",
+            |_: Caller<'_, ()>| -> i32 { 42 },
+        )
+        .unwrap();
+
+    linker
+        .func_wrap("env", "show_notification", |code: i32| {
+            println!("PLUGIN NOTIFICATION CODE: {}", code);
+        })
+        .unwrap();
 
     // New Deep Hook for Milestone 18
-    linker.func_wrap("env", "get_resource_details_len", |_: Caller<'_, ()>, _kind_ptr: i32, _kind_len: i32, _ns_ptr: i32, _ns_len: i32, _name_ptr: i32, _name_len: i32| -> i32 {
-        // Mocking return length as required for Task 1
-        println!("Plugin requested resource details length via ABI.");
-        1024
-    }).unwrap();
+    linker
+        .func_wrap(
+            "env",
+            "get_resource_details_len",
+            |_: Caller<'_, ()>,
+             _kind_ptr: i32,
+             _kind_len: i32,
+             _ns_ptr: i32,
+             _ns_len: i32,
+             _name_ptr: i32,
+             _name_len: i32|
+             -> i32 {
+                // Mocking return length as required for Task 1
+                println!("Plugin requested resource details length via ABI.");
+                1024
+            },
+        )
+        .unwrap();
 
     linker
 }
@@ -204,19 +230,29 @@ pub fn execute_wasm_action(
 ) -> Result<String, String> {
     let engine = Engine::default();
     let module = Module::from_binary(&engine, wasm_bytes).map_err(|e| e.to_string())?;
-    
+
     let mut store = Store::new(&engine, ());
     let linker = create_linker(&engine);
-    
-    let instance = linker.instantiate(&mut store, &module).map_err(|e| e.to_string())?;
+
+    let instance = linker
+        .instantiate(&mut store, &module)
+        .map_err(|e| e.to_string())?;
 
     let func = instance
         .get_typed_func::<(), ()>(&mut store, function_name)
-        .map_err(|e| format!("Function '{}' not found or wrong signature: {}", function_name, e))?;
+        .map_err(|e| {
+            format!(
+                "Function '{}' not found or wrong signature: {}",
+                function_name, e
+            )
+        })?;
 
     func.call(&mut store, ()).map_err(|e| e.to_string())?;
 
-    Ok(format!("Action '{}' executed successfully via WASM ABI.", function_name))
+    Ok(format!(
+        "Action '{}' executed successfully via WASM ABI.",
+        function_name
+    ))
 }
 
 #[tauri::command]
@@ -226,9 +262,12 @@ pub async fn call_plugin_action(
     payload: String,
 ) -> Result<String, String> {
     let wasm_path = get_plugin_dir().join(&plugin_id).join("logic.wasm");
-    
+
     if !wasm_path.exists() {
-        return Ok(format!("Mock action '{}' executed for plugin '{}' with payload: {}", action_name, plugin_id, payload));
+        return Ok(format!(
+            "Mock action '{}' executed for plugin '{}' with payload: {}",
+            action_name, plugin_id, payload
+        ));
     }
 
     let wasm_bytes = std::fs::read(&wasm_path).map_err(|e| e.to_string())?;

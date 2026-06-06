@@ -33,12 +33,12 @@ pub async fn get_k8s_resource_details(
             } else {
                 Api::all_with(client.clone(), &ar)
             };
-            
+
             let obj = api.get(&name).await.map_err(|e| e.to_string())?;
             return serde_yaml::to_string(&obj).map_err(|e| e.to_string());
         }
     }
-    
+
     Err(format!("Resource kind '{}' not found", kind))
 }
 

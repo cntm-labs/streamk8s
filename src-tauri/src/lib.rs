@@ -35,6 +35,7 @@ pub fn run() {
             crate::k8s::resources::get_k8s_resource_details,
             crate::k8s::ai::analyze_with_ai,
             crate::k8s::search::global_search,
+            crate::k8s::topology::get_namespace_topology,
             crate::plugins::manager::get_installed_plugins,
             crate::plugins::manager::call_plugin_action,
             crate::plugins::manager::install_plugin,

@@ -57,12 +57,11 @@ impl AiProvider for GeminiProvider {
 
         let full_prompt = format!("{}\n\nUser Request: {}", system_prompt, prompt);
 
-        let res = client.post(&url)
+        let res = client
+            .post(&url)
             .json(&GeminiRequest {
                 contents: vec![GeminiContent {
-                    parts: vec![GeminiPart {
-                        text: full_prompt,
-                    }],
+                    parts: vec![GeminiPart { text: full_prompt }],
                 }],
             })
             .send()
