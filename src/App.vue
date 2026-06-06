@@ -17,6 +17,7 @@ import CommandPalette from './components/CommandPalette.vue';
 import WelcomeView from './views/WelcomeView.vue';
 import SettingsView from './views/SettingsView.vue';
 import MarketplaceView from './views/MarketplaceView.vue';
+import TopologyView from './views/TopologyView.vue';
 
 interface Metrics {
   cpu_usage: number;
@@ -34,14 +35,15 @@ interface Advice {
 }
 
 const activeTab = ref('explorer');
-const currentView = ref<'welcome' | 'cluster' | 'settings' | 'marketplace'>('welcome');
+const currentView = ref<'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology'>('welcome');
 const sidebarVisible = ref(true);
 const sidebarWidth = ref(240);
 const isResizing = ref(false);
 const showCommandPalette = ref(false);
 
-const navMap: Record<string, { sidebar: boolean, view: 'welcome' | 'cluster' | 'settings' | 'marketplace' }> = {
+const navMap: Record<string, { sidebar: boolean, view: 'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology' }> = {
   explorer: { sidebar: true, view: 'cluster' },
+  topology: { sidebar: false, view: 'topology' as any },
   hardware: { sidebar: true, view: 'cluster' },
   ai: { sidebar: true, view: 'cluster' },
   marketplace: { sidebar: true, view: 'marketplace' },
@@ -266,6 +268,7 @@ onMounted(async () => {
         <WelcomeView v-if="currentView === 'welcome'" @start="handleTabChange('explorer')" />
         <SettingsView v-else-if="currentView === 'settings'" />
         <MarketplaceView v-else-if="currentView === 'marketplace'" />
+        <TopologyView v-else-if="currentView === 'topology'" />
         
         <section v-else-if="currentView === 'cluster'" class="workloads-panel">
           <AdviceBanner :advice="currentAdvice" @optimize="() => {}" />

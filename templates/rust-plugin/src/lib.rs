@@ -1,4 +1,4 @@
-use streamk8s_sdk::{Plugin, register_plugin, notify, get_resource_count};
+use streamk8s_sdk::{get_resource_count, notify, register_plugin, Plugin};
 
 #[derive(Default)]
 struct MyPlugin;

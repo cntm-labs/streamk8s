@@ -4,6 +4,7 @@ import {
   Bot, 
   ShoppingBag, 
   Activity,
+  Network,
   User,
   Settings
 } from 'lucide-vue-next';
@@ -18,6 +19,7 @@ const emit = defineEmits<{
 
 const topItems = [
   { id: 'explorer', icon: LayoutGrid, title: 'Explorer' },
+  { id: 'topology', icon: Network, title: 'Topology Map' },
   { id: 'ai', icon: Bot, title: 'AI Assistant' },
   { id: 'marketplace', icon: ShoppingBag, title: 'Marketplace' },
   { id: 'hardware', icon: Activity, title: 'Hardware' },

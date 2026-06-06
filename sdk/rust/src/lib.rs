@@ -39,7 +39,7 @@ pub fn notify(code: i32) {
 /// A safe wrapper to fetch deep resource details.
 pub fn fetch_resource_details(kind: &str, ns: &str, name: &str) -> String {
     // For Milestone 18, we demonstrate the plumbing.
-    // In a final SDK, this would allocate a buffer, call the len function, 
+    // In a final SDK, this would allocate a buffer, call the len function,
     // and then call a 'read_resource_details' function.
     // For now, return a placeholder string or implement the first part of the flow.
     unsafe {
