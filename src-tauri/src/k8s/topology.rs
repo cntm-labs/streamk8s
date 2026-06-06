@@ -1,5 +1,5 @@
 use serde::Serialize;
-use kube::{Api};
+use kube::Api;
 use k8s_openapi::api::core::v1::{Service, Pod};
 use k8s_openapi::api::networking::v1::Ingress;
 use crate::k8s::inspector::create_client;
@@ -35,17 +35,25 @@ pub async fn get_namespace_topology(
     let mut nodes = Vec::new();
     let mut edges = Vec::new();
 
-    // 1. Fetch Resources with individual error handling
-    let svc_api: Api<Service> = Api::namespaced(client.clone(), &namespace);
+    // 1. Fetch Pods (Core requirement)
     let pod_api: Api<Pod> = Api::namespaced(client.clone(), &namespace);
+    let pods = pod_api.list(&Default::default()).await
+        .map(|l| l.items)
+        .unwrap_or_default();
+
+    // 2. Fetch Services
+    let svc_api: Api<Service> = Api::namespaced(client.clone(), &namespace);
+    let services = svc_api.list(&Default::default()).await
+        .map(|l| l.items)
+        .unwrap_or_default();
+
+    // 3. Fetch Ingresses (Optional, might not exist in all clusters)
     let ingress_api: Api<Ingress> = Api::namespaced(client.clone(), &namespace);
+    let ingresses = ingress_api.list(&Default::default()).await
+        .map(|l| l.items)
+        .unwrap_or_default();
 
-    // kube-rs list returns ObjectList, we want the items Vec
-    let services = svc_api.list(&Default::default()).await.map(|l| l.items).unwrap_or_default();
-    let pods = pod_api.list(&Default::default()).await.map(|l| l.items).unwrap_or_default();
-    let ingresses = ingress_api.list(&Default::default()).await.map(|l| l.items).unwrap_or_default();
-
-    // 2. Map Services to Nodes and build Selector Map
+    // Map Services to Nodes and build Selector Map
     for svc in &services {
         let name = svc.metadata.name.clone().unwrap_or_default();
         let id = format!("svc-{}", name);
@@ -55,14 +63,12 @@ pub async fn get_namespace_topology(
             name: name.clone(),
         });
 
-        // Match Pods by Selector
         if let Some(selector) = svc.spec.as_ref().and_then(|s| s.selector.as_ref()) {
             for pod in &pods {
                 let pod_labels = pod.metadata.labels.as_ref();
                 let pod_name = pod.metadata.name.clone().unwrap_or_default();
                 let pod_id = format!("pod-{}", pod_name);
 
-                // Check if all selector labels match pod labels
                 let mut matches = true;
                 if let Some(p_labels) = pod_labels {
                     for (key, value) in selector {
@@ -87,7 +93,7 @@ pub async fn get_namespace_topology(
         }
     }
 
-    // 3. Map Pods to Nodes (Only those not already implicit, but let's add all in namespace)
+    // Map Pods to Nodes
     for pod in &pods {
         let name = pod.metadata.name.clone().unwrap_or_default();
         let id = format!("pod-{}", name);
@@ -100,7 +106,7 @@ pub async fn get_namespace_topology(
         }
     }
 
-    // 4. Map Ingresses to Services
+    // Map Ingresses to Services
     for ing in &ingresses {
         let name = ing.metadata.name.clone().unwrap_or_default();
         let id = format!("ing-{}", name);
