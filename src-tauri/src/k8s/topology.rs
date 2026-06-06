@@ -12,6 +12,7 @@ pub struct TopologyEdge {
     pub id: String,
     pub source: String,
     pub target: String,
+    pub label: String,
 }
 
 #[derive(Serialize, Debug)]
@@ -54,16 +55,19 @@ pub async fn get_namespace_topology(
                 id: "e1".into(),
                 source: "ingress-1".into(),
                 target: "svc-1".into(),
+                label: "routes".into(),
             },
             TopologyEdge {
                 id: "e2".into(),
                 source: "svc-1".into(),
                 target: "pod-1".into(),
+                label: "selects".into(),
             },
             TopologyEdge {
                 id: "e3".into(),
                 source: "svc-1".into(),
                 target: "pod-2".into(),
+                label: "selects".into(),
             },
         ],
     })
