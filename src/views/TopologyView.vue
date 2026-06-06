@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { ref, onMounted, markRaw } from 'vue';
+import { ref, onMounted, markRaw, watch } from 'vue';
 import { VueFlow, useVueFlow, MarkerType } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { invoke } from '@tauri-apps/api/core';
 import dagre from 'dagre';
-import { Box, Server, Globe, Cpu } from 'lucide-vue-next';
+import { Box, Server, Globe, Cpu, RefreshCw, AlertTriangle } from 'lucide-vue-next';
+
+const props = defineProps<{
+  contextName: string | null;
+  namespace?: string;
+}>();
 
 const { onPaneReady, fitView } = useVueFlow();
 
 const nodes = ref<any[]>([]);
 const edges = ref<any[]>([]);
+const isLoading = ref(false);
+const error = ref<string | null>(null);
 
 // Custom Node component mapping
 const nodeTypes = {
@@ -39,6 +46,8 @@ const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 const getLayoutedElements = (nodes: any[], edges: any[]) => {
+  if (nodes.length === 0) return [];
+  
   dagreGraph.setGraph({ rankdir: 'LR', nodesep: 60, ranksep: 150 });
 
   nodes.forEach((node) => {
@@ -61,9 +70,23 @@ const getLayoutedElements = (nodes: any[], edges: any[]) => {
 };
 
 const fetchTopology = async () => {
+  if (!props.contextName) return;
+  
+  isLoading.value = true;
+  error.value = null;
+  
   try {
-    const graph = await invoke<any>('get_namespace_topology', { contextName: 'default', namespace: 'default' });
+    const graph = await invoke<any>('get_namespace_topology', { 
+      contextName: props.contextName, 
+      namespace: props.namespace || 'default' 
+    });
     
+    if (!graph.nodes || graph.nodes.length === 0) {
+      nodes.value = [];
+      edges.value = [];
+      return;
+    }
+
     const initialNodes = graph.nodes.map((n: any) => ({
       id: n.id,
       label: n.name,
@@ -84,14 +107,19 @@ const fetchTopology = async () => {
     nodes.value = getLayoutedElements(initialNodes, initialEdges);
     edges.value = initialEdges;
     
-    // Fit view after layout
     setTimeout(() => {
       fitView();
-    }, 50);
-  } catch (e) {
+    }, 100);
+  } catch (e: any) {
     console.error('Failed to fetch topology:', e);
+    error.value = e.toString();
+  } finally {
+    isLoading.value = false;
   }
 };
+
+watch(() => props.contextName, fetchTopology);
+watch(() => props.namespace, fetchTopology);
 
 onPaneReady(() => {
   fitView();
@@ -102,8 +130,34 @@ onMounted(fetchTopology);
 
 <template>
   <div class="topology-wrapper">
+    <!-- Overlay Actions -->
+    <div class="topology-controls">
+      <div class="status-indicator">
+        <div class="dot" :class="{ active: props.contextName }"></div>
+        <span>{{ props.contextName || 'No Context' }}</span>
+        <span class="ns-badge">ns: {{ props.namespace || 'default' }}</span>
+      </div>
+      <button class="refresh-btn" @click="fetchTopology" :disabled="isLoading">
+        <RefreshCw :size="14" :class="{ spin: isLoading }" />
+        Refresh
+      </button>
+    </div>
+
+    <!-- Empty/Error States -->
+    <div v-if="error" class="overlay-state error">
+      <AlertTriangle :size="32" />
+      <p>{{ error }}</p>
+      <button @click="fetchTopology">Try Again</button>
+    </div>
+    
+    <div v-else-if="nodes.length === 0 && !isLoading" class="overlay-state empty">
+      <Box :size="48" style="opacity: 0.2" />
+      <h3>No Resources Found</h3>
+      <p>There are no Ingresses, Services, or Pods in the <b>{{ props.namespace || 'default' }}</b> namespace.</p>
+    </div>
+
     <VueFlow :nodes="nodes" :edges="edges" :node-types="nodeTypes" :fit-view-on-init="true">
-      <Background color="#111827" :gap="20" pattern-color="#374151" />
+      <Background color="#030712" :gap="20" pattern-color="#1f2937" />
     </VueFlow>
   </div>
 </template>
@@ -116,7 +170,81 @@ onMounted(fetchTopology);
   width: 100%;
   height: 100%;
   background-color: #030712;
+  position: relative;
 }
+
+.topology-controls {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(8px);
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.ns-badge {
+  background: #374151;
+  color: #f3f4f6;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.dot {
+  width: 8px; height: 8px;
+  background: #4b5563;
+  border-radius: 50%;
+}
+.dot.active {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.refresh-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.refresh-btn:hover { background: #2563eb; }
+
+.overlay-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.overlay-state.error { color: #ef4444; }
+.overlay-state.empty { color: #4b5563; }
 
 /* Custom Node Styling */
 .custom-node-container {
@@ -129,28 +257,9 @@ onMounted(fetchTopology);
   border: 1px solid #4b5563;
   border-radius: 6px;
   min-width: 180px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.custom-node-container:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-}
-
-.node-icon {
-  color: #9ca3af;
-}
-
-.node-label {
-  font-size: 0.75rem;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Kind-specific colors */
 .pod .node-icon { color: #10b981; }
 .service .node-icon { color: #3b82f6; }
 .ingress .node-icon { color: #f59e0b; }
@@ -158,10 +267,6 @@ onMounted(fetchTopology);
 .vue-flow__edge-path {
   stroke-width: 2 !important;
   stroke: #4b5563 !important;
-}
-
-.vue-flow__edge.animated .vue-flow__edge-path {
-  stroke: #3b82f6 !important;
 }
 
 .vue-flow__edge-label {
@@ -172,12 +277,8 @@ onMounted(fetchTopology);
   font-size: 10px;
   font-weight: 600;
   border: 1px solid #374151;
-  pointer-events: none;
 }
 
-.vue-flow__handle {
-  width: 6px !important;
-  height: 6px !important;
-  background: #3b82f6 !important;
-}
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>

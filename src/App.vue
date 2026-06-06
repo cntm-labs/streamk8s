@@ -268,7 +268,11 @@ onMounted(async () => {
         <WelcomeView v-if="currentView === 'welcome'" @start="handleTabChange('explorer')" />
         <SettingsView v-else-if="currentView === 'settings'" />
         <MarketplaceView v-else-if="currentView === 'marketplace'" />
-        <TopologyView v-else-if="currentView === 'topology'" />
+        <TopologyView 
+          v-else-if="currentView === 'topology'" 
+          :context-name="selectedContextName"
+          namespace="default"
+        />
         
         <section v-else-if="currentView === 'cluster'" class="workloads-panel">
           <AdviceBanner :advice="currentAdvice" @optimize="() => {}" />
