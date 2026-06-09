@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-BghxFE1z.css
-│   │   └── index-CsFK-nyK.js
+│   │   ├── index-SdUaqquL.js
+│   │   └── index-VPDXPoAR.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -54,6 +54,7 @@
 │       │   ├── 2026-05-31-online-registry.md
 │       │   ├── 2026-06-02-professional-expansion.md
 │       │   ├── 2026-06-03-connectivity-topology.md
+│       │   ├── 2026-06-03-infra-topology.md
 │       │   └── 2026-06-03-semantic-topology.md
 │       └── specs
 │           ├── 2024-05-21-deep-abi-hooks-design.md
@@ -85,7 +86,8 @@
 │           ├── 2026-05-11-plugin-sdk-design.md
 │           ├── 2026-05-31-online-registry-design.md
 │           ├── 2026-06-02-professional-expansion-design.md
-│           └── 2026-06-03-connectivity-topology-design.md
+│           ├── 2026-06-03-connectivity-topology-design.md
+│           └── 2026-06-03-infra-topology-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -7585,7 +7587,8 @@
 │       ├── 272192-1780482264
 │       │   ├── content
 │       │   │   ├── topology-layout.html
-│       │   │   └── topology-nodes.html
+│       │   │   ├── topology-nodes.html
+│       │   │   └── topology-redo-concepts.html
 │       │   └── state
 │       │       ├── server-info
 │       │       ├── server.log
@@ -7621,4 +7624,4 @@
 └── .vscode
     └── extensions.json
 
-821 directories, 6801 files
+821 directories, 6804 files
