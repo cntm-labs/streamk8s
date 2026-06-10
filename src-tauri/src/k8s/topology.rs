@@ -1,14 +1,15 @@
-use serde::Serialize;
-use kube::Api;
-use k8s_openapi::api::core::v1::{Service, Pod};
-use k8s_openapi::api::networking::v1::Ingress;
 use crate::k8s::inspector::create_client;
+use k8s_openapi::api::core::v1::{Node, Pod, Service};
+use k8s_openapi::api::networking::v1::Ingress;
+use kube::Api;
+use serde::Serialize;
 
 #[derive(Serialize, Clone, Debug)]
 pub struct TopologyNode {
     pub id: String,
     pub kind: String,
     pub name: String,
+    pub parent_id: Option<String>,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -31,27 +32,53 @@ pub async fn get_namespace_topology(
     namespace: String,
 ) -> Result<TopologyGraph, String> {
     let client = create_client(context_name).await?;
-    
+
     let mut nodes = Vec::new();
     let mut edges = Vec::new();
 
+    // 0. Fetch Nodes
+    let node_api: Api<Node> = Api::all(client.clone());
+    let hw_nodes = node_api
+        .list(&Default::default())
+        .await
+        .map(|l| l.items)
+        .unwrap_or_default();
+
     // 1. Fetch Pods (Core requirement)
     let pod_api: Api<Pod> = Api::namespaced(client.clone(), &namespace);
-    let pods = pod_api.list(&Default::default()).await
+    let pods = pod_api
+        .list(&Default::default())
+        .await
         .map(|l| l.items)
         .unwrap_or_default();
 
     // 2. Fetch Services
     let svc_api: Api<Service> = Api::namespaced(client.clone(), &namespace);
-    let services = svc_api.list(&Default::default()).await
+    let services = svc_api
+        .list(&Default::default())
+        .await
         .map(|l| l.items)
         .unwrap_or_default();
 
     // 3. Fetch Ingresses (Optional, might not exist in all clusters)
     let ingress_api: Api<Ingress> = Api::namespaced(client.clone(), &namespace);
-    let ingresses = ingress_api.list(&Default::default()).await
+    let ingresses = ingress_api
+        .list(&Default::default())
+        .await
         .map(|l| l.items)
         .unwrap_or_default();
+
+    // Map Nodes to Nodes (TopologyNodes)
+    for hw_node in &hw_nodes {
+        let name = hw_node.metadata.name.clone().unwrap_or_default();
+        let id = format!("node-{}", name);
+        nodes.push(TopologyNode {
+            id,
+            kind: "Node".into(),
+            name,
+            parent_id: None,
+        });
+    }
 
     // Map Services to Nodes and build Selector Map
     for svc in &services {
@@ -61,6 +88,7 @@ pub async fn get_namespace_topology(
             id: id.clone(),
             kind: "Service".into(),
             name: name.clone(),
+            parent_id: None,
         });
 
         if let Some(selector) = svc.spec.as_ref().and_then(|s| s.selector.as_ref()) {
@@ -97,11 +125,18 @@ pub async fn get_namespace_topology(
     for pod in &pods {
         let name = pod.metadata.name.clone().unwrap_or_default();
         let id = format!("pod-{}", name);
+        let parent_id = pod
+            .spec
+            .as_ref()
+            .and_then(|s| s.node_name.clone())
+            .map(|n| format!("node-{}", n));
+
         if !nodes.iter().any(|n| n.id == id) {
             nodes.push(TopologyNode {
                 id,
                 kind: "Pod".into(),
                 name,
+                parent_id,
             });
         }
     }
@@ -114,6 +149,7 @@ pub async fn get_namespace_topology(
             id: id.clone(),
             kind: "Ingress".into(),
             name: name.clone(),
+            parent_id: None,
         });
 
         if let Some(spec) = &ing.spec {
@@ -138,4 +174,21 @@ pub async fn get_namespace_topology(
     }
 
     Ok(TopologyGraph { nodes, edges })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_topology_node_serialization_with_parent() {
+        let node = TopologyNode {
+            id: "1".into(),
+            kind: "Pod".into(),
+            name: "test-pod".into(),
+            parent_id: Some("node-1".into()),
+        };
+        let json = serde_json::to_string(&node).unwrap();
+        assert!(json.contains(r#""parent_id":"node-1""#));
+    }
 }

@@ -21,6 +21,16 @@ const error = ref<string | null>(null);
 
 // Custom Node component mapping
 const nodeTypes = {
+  group: markRaw({
+    props: ['label', 'data'],
+    template: `
+      <div class="node-group-container">
+        <div class="group-header">
+          <span class="icon">🖥️</span> {{ props.label }}
+        </div>
+      </div>
+    `
+  }),
   custom: markRaw({
     props: ['label', 'data'],
     setup(props: any) {
@@ -101,12 +111,18 @@ const fetchTopology = async () => {
       return;
     }
 
-    const initialNodes = graph.nodes.map((n: any) => ({
-      id: n.id,
-      label: n.name,
-      type: 'custom',
-      data: { kind: n.kind }
-    }));
+    const initialNodes = graph.nodes.map((n: any) => {
+      const isGroup = n.kind === 'Node';
+      return {
+        id: n.id,
+        label: n.name,
+        type: isGroup ? 'group' : 'custom',
+        data: { kind: n.kind },
+        parentNode: n.parent_id || undefined,
+        extent: n.parent_id ? 'parent' : undefined,
+        style: isGroup ? { width: '400px', height: '200px', backgroundColor: 'rgba(31, 41, 55, 0.5)' } : {}
+      };
+    });
 
     const initialEdges = graph.edges.map((e: any) => ({
       id: e.id,
@@ -193,6 +209,28 @@ onMounted(() => {
 <style>
 @import '@vue-flow/core/dist/style.css';
 @import '@vue-flow/core/dist/theme-default.css';
+
+.node-group-container {
+  width: 100%;
+  height: 100%;
+  border: 2px dashed #4b5563;
+  border-radius: 8px;
+  background-color: transparent;
+  pointer-events: none; /* Let clicks pass to children */
+}
+.group-header {
+  padding: 8px;
+  background-color: rgba(31, 41, 55, 0.9);
+  color: #d1d5db;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom: 1px solid #4b5563;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 .topology-wrapper {
   width: 100%;
