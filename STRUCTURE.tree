@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-BvWJyu-i.css
-│   │   └── index-Uuvx9bnd.js
+│   │   ├── index-BTkiHfKo.js
+│   │   └── index-Dkcnobnb.css
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -55,6 +55,7 @@
 │       │   ├── 2026-06-02-professional-expansion.md
 │       │   ├── 2026-06-03-connectivity-topology.md
 │       │   ├── 2026-06-03-infra-topology.md
+│       │   ├── 2026-06-03-orchestrator.md
 │       │   ├── 2026-06-03-semantic-topology.md
 │       │   └── 2026-06-03-yaml-controller.md
 │       └── specs
@@ -89,6 +90,7 @@
 │           ├── 2026-06-02-professional-expansion-design.md
 │           ├── 2026-06-03-connectivity-topology-design.md
 │           ├── 2026-06-03-infra-topology-design.md
+│           ├── 2026-06-03-orchestrator-design.md
 │           └── 2026-06-03-yaml-controller-design.md
 ├── FAQ.md
 ├── GEMINI.md
@@ -108,17 +110,23 @@
 ├── graphify-out
 │   ├── cache
 │   │   ├── ast
+│   │   │   ├── 06f45a6cceaff199c15357ddaae8cd8760378014134eda5eb24c752907a9071f.json
 │   │   │   ├── 071b3d2c8e68444d00cf0f61707b3eb09ebeae979516b91e43a07daf7c395d0c.json
+│   │   │   ├── 077dff9f2a47a9e7c6060bf4eb289587b1f881590b6439bb7e0634a00de2489c.json
 │   │   │   ├── 0cc870c58c93e4a6d53e0bb70785a37af3e3a5de29663eb62a4dbc1a4800a14a.json
 │   │   │   ├── 13790d5c8afcec1b06769ad0aa6737cff6cb803c2073420156474d64f5751bf3.json
 │   │   │   ├── 142f76c09f20a606e98d5431db38d04f6233877d03d42490ee78cb1c644e2b08.json
 │   │   │   ├── 1c64380c232808e329a190c1545016e6d584dfca3d043e65d26e6c13a0b5b7fc.json
+│   │   │   ├── 1f4ec3ee93da994becb36804e14aed1f78e66ee7419934dab193b2b0ba69ce4c.json
 │   │   │   ├── 2233b8fcad98c2ff3408c0512925201041a436a65a726714efbc1af47cf30169.json
+│   │   │   ├── 27d28943ed3236383cb9c346bb36600488340e71fd2d6b7d68e892b35899bb1f.json
 │   │   │   ├── 39b3fa48bdcdf3ef5daa9b3238d8b48d78d060df9179b8344a454ed1051f6917.json
 │   │   │   ├── 39f7002a0908b784e18eb6e1426dbbdf0973bd370af2ac2addff3fbda5d6cbcb.json
+│   │   │   ├── 4051ecbd02841a6217c2f42b90f9212e84ac3f16ad4e9f98490bafc482d4cce0.json
 │   │   │   ├── 40a847a20a7f684bfb5337f138d1d81ca2d79599437ed776fd1f74afe0c3afaa.json
 │   │   │   ├── 4421f69993887020c419ec68a0e90a21d2a5fc1a3a3f0b3b4d8d9997523b94a6.json
 │   │   │   ├── 49fa2e5700a17e5774aa9d660c103b62f603dcfe1c95ab458777b14c6879802b.json
+│   │   │   ├── 54f3ff31b008760792d5d3617a03a4ab3ad6c430379b1e2e0e4401294b08c618.json
 │   │   │   ├── 5d4e1477707fba0e4c6502efbb33b76d824e72dbf9731b058d3dcf7cfd013d82.json
 │   │   │   ├── 5ed1a753ff465040efb77d4b44141e00462528b9e14d191468ff2c02fc261e7e.json
 │   │   │   ├── 62f7111d069e8c92e13b2b47fb05cf6e914fc0abbcfaab5877b207413698034b.json
@@ -126,6 +134,7 @@
 │   │   │   ├── 684a4cf0954694866e658f2e4a87751b73faa990bd21a30c103f39943cb3314f.json
 │   │   │   ├── 70ee4148ab2191f2274f79999c3e790f4804aa5b19402c22be38ad9cd099a26a.json
 │   │   │   ├── 83dc2d5c1f479d286c7c162fc12889c85174c49b1766a45e048121112b69d6ec.json
+│   │   │   ├── 84eb6468007800ba9cb2e56d0a522304e77ffbd5721c2ff94802cb7309316719.json
 │   │   │   ├── 9169064f78959e2add41431205a3852e57f58ec57c82aaac9bf1fdf19df86d32.json
 │   │   │   ├── 928ed19b2e1b424086df5031a1918be268c767a5484258957bf727bbfa2a7f0c.json
 │   │   │   ├── 93363071a1c447d2200be6be7164330d30042646502a5f8f069674d845dd824d.json
@@ -133,8 +142,11 @@
 │   │   │   ├── 98bd1e3479c70d9fc2a369fea07c64bfc967019615151d1e2111286715e407c2.json
 │   │   │   ├── 9a3b47b29bc83317652df4073518e0bc6e87de27ab41aa0a4f38d782a7288e3f.json
 │   │   │   ├── 9d51fc7bda048e17c82501f1f1481b14a5ef25e40cc56b7ab62c3f58f72b5fe1.json
+│   │   │   ├── a13ae82b90d8d66a57598b23f63c8c375cbad5fd5f26d4d252d6ee492f21711f.json
 │   │   │   ├── a5be891e0f8333eec30dba86465663ca30681eb3707d20d4721631f310176798.json
+│   │   │   ├── a5d4be646dde1b8ec57aaff49dfa7dbf6ecc783c8edad86b1192d5ccb3c6bd95.json
 │   │   │   ├── b245580f3cf868c195de80ca7d5e6bc82d298c70304acb0807f8eba654c2dc77.json
+│   │   │   ├── bfde7e152ef68ecf6335771c650af6771979f5309cb32147906910cbd1a2f35b.json
 │   │   │   ├── c3e4ed4b22a7c4c28b70ea225d2f6bda160471423259d1767f7acc323fa474a4.json
 │   │   │   ├── c425638b62f7611a3a58ba518f7961846171c240267562ddda9cf57a9baa6564.json
 │   │   │   ├── c699d836829340776dc88780d96b217299ed14bd1a7de7017c4ba3a8d88c7be9.json
@@ -7488,7 +7500,8 @@
 │   │   ├── ResourceTree.vue
 │   │   ├── Sidebar.vue
 │   │   ├── Toast.vue
-│   │   └── TrendChart.vue
+│   │   ├── TrendChart.vue
+│   │   └── YamlEditorModal.vue
 │   ├── main.ts
 │   ├── style.css
 │   ├── views
@@ -7575,6 +7588,7 @@
 │       │       └── server-stopped
 │       ├── 214413-1781091034
 │       │   ├── content
+│       │   │   ├── orchestrator-options.html
 │       │   │   └── yaml-controller-options.html
 │       │   └── state
 │       │       ├── server-info
@@ -7633,4 +7647,4 @@
 └── .vscode
     └── extensions.json
 
-824 directories, 6810 files
+824 directories, 6824 files

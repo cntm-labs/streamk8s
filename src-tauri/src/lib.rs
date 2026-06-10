@@ -21,6 +21,8 @@ pub fn run() {
             crate::config::save_config,
             crate::k8s::pods::get_pods,
             crate::k8s::scaling::scale_workload,
+            crate::k8s::scaling::suspend_namespace,
+            crate::k8s::scaling::resume_namespace,
             crate::k8s::logs::start_log_stream,
             crate::k8s::contexts::get_available_contexts,
             crate::k8s::inspector::get_resource_manifest,
