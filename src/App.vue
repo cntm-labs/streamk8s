@@ -12,6 +12,7 @@ import TrendChart from './components/TrendChart.vue';
 import InspectorPanel from './components/InspectorPanel.vue';
 import AdviceBanner from './components/AdviceBanner.vue';
 import CommandPalette from './components/CommandPalette.vue';
+import YamlEditorModal from './components/YamlEditorModal.vue';
 
 // Views
 import WelcomeView from './views/WelcomeView.vue';
@@ -40,6 +41,7 @@ const sidebarVisible = ref(true);
 const sidebarWidth = ref(240);
 const isResizing = ref(false);
 const showCommandPalette = ref(false);
+const editingResource = ref<any | null>(null);
 
 const navMap: Record<string, { sidebar: boolean, view: 'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology' }> = {
   explorer: { sidebar: true, view: 'cluster' },
@@ -304,6 +306,7 @@ onMounted(async () => {
                ref="inspectorPanelRef"
                :selected-resource="selectedResource" 
                @close="selectedResource = null"
+               @edit="(res) => editingResource = res"
              />
           </div>
         </section>
@@ -315,6 +318,12 @@ onMounted(async () => {
       :visible="showCommandPalette"
       @close="showCommandPalette = false"
       @select="handleCommandSelect"
+    />
+
+    <YamlEditorModal 
+      v-if="editingResource" 
+      :resource="editingResource" 
+      :onClose="() => editingResource = null" 
     />
   </div>
 </template>

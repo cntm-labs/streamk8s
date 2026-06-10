@@ -3,13 +3,13 @@ import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import { marked } from 'marked';
-import { X, Loader2 } from 'lucide-vue-next';
+import { Loader2 } from 'lucide-vue-next';
 
 const props = defineProps<{
   selectedResource: { contextName: string, namespace: string, name: string, kind: string } | null
 }>();
 
-const emit = defineEmits(['close']);
+const emit = defineEmits<{ (e: 'close'): void; (e: 'edit', resource: any): void; }>();
 
 const activeTab = ref('Logs');
 const tabs = ['Logs', 'YAML', 'Events', 'Files', 'AI Diagnostic'];
@@ -219,9 +219,10 @@ defineExpose({ clearLogs });
         <button v-if="activeTab === 'AI Diagnostic'" @click="runAiAnalysis" class="action-btn ai-btn" :disabled="isAnalyzing">AI Analyze</button>
         
         <div class="header-divider"></div>
-        <button @click="emit('close')" class="close-btn" title="Close Panel">
-          <X :size="16" />
-        </button>
+        <div class="header-actions">
+          <button class="btn-icon" @click="emit('edit', selectedResource)" title="Edit YAML">✏️</button>
+          <button class="btn-icon" @click="emit('close')" title="Close Panel">✕</button>
+        </div>
       </div>
     </div>
 

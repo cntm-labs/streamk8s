@@ -1,4 +1,6 @@
 use k8s_openapi::api::core::v1::{Event, Pod};
+use kube::core::DynamicObject;
+use kube::discovery::{Discovery, Scope};
 use kube::{
     api::ListParams,
     api::{Patch, PatchParams},
@@ -6,6 +8,49 @@ use kube::{
 };
 use serde_json::Value;
 use tokio::io::AsyncReadExt;
+
+#[tauri::command]
+pub async fn apply_k8s_resource(
+    context_name: Option<String>,
+    kind: String,
+    namespace: String,
+    name: String,
+    yaml: String,
+    dry_run: bool,
+) -> Result<String, String> {
+    let client = create_client(context_name).await?;
+    let discovery = Discovery::new(client.clone())
+        .run()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    for group in discovery.groups() {
+        if let Some((ar, caps)) = group.recommended_kind(&kind) {
+            let api: kube::Api<DynamicObject> = if caps.scope == Scope::Namespaced {
+                kube::Api::namespaced_with(client.clone(), &namespace, &ar)
+            } else {
+                kube::Api::all_with(client.clone(), &ar)
+            };
+
+            let patch: DynamicObject =
+                serde_yaml::from_str(&yaml).map_err(|e| format!("Invalid YAML: {}", e))?;
+
+            let mut pp = PatchParams::apply("streamk8s");
+            pp.force = true;
+            if dry_run {
+                pp.dry_run = true;
+            }
+
+            let _obj = api
+                .patch(&name, &pp, &Patch::Apply(&patch))
+                .await
+                .map_err(|e| e.to_string())?;
+            return Ok(format!("Successfully applied {} {}", kind, name));
+        }
+    }
+
+    Err(format!("Resource kind '{}' not found", kind))
+}
 
 #[tauri::command]
 pub async fn apply_resource_manifest(
