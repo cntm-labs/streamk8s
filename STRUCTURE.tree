@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-SdUaqquL.js
-│   │   └── index-VPDXPoAR.css
+│   │   ├── index-BvWJyu-i.css
+│   │   └── index-Uuvx9bnd.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -55,7 +55,8 @@
 │       │   ├── 2026-06-02-professional-expansion.md
 │       │   ├── 2026-06-03-connectivity-topology.md
 │       │   ├── 2026-06-03-infra-topology.md
-│       │   └── 2026-06-03-semantic-topology.md
+│       │   ├── 2026-06-03-semantic-topology.md
+│       │   └── 2026-06-03-yaml-controller.md
 │       └── specs
 │           ├── 2024-05-21-deep-abi-hooks-design.md
 │           ├── 2024-05-22-gemini-provider-design.md
@@ -87,7 +88,8 @@
 │           ├── 2026-05-31-online-registry-design.md
 │           ├── 2026-06-02-professional-expansion-design.md
 │           ├── 2026-06-03-connectivity-topology-design.md
-│           └── 2026-06-03-infra-topology-design.md
+│           ├── 2026-06-03-infra-topology-design.md
+│           └── 2026-06-03-yaml-controller-design.md
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -7571,6 +7573,13 @@
 │       │       ├── events
 │       │       ├── server.pid
 │       │       └── server-stopped
+│       ├── 214413-1781091034
+│       │   ├── content
+│       │   │   └── yaml-controller-options.html
+│       │   └── state
+│       │       ├── server-info
+│       │       ├── server.log
+│       │       └── server.pid
 │       ├── 2413762-1778663007
 │       │   ├── content
 │       │   │   └── lens-comparison.html
@@ -7624,4 +7633,4 @@
 └── .vscode
     └── extensions.json
 
-821 directories, 6804 files
+824 directories, 6810 files
