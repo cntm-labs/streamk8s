@@ -52,6 +52,7 @@ pub fn run() {
                 let mut sys = System::new_all();
                 loop {
                     let metrics = collect_metrics(&mut sys, &nvml);
+                    crate::hardware::collector::check_for_heavy_apps(&sys, &handle);
                     let _ = handle.emit("hardware-update", &metrics);
 
                     let heavy_apps = Profiler::scan_heavy_apps(&sys);
