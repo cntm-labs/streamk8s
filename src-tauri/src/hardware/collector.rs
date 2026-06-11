@@ -1,6 +1,7 @@
 use nvml_wrapper::Nvml;
 use serde::Serialize;
 use sysinfo::System;
+use tauri::{AppHandle, Emitter};
 
 #[derive(Serialize, Clone)]
 pub struct SystemMetrics {
@@ -8,6 +9,18 @@ pub struct SystemMetrics {
     pub ram_usage: f32,
     pub gpu_usage: Option<f32>,
     pub gpu_mem_usage: Option<f32>,
+}
+
+pub fn check_for_heavy_apps(sys: &System, app: &AppHandle) {
+    let heavy_apps = ["adobe premiere", "cyberpunk", "chrome", "firefox", "code"];
+
+    for (_pid, process) in sys.processes() {
+        let name = process.name().to_lowercase();
+        if heavy_apps.iter().any(|&ha| name.contains(ha)) && process.cpu_usage() > 20.0 {
+            app.emit("heavy-app-detected", name).ok();
+            break;
+        }
+    }
 }
 
 pub fn collect_metrics(sys: &mut System, nvml: &Option<Nvml>) -> SystemMetrics {

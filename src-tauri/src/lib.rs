@@ -21,6 +21,8 @@ pub fn run() {
             crate::config::save_config,
             crate::k8s::pods::get_pods,
             crate::k8s::scaling::scale_workload,
+            crate::k8s::scaling::suspend_namespace,
+            crate::k8s::scaling::resume_namespace,
             crate::k8s::logs::start_log_stream,
             crate::k8s::contexts::get_available_contexts,
             crate::k8s::inspector::get_resource_manifest,
@@ -50,6 +52,7 @@ pub fn run() {
                 let mut sys = System::new_all();
                 loop {
                     let metrics = collect_metrics(&mut sys, &nvml);
+                    crate::hardware::collector::check_for_heavy_apps(&sys, &handle);
                     let _ = handle.emit("hardware-update", &metrics);
 
                     let heavy_apps = Profiler::scan_heavy_apps(&sys);
