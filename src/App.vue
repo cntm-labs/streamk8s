@@ -13,6 +13,7 @@ import InspectorPanel from './components/InspectorPanel.vue';
 import AdviceBanner from './components/AdviceBanner.vue';
 import CommandPalette from './components/CommandPalette.vue';
 import YamlEditorModal from './components/YamlEditorModal.vue';
+import AdvisorToast from './components/AdvisorToast.vue';
 
 // Views
 import WelcomeView from './views/WelcomeView.vue';
@@ -325,6 +326,8 @@ onMounted(async () => {
       :resource="editingResource" 
       :onClose="() => editingResource = null" 
     />
+    
+    <AdvisorToast :context-name="selectedContextName" />
   </div>
 </template>
 
