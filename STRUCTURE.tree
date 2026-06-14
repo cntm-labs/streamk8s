@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-3P9gkshV.js
-│   │   └── index-B22HdDJ7.css
+│   │   ├── index-B77Qx-r2.css
+│   │   └── index-BFDg6EAA.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -23,6 +23,7 @@
 │       │   ├── 2024-05-22-gemini-provider.md
 │       │   ├── 2024-05-24-semantic-backend-rust.md
 │       │   ├── 2025-01-24-ai-diagnostic-polish-pr.md
+│       │   ├── 2025-02-14-component-spatial-refactor.md
 │       │   ├── 2025-03-05-backend-config-ai-settings.md
 │       │   ├── 2025-03-24-consolidate-features.md
 │       │   ├── 2025-03-24-inspector-close-button.md
@@ -7661,4 +7662,4 @@
 └── .vscode
     └── extensions.json
 
-827 directories, 6835 files
+827 directories, 6836 files
