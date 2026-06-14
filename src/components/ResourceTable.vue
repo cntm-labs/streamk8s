@@ -161,57 +161,60 @@ const isScaleSupported = computed(() => ['Pod', 'Deployment', 'StatefulSet'].inc
 
 <style scoped>
 .resource-table {
-  background-color: #1f2937;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #374151;
+  background-color: var(--surface-card);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-dim);
   display: flex;
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
   position: relative;
+  font-family: var(--font-ui);
 }
 .list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
 .header-left {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 .selection-count {
   font-size: 0.875rem;
-  color: #3b82f6;
+  color: var(--accent-blue);
   background-color: rgba(59, 130, 246, 0.1);
   padding: 2px 8px;
   border-radius: 12px;
 }
 .search-input {
-  background-color: #374151;
-  border: 1px solid #4b5563;
+  background-color: var(--surface-dark);
+  border: 1px solid var(--border-dim);
   color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
   outline: none;
+  transition: border-color 0.2s;
 }
 .search-input:focus {
-  border-color: #3b82f6;
+  border-color: var(--accent-blue);
 }
 h3 {
   margin: 0;
   font-size: 1.125rem;
+  font-weight: 600;
 }
 
 .bulk-action-bar {
-  background-color: #111827;
-  border: 1px solid #3b82f6;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
+  background-color: var(--surface-dark);
+  border: 1px solid var(--accent-blue);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -224,16 +227,16 @@ h3 {
 
 .bulk-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 .btn-bulk {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   border: none;
   color: white;
@@ -257,8 +260,8 @@ h3 {
 .table-container {
   flex: 1;
   overflow-y: auto;
-  border: 1px solid #374151;
-  border-radius: 4px;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-sm);
 }
 table {
   width: 100%;
@@ -267,51 +270,57 @@ table {
 th {
   position: sticky;
   top: 0;
-  background-color: #1f2937;
+  background-color: var(--surface-card);
   text-align: left;
   font-size: 0.75rem;
+  font-weight: 700;
   color: #9ca3af;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #374151;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-dim);
   z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 td {
-  padding: 0.75rem 1rem;
+  padding: var(--space-4);
   font-size: 0.875rem;
-  border-top: 1px solid #374151;
+  border-top: 1px solid var(--border-dim);
 }
 .col-check {
-  width: 40px;
+  width: 48px;
   text-align: center;
 }
 .resource-name-cell {
-  color: #3b82f6;
-  font-weight: 500;
+  color: var(--accent-blue);
+  font-weight: 600;
   cursor: pointer;
+  font-family: var(--font-code);
 }
 .resource-name-cell:hover {
   text-decoration: underline;
 }
 tr {
   cursor: pointer;
-  transition: background-color 0.1s;
+  transition: all 0.2s;
 }
 tr:hover {
-  background-color: #2d3748;
+  background-color: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 12px var(--accent-blue-glow);
 }
 tr.row-selected {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(59, 130, 246, 0.08);
 }
 .status-badge {
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
+  font-weight: 600;
 }
 /* Standard Pod statuses */
-.running { background-color: #065f46; color: #34d399; }
-.pending { background-color: #92400e; color: #fbbf24; }
-.failed { background-color: #991b1b; color: #f87171; }
+.running { background-color: rgba(6, 95, 70, 0.2); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.2); }
+.pending { background-color: rgba(146, 64, 14, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); }
+.failed { background-color: rgba(153, 27, 27, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
 /* Generic statuses */
-.active, .ready { background-color: #065f46; color: #34d399; }
-.inactive, .error { background-color: #991b1b; color: #f87171; }
+.active, .ready { background-color: rgba(6, 95, 70, 0.2); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.2); }
+.inactive, .error { background-color: rgba(153, 27, 27, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
 </style>

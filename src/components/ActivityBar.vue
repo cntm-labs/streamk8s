@@ -68,14 +68,16 @@ const selectItem = (id: string) => {
 <style scoped>
 .activity-bar {
   width: 48px;
-  background-color: #1f2937;
+  background-color: var(--surface-glass);
+  backdrop-filter: var(--glass-blur);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-right: 1px solid #374151;
+  border-right: var(--glass-border);
   height: 100%;
+  z-index: 10;
 }
 
 .top-items, .bottom-items {
