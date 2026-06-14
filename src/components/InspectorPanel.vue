@@ -41,6 +41,21 @@ const clearLogs = () => {
   logs.value = [];
 };
 
+const initiateLogStream = async () => {
+  if (!props.selectedResource || props.selectedResource.kind !== 'Pods') return;
+  
+  try {
+    logs.value = ["Connecting to pod logs..."];
+    await invoke('start_log_stream', {
+      contextName: props.selectedResource.contextName,
+      namespace: props.selectedResource.namespace,
+      podName: props.selectedResource.name,
+    });
+  } catch (e) {
+    logs.value.push(`Stream Error: ${e}`);
+  }
+};
+
 const fetchYaml = async () => {
   if (!props.selectedResource) return;
   isLoadingYaml.value = true;
@@ -175,6 +190,10 @@ onMounted(async () => {
       });
     }
   });
+
+  if (activeTab.value === 'Logs') {
+    initiateLogStream();
+  }
 });
 
 onUnmounted(() => {
@@ -182,6 +201,7 @@ onUnmounted(() => {
 });
 
 watch(activeTab, (newTab) => {
+  if (newTab === 'Logs') initiateLogStream();
   if (newTab === 'YAML') fetchYaml();
   if (newTab === 'Events') fetchEvents();
   if (newTab === 'Files') readFile();
@@ -189,6 +209,7 @@ watch(activeTab, (newTab) => {
 
 watch(() => props.selectedResource, () => {
   clearLogs();
+  if (activeTab.value === 'Logs') initiateLogStream();
   if (activeTab.value === 'YAML') fetchYaml();
   if (activeTab.value === 'Events') fetchEvents();
   if (activeTab.value === 'Files') readFile();

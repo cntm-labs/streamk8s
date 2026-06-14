@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-B77Qx-r2.css
-│   │   └── index-BFDg6EAA.js
+│   │   ├── index-BNJgsXca.css
+│   │   └── index-SwJQeTik.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -23,6 +23,7 @@
 │       │   ├── 2024-05-22-gemini-provider.md
 │       │   ├── 2024-05-24-semantic-backend-rust.md
 │       │   ├── 2025-01-24-ai-diagnostic-polish-pr.md
+│       │   ├── 2025-01-24-interactive-polish.md
 │       │   ├── 2025-02-14-component-spatial-refactor.md
 │       │   ├── 2025-03-05-backend-config-ai-settings.md
 │       │   ├── 2025-03-24-consolidate-features.md
@@ -57,6 +58,7 @@
 │       │   ├── 2026-06-03-connectivity-topology.md
 │       │   ├── 2026-06-03-infra-topology.md
 │       │   ├── 2026-06-03-orchestrator.md
+│       │   ├── 2026-06-03-reactive-terminal.md
 │       │   ├── 2026-06-03-semantic-topology.md
 │       │   ├── 2026-06-03-ux-refinement.md
 │       │   ├── 2026-06-03-yaml-controller.md
@@ -7662,4 +7664,4 @@
 └── .vscode
     └── extensions.json
 
-827 directories, 6836 files
+827 directories, 6838 files
