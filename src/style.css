@@ -4,7 +4,10 @@
   --radius-sm: 4px;
   --surface-dark: #030712;
   --surface-card: #111827;
-  --surface-glass: rgba(17, 24, 39, 0.7);
+  --surface-glass: rgba(17, 24, 39, 0.6);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.05);
+  --glass-blur: blur(12px);
+  --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --accent-blue: #3b82f6;
   --accent-blue-glow: rgba(59, 130, 246, 0.4);
   --border-dim: #1f2937;
@@ -33,4 +36,8 @@ html, body {
 
 * {
   box-sizing: border-box;
+}
+
+button, .btn-refresh, .activity-item, .cluster-icon, .search-box, tr {
+  transition: var(--transition-smooth);
 }
