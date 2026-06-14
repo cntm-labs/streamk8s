@@ -18,8 +18,9 @@ This file is the operational core. Gemini CLI MUST follow these protocols to mai
      - Linked Issue ID (search for keywords like "fixes #123").
      - Automated Labels (e.g., `feat`, `fix`, `docs`).
    - **Assign:** Automatically set the current developer as the Assignee.
-3. **Pre-Commit Action:** Before every commit, you MUST:
-   - Run `tree -a -I 'node_modules|.git|target' > STRUCTURE.tree`.
+3. Pre-Commit Action: Before every commit, you MUST:
+   - Run `tree -a -I 'node_modules|.git|target|dist|dist-ssr|.vscode|.idea|.superpowers|graphify-out|docs/superpowers|docs/plans' > STRUCTURE.tree`.
+
    - Trigger stack-specific formatting (e.g., `cargo fmt`).
    - Run `pre-commit run --all-files` if available.
 
