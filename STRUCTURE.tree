@@ -21,6 +21,7 @@
 │       │   ├── 2023-10-27-plugin-sdk-docs.md
 │       │   ├── 2024-05-21-deep-abi-hooks.md
 │       │   ├── 2024-05-22-gemini-provider.md
+│       │   ├── 2024-05-24-polish-log-streaming.md
 │       │   ├── 2024-05-24-semantic-backend-rust.md
 │       │   ├── 2025-01-24-ai-diagnostic-polish-pr.md
 │       │   ├── 2025-01-24-interactive-polish.md
@@ -7664,4 +7665,4 @@
 └── .vscode
     └── extensions.json
 
-827 directories, 6838 files
+827 directories, 6839 files
