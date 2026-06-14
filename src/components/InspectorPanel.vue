@@ -41,6 +41,21 @@ const clearLogs = () => {
   logs.value = [];
 };
 
+const initiateLogStream = async () => {
+  if (!props.selectedResource || props.selectedResource.kind !== 'Pods') return;
+  
+  try {
+    logs.value = ["Connecting to pod logs..."];
+    await invoke('start_log_stream', {
+      contextName: props.selectedResource.contextName,
+      namespace: props.selectedResource.namespace,
+      podName: props.selectedResource.name,
+    });
+  } catch (e) {
+    logs.value.push(`Stream Error: ${e}`);
+  }
+};
+
 const fetchYaml = async () => {
   if (!props.selectedResource) return;
   isLoadingYaml.value = true;
@@ -175,6 +190,10 @@ onMounted(async () => {
       });
     }
   });
+
+  if (activeTab.value === 'Logs') {
+    initiateLogStream();
+  }
 });
 
 onUnmounted(() => {
@@ -182,6 +201,7 @@ onUnmounted(() => {
 });
 
 watch(activeTab, (newTab) => {
+  if (newTab === 'Logs') initiateLogStream();
   if (newTab === 'YAML') fetchYaml();
   if (newTab === 'Events') fetchEvents();
   if (newTab === 'Files') readFile();
@@ -189,6 +209,7 @@ watch(activeTab, (newTab) => {
 
 watch(() => props.selectedResource, () => {
   clearLogs();
+  if (activeTab.value === 'Logs') initiateLogStream();
   if (activeTab.value === 'YAML') fetchYaml();
   if (activeTab.value === 'Events') fetchEvents();
   if (activeTab.value === 'Files') readFile();
@@ -299,64 +320,64 @@ defineExpose({ clearLogs });
 
 <style scoped>
 .inspector-panel {
-  height: 300px;
-  background-color: #000;
-  border-top: 1px solid #374151;
+  height: 350px;
+  background-color: var(--surface-dark);
+  border-top: 1px solid var(--border-dim);
   display: flex;
   flex-direction: column;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: var(--font-ui);
 }
 .panel-header {
-  height: 36px;
-  background-color: #1f2937;
+  height: 48px;
+  background-color: var(--surface-card);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 0.5rem;
-  border-bottom: 1px solid #374151;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--border-dim);
 }
 .tabs {
   display: flex;
-  gap: 2px;
-  height: 100%;
+  gap: var(--space-2);
+  align-items: center;
 }
 .tab-btn {
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
+  background: var(--surface-dark);
+  border: 1px solid var(--border-dim);
   color: #9ca3af;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  padding: 0 1rem;
+  padding: 6px 16px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.2s;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 .tab-btn:hover {
-  color: #d1d5db;
-  background-color: rgba(255,255,255,0.05);
+  color: #f3f4f6;
+  border-color: var(--accent-blue);
 }
 .tab-btn.active {
-  color: #3b82f6;
-  border-bottom-color: #3b82f6;
-  background-color: rgba(59, 130, 246, 0.1);
+  color: white;
+  background-color: var(--accent-blue);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 10px var(--accent-blue-glow);
 }
 .actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 .action-btn {
-  background-color: #374151;
-  border: 1px solid #4b5563;
+  background-color: var(--surface-dark);
+  border: 1px solid var(--border-dim);
   color: #d1d5db;
-  font-size: 0.65rem;
-  padding: 2px 10px;
-  border-radius: 4px;
+  font-size: 0.75rem;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all 0.2s;
 }
 .action-btn:hover:not(:disabled) {
-  background-color: #4b5563;
+  border-color: var(--accent-blue);
   color: white;
 }
 .action-btn:disabled {
@@ -364,8 +385,8 @@ defineExpose({ clearLogs });
   cursor: not-allowed;
 }
 .action-btn.save-btn {
-  background-color: #2563eb;
-  border-color: #3b82f6;
+  background-color: var(--accent-blue);
+  border-color: var(--accent-blue);
   color: white;
 }
 .action-btn.save-btn:hover:not(:disabled) {
@@ -373,7 +394,7 @@ defineExpose({ clearLogs });
 }
 .action-btn.ai-btn {
   background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  border-color: #818cf8;
+  border: none;
   color: white;
 }
 .action-btn.ai-btn:hover:not(:disabled) {
@@ -384,11 +405,11 @@ defineExpose({ clearLogs });
 .header-divider {
   width: 1px;
   height: 20px;
-  background-color: #374151;
+  background-color: var(--border-dim);
   margin: 0 4px;
 }
 
-.close-btn {
+.btn-icon {
   background: none;
   border: none;
   color: #9ca3af;
@@ -396,13 +417,13 @@ defineExpose({ clearLogs });
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: var(--radius-sm);
   transition: all 0.2s;
 }
 
-.close-btn:hover {
-  background-color: #ef4444;
+.btn-icon:hover {
+  background-color: rgba(255, 255, 255, 0.05);
   color: white;
 }
 
@@ -410,22 +431,22 @@ defineExpose({ clearLogs });
   flex: 1;
   overflow: hidden;
   position: relative;
-  background-color: #0a0a0a;
+  background-color: #050505;
 }
 
 /* Common Content Styles */
 .log-content, .yaml-content, .events-content, .files-content, .ai-content {
   height: 100%;
   overflow-y: auto;
+  padding: var(--space-4);
 }
 
 /* AI Diagnostic Styles */
 .ai-content {
-  padding: 1rem;
   color: #e5e7eb;
 }
 .markdown-body {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   line-height: 1.6;
 }
 .markdown-body :deep(h1), .markdown-body :deep(h2), .markdown-body :deep(h3) {
@@ -437,7 +458,7 @@ defineExpose({ clearLogs });
   background-color: #1f2937;
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
-  font-family: inherit;
+  font-family: var(--font-code);
 }
 .markdown-body :deep(pre) {
   background-color: #111827;
@@ -459,19 +480,19 @@ defineExpose({ clearLogs });
 
 /* Logs Styles */
 .log-content {
-  padding: 0.5rem;
+  font-family: var(--font-code);
 }
 .log-line {
   display: flex;
-  gap: 0.75rem;
-  font-size: 0.8rem;
-  line-height: 1.4;
+  gap: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-all;
 }
 .line-num {
   color: #4b5563;
-  min-width: 2rem;
+  min-width: 2.5rem;
   text-align: right;
   user-select: none;
 }
@@ -483,39 +504,40 @@ defineExpose({ clearLogs });
 .yaml-content, .file-editor-area {
   height: 100%;
   display: flex;
+  padding: 0;
 }
 .code-editor {
   flex: 1;
-  background-color: #0a0a0a;
-  color: #a78bfa; /* Light purple for YAML/Code */
+  background-color: transparent;
+  color: #a78bfa;
   border: none;
-  padding: 1rem;
-  font-family: inherit;
-  font-size: 0.8rem;
+  padding: var(--space-4);
+  font-family: var(--font-code);
+  font-size: 0.875rem;
   resize: none;
   outline: none;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 /* Events Table Styles */
 .events-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #d1d5db;
 }
 .events-table th {
   text-align: left;
-  background-color: #111827;
-  padding: 0.5rem;
+  background-color: var(--surface-card);
+  padding: var(--space-3) var(--space-4);
   position: sticky;
   top: 0;
   color: #9ca3af;
-  border-bottom: 1px solid #374151;
+  border-bottom: 1px solid var(--border-dim);
 }
 .events-table td {
-  padding: 0.5rem;
-  border-bottom: 1px solid #1f2937;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-dim);
   vertical-align: top;
 }
 .type-cell.warning { color: #f59e0b; }
@@ -525,23 +547,24 @@ defineExpose({ clearLogs });
 .files-content {
   display: flex;
   flex-direction: column;
+  padding: 0;
 }
 .file-browser-header {
   display: flex;
   gap: 0.5rem;
-  padding: 0.5rem;
-  background-color: #111827;
-  border-bottom: 1px solid #374151;
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--surface-card);
+  border-bottom: 1px solid var(--border-dim);
 }
 .path-input {
   flex: 1;
-  background-color: #1f2937;
-  border: 1px solid #374151;
+  background-color: var(--surface-dark);
+  border: 1px solid var(--border-dim);
   color: #d1d5db;
-  font-size: 0.75rem;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-code);
 }
 
 /* Shared UI */
@@ -552,7 +575,7 @@ defineExpose({ clearLogs });
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #3b82f6;
+  color: var(--accent-blue);
   font-size: 0.8rem;
   z-index: 10;
 }
@@ -576,7 +599,7 @@ defineExpose({ clearLogs });
   align-items: center;
   height: 100%;
   color: #4b5563;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-style: italic;
   padding: 2rem;
   text-align: center;

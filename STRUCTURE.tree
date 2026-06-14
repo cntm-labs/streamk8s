@@ -7,8 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── dist
 │   ├── assets
-│   │   ├── index-BSqJMx0O.css
-│   │   └── index-DZxZCOsa.js
+│   │   ├── index-BNJgsXca.css
+│   │   └── index-SwJQeTik.js
 │   ├── index.html
 │   ├── tauri.svg
 │   └── vite.svg
@@ -21,8 +21,11 @@
 │       │   ├── 2023-10-27-plugin-sdk-docs.md
 │       │   ├── 2024-05-21-deep-abi-hooks.md
 │       │   ├── 2024-05-22-gemini-provider.md
+│       │   ├── 2024-05-24-polish-log-streaming.md
 │       │   ├── 2024-05-24-semantic-backend-rust.md
 │       │   ├── 2025-01-24-ai-diagnostic-polish-pr.md
+│       │   ├── 2025-01-24-interactive-polish.md
+│       │   ├── 2025-02-14-component-spatial-refactor.md
 │       │   ├── 2025-03-05-backend-config-ai-settings.md
 │       │   ├── 2025-03-24-consolidate-features.md
 │       │   ├── 2025-03-24-inspector-close-button.md
@@ -56,8 +59,11 @@
 │       │   ├── 2026-06-03-connectivity-topology.md
 │       │   ├── 2026-06-03-infra-topology.md
 │       │   ├── 2026-06-03-orchestrator.md
+│       │   ├── 2026-06-03-reactive-terminal.md
 │       │   ├── 2026-06-03-semantic-topology.md
-│       │   └── 2026-06-03-yaml-controller.md
+│       │   ├── 2026-06-03-ux-refinement.md
+│       │   ├── 2026-06-03-yaml-controller.md
+│       │   └── design-system-tokens-app-shell.md
 │       └── specs
 │           ├── 2024-05-21-deep-abi-hooks-design.md
 │           ├── 2024-05-22-gemini-provider-design.md
@@ -91,6 +97,7 @@
 │           ├── 2026-06-03-connectivity-topology-design.md
 │           ├── 2026-06-03-infra-topology-design.md
 │           ├── 2026-06-03-orchestrator-design.md
+│           ├── 2026-06-03-ux-refinement-design.md
 │           └── 2026-06-03-yaml-controller-design.md
 ├── FAQ.md
 ├── GEMINI.md
@@ -120,6 +127,7 @@
 │   │   │   ├── 1f4ec3ee93da994becb36804e14aed1f78e66ee7419934dab193b2b0ba69ce4c.json
 │   │   │   ├── 2233b8fcad98c2ff3408c0512925201041a436a65a726714efbc1af47cf30169.json
 │   │   │   ├── 27d28943ed3236383cb9c346bb36600488340e71fd2d6b7d68e892b35899bb1f.json
+│   │   │   ├── 27ea48f28cf79b289b9968063f21166f8be7ef6d34e669c2f2d6e8b2a707ef73.json
 │   │   │   ├── 39b3fa48bdcdf3ef5daa9b3238d8b48d78d060df9179b8344a454ed1051f6917.json
 │   │   │   ├── 39f7002a0908b784e18eb6e1426dbbdf0973bd370af2ac2addff3fbda5d6cbcb.json
 │   │   │   ├── 4051ecbd02841a6217c2f42b90f9212e84ac3f16ad4e9f98490bafc482d4cce0.json
@@ -127,6 +135,7 @@
 │   │   │   ├── 4421f69993887020c419ec68a0e90a21d2a5fc1a3a3f0b3b4d8d9997523b94a6.json
 │   │   │   ├── 49fa2e5700a17e5774aa9d660c103b62f603dcfe1c95ab458777b14c6879802b.json
 │   │   │   ├── 54f3ff31b008760792d5d3617a03a4ab3ad6c430379b1e2e0e4401294b08c618.json
+│   │   │   ├── 558f0c8fe27fa9ac0c955243affcbec3167e9d825cdbedda5914ea6e75314412.json
 │   │   │   ├── 5d4e1477707fba0e4c6502efbb33b76d824e72dbf9731b058d3dcf7cfd013d82.json
 │   │   │   ├── 5ed1a753ff465040efb77d4b44141e00462528b9e14d191468ff2c02fc261e7e.json
 │   │   │   ├── 62f7111d069e8c92e13b2b47fb05cf6e914fc0abbcfaab5877b207413698034b.json
@@ -155,6 +164,7 @@
 │   │   │   ├── d41f8c72e7108fb02424b77b7c630b909338804ea07ee1a9ca0bac36411a5876.json
 │   │   │   ├── dc7fcbfca25dc5ef468e769a00005358a81428ed8e56b5da780a029abac26e30.json
 │   │   │   ├── e047adf643f7f139051be079a119838ff63e5f9c0f3c44f4e25933ba44616380.json
+│   │   │   ├── e1c122728a91734e6fdf5ecdcb17337a4b47a745222f763269740c38ed6a6181.json
 │   │   │   ├── e4a2fefadc13f00ae940f7828754bbe6ae87f0f36ad1994ecee5d42b0d164237.json
 │   │   │   └── eec906298cb555168d95bcb4fb0d736392a65ca8e06fabb40b9490acf0aea895.json
 │   │   ├── semantic
@@ -7625,12 +7635,19 @@
 │       │   └── state
 │       │       ├── server.pid
 │       │       └── server-stopped
-│       └── 3783278-1778072564
+│       ├── 3783278-1778072564
+│       │   ├── content
+│       │   │   └── pod-control-design.html
+│       │   └── state
+│       │       ├── server.pid
+│       │       └── server-stopped
+│       └── 50207-1781401380
 │           ├── content
-│           │   └── pod-control-design.html
+│           │   └── ux-audit-report.html
 │           └── state
-│               ├── server.pid
-│               └── server-stopped
+│               ├── server-info
+│               ├── server.log
+│               └── server.pid
 ├── SUPPORT.md
 ├── templates
 │   └── rust-plugin
@@ -7648,4 +7665,4 @@
 └── .vscode
     └── extensions.json
 
-824 directories, 6825 files
+827 directories, 6839 files

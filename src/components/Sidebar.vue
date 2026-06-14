@@ -21,13 +21,15 @@ defineEmits(['start-resize']);
 <style scoped>
 .sidebar {
   position: relative;
-  background-color: #111827;
-  border-right: 1px solid #374151;
+  background-color: var(--surface-glass);
+  backdrop-filter: var(--glass-blur);
+  border-right: var(--glass-border);
   display: flex;
   flex-direction: column;
   height: 100%;
   min-width: 0;
   overflow: hidden;
+  z-index: 5;
 }
 
 .sidebar-header {
@@ -56,15 +58,17 @@ defineEmits(['start-resize']);
 .resizer {
   position: absolute;
   top: 0;
-  right: -2px;
-  width: 4px;
+  right: 0;
+  width: 2px;
   height: 100%;
   cursor: col-resize;
   z-index: 100;
-  transition: background-color 0.2s;
+  background-color: transparent;
+  transition: var(--transition-smooth);
 }
 
 .resizer:hover, .resizer:active {
-  background-color: #3b82f6;
+  background-color: var(--accent-blue);
+  box-shadow: 0 0 8px var(--accent-blue);
 }
 </style>
