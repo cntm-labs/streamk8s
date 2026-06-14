@@ -347,7 +347,7 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  transition: grid-template-columns 0.2s ease-out;
+  transition: var(--transition-smooth);
 }
 
 /* Explicit Grid Assignments for Shell Stability */
@@ -366,14 +366,16 @@ body {
 /* Persistent Header Styling */
 .main-header {
   height: 40px;
-  background-color: var(--surface-card);
-  border-bottom: 1px solid var(--border-dim);
+  background-color: var(--surface-glass);
+  backdrop-filter: var(--glass-blur);
+  border-bottom: var(--glass-border);
   display: flex;
   align-items: center;
   padding: 0 var(--space-4);
   justify-content: space-between;
   flex-shrink: 0;
   width: 100%;
+  z-index: 10;
 }
 
 .header-left { display: flex; align-items: center; gap: var(--space-2); min-width: 150px; }
