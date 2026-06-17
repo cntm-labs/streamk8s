@@ -1,5 +1,5 @@
-use serde::Serialize;
 use kube::config::Kubeconfig;
+use serde::Serialize;
 
 #[derive(Serialize, Clone)]
 pub struct SearchResult {
@@ -72,7 +72,10 @@ mod tests {
     async fn test_global_search_includes_contexts() {
         let results = global_search("".to_string()).await.unwrap();
         let cluster_exists = results.iter().any(|r| r.kind == "Cluster");
-        assert!(cluster_exists, "Should find at least one cluster context if kubeconfig exists");
+        assert!(
+            cluster_exists,
+            "Should find at least one cluster context if kubeconfig exists"
+        );
     }
 
     #[tokio::test]
