@@ -118,18 +118,20 @@ const handleSelectResource = (resource: any) => {
 
 const handleCommandSelect = (result: any) => {
   showCommandPalette.value = false;
+  
   if (result.kind === 'Action') {
+    // Navigate between tabs/views
     if (result.id === 'action_settings') handleTabChange('settings');
     else if (result.id === 'action_explorer') handleTabChange('explorer');
     else if (result.id === 'action_hardware') handleTabChange('hardware');
   } else if (result.kind === 'Cluster') {
-    selectedContextName.value = result.context;
-    // Set state directly to ensure explorer view is shown with sidebar
-    activeTab.value = 'explorer';
-    currentView.value = 'cluster';
-    sidebarVisible.value = true;
-    if (selectedContextName.value) {
-      fetchResources(selectedContextName.value, activeResourceKind.value);
+    // Switch Kubernetes Context
+    if (result.context) {
+      selectedContextName.value = result.context;
+      activeTab.value = 'explorer';
+      currentView.value = 'cluster';
+      sidebarVisible.value = true;
+      fetchResources(result.context, activeResourceKind.value);
     }
   }
 };
