@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue';
 import { Search, Globe, Box, Zap, Command } from 'lucide-vue-next';
+import { invoke } from '@tauri-apps/api/core';
 
-interface CommandItem {
+interface SearchResult {
   id: string;
-  label: string;
-  type: 'cluster' | 'resource' | 'action';
-  description?: string;
+  title: string;
+  subtitle: string;
+  kind: string; // 'Cluster', 'Resource', or 'Action'
+  context: string | null;
+  namespace: string | null;
 }
 
 const emit = defineEmits(['close', 'select']);
@@ -14,39 +17,27 @@ const emit = defineEmits(['close', 'select']);
 const query = ref('');
 const selectedIndex = ref(0);
 const inputRef = ref<HTMLInputElement | null>(null);
+const filteredItems = ref<SearchResult[]>([]);
 
-// Mock data for UI demonstration
-const items: CommandItem[] = [
-  { id: 'c1', label: 'docker-desktop', type: 'cluster', description: 'Switch to Docker Desktop context' },
-  { id: 'c2', label: 'minikube', type: 'cluster', description: 'Switch to Minikube context' },
-  { id: 'r1', label: 'Pods', type: 'resource', description: 'View all Pods' },
-  { id: 'r2', label: 'Deployments', type: 'resource', description: 'View all Deployments' },
-  { id: 'r3', label: 'Services', type: 'resource', description: 'View all Services' },
-  { id: 'a1', label: 'Optimize Resources', type: 'action', description: 'Run smart optimization' },
-  { id: 'a2', label: 'Settings', type: 'action', description: 'Open application settings' },
-];
-
-const filteredItems = ref<CommandItem[]>(items);
-
-const filterItems = () => {
-  if (!query.value) {
-    filteredItems.value = items;
-  } else {
-    const q = query.value.toLowerCase();
-    filteredItems.value = items.filter(item => 
-      item.label.toLowerCase().includes(q) || 
-      item.description?.toLowerCase().includes(q)
-    );
+const performSearch = async () => {
+  try {
+    filteredItems.value = await invoke<SearchResult[]>('global_search', { query: query.value });
+    selectedIndex.value = 0;
+  } catch (e) {
+    console.error('Search failed', e);
   }
-  selectedIndex.value = 0;
 };
+
+watch(query, () => {
+  performSearch();
+});
 
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'ArrowDown') {
-    selectedIndex.value = (selectedIndex.value + 1) % filteredItems.value.length;
+    selectedIndex.value = (selectedIndex.value + 1) % (filteredItems.value.length || 1);
     e.preventDefault();
   } else if (e.key === 'ArrowUp') {
-    selectedIndex.value = (selectedIndex.value - 1 + filteredItems.value.length) % filteredItems.value.length;
+    selectedIndex.value = (selectedIndex.value - 1 + filteredItems.value.length) % (filteredItems.value.length || 1);
     e.preventDefault();
   } else if (e.key === 'Enter') {
     if (filteredItems.value[selectedIndex.value]) {
@@ -57,7 +48,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
   }
 };
 
-const handleSelect = (item: CommandItem) => {
+const handleSelect = (item: SearchResult) => {
   emit('select', item);
   emit('close');
 };
@@ -70,6 +61,7 @@ const closeOnOutsideClick = (e: MouseEvent) => {
 };
 
 onMounted(() => {
+  performSearch(); // Initial load to show all
   nextTick(() => {
     inputRef.value?.focus();
   });
@@ -91,7 +83,6 @@ onUnmounted(() => {
           v-model="query" 
           type="text" 
           placeholder="Type a command or search..." 
-          @input="filterItems"
         />
         <div class="palette-shortcut">ESC</div>
       </div>
@@ -106,16 +97,16 @@ onUnmounted(() => {
           @click="handleSelect(item)"
         >
           <div class="item-icon">
-            <Globe v-if="item.type === 'cluster'" :size="16" />
-            <Box v-else-if="item.type === 'resource'" :size="16" />
-            <Zap v-else-if="item.type === 'action'" :size="16" />
+            <Globe v-if="item.kind === 'Cluster'" :size="16" />
+            <Box v-else-if="item.kind === 'Resource'" :size="16" />
+            <Zap v-else-if="item.kind === 'Action'" :size="16" />
             <Command v-else :size="16" />
           </div>
           <div class="item-info">
-            <div class="item-label">{{ item.label }}</div>
-            <div class="item-description" v-if="item.description">{{ item.description }}</div>
+            <div class="item-label">{{ item.title }}</div>
+            <div class="item-description" v-if="item.subtitle">{{ item.subtitle }}</div>
           </div>
-          <div class="item-type-badge">{{ item.type }}</div>
+          <div class="item-type-badge">{{ item.kind }}</div>
         </div>
       </div>
       
