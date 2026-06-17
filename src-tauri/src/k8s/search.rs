@@ -1,4 +1,5 @@
 use serde::Serialize;
+use kube::config::Kubeconfig;
 
 #[derive(Serialize, Clone)]
 pub struct SearchResult {
@@ -12,7 +13,6 @@ pub struct SearchResult {
 
 #[tauri::command]
 pub async fn global_search(query: String) -> Result<Vec<SearchResult>, String> {
-    // Basic action registry
     let mut results = vec![
         SearchResult {
             id: "action_settings".into(),
@@ -40,7 +40,20 @@ pub async fn global_search(query: String) -> Result<Vec<SearchResult>, String> {
         },
     ];
 
-    // Filter results based on query (case-insensitive)
+    // Load kubeconfig to get contexts
+    if let Ok(config) = Kubeconfig::read() {
+        for ctx in config.contexts {
+            results.push(SearchResult {
+                id: format!("ctx_{}", ctx.name),
+                title: ctx.name.clone(),
+                subtitle: "Kubernetes Context".into(),
+                kind: "Cluster".into(),
+                context: Some(ctx.name),
+                namespace: None,
+            });
+        }
+    }
+
     if !query.is_empty() {
         let q = query.to_lowercase();
         results.retain(|r| {
@@ -49,4 +62,22 @@ pub async fn global_search(query: String) -> Result<Vec<SearchResult>, String> {
     }
 
     Ok(results)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_global_search_includes_contexts() {
+        let results = global_search("".to_string()).await.unwrap();
+        let cluster_exists = results.iter().any(|r| r.kind == "Cluster");
+        assert!(cluster_exists, "Should find at least one cluster context if kubeconfig exists");
+    }
+
+    #[tokio::test]
+    async fn test_global_search_actions() {
+        let results = global_search("settings".to_string()).await.unwrap();
+        assert!(results.iter().any(|r| r.id == "action_settings"));
+    }
 }
