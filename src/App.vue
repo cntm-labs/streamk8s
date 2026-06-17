@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import ActivityBar from './components/ActivityBar.vue';
@@ -78,6 +78,8 @@ const handleMouseUp = () => {
 const metrics = ref<Metrics>({ cpu_usage: 0, ram_usage: 0, gpu_usage: null, gpu_mem_usage: null });
 const availableContexts = ref<ClusterContext[]>([]);
 const selectedContextName = ref<string | null>(null);
+const selectedNamespace = ref('default');
+const availableNamespaces = ref<string[]>(['default']);
 const clusterResources = ref<Record<string, any[]>>({});
 const currentAdvice = ref<Advice | null>(null);
 const activeResourceKind = ref('Pods');
@@ -116,7 +118,22 @@ const handleSelectResource = (resource: any) => {
   };
 };
 
-const handleCommandSelect = (result: any) => {
+const fetchNamespaces = async (context: string) => {
+  try {
+    availableNamespaces.value = await invoke<string[]>('get_namespaces', { contextName: context });
+  } catch (e) {
+    console.error('Failed to fetch namespaces:', e);
+    availableNamespaces.value = ['default'];
+  }
+};
+
+watch(selectedNamespace, () => {
+  if (selectedContextName.value) {
+    fetchResources(selectedContextName.value, activeResourceKind.value);
+  }
+});
+
+const handleCommandSelect = async (result: any) => {
   showCommandPalette.value = false;
   
   if (result.kind === 'Action') {
@@ -131,6 +148,7 @@ const handleCommandSelect = (result: any) => {
       activeTab.value = 'explorer';
       currentView.value = 'cluster';
       sidebarVisible.value = true;
+      await fetchNamespaces(result.context);
       fetchResources(result.context, activeResourceKind.value);
     }
   }
@@ -144,7 +162,7 @@ const fetchResources = async (context: string, kind: string) => {
     else if (kind === 'ConfigMaps') cmd = 'get_configmaps';
     else if (kind === 'Secrets') cmd = 'get_secrets';
 
-    const data = await invoke<any[]>(cmd, { contextName: context, namespace: 'default' });
+    const data = await invoke<any[]>(cmd, { contextName: context, namespace: selectedNamespace.value });
     clusterResources.value[context] = data;
   } catch (e) {
     console.error(`Failed to fetch ${kind}:`, e);
@@ -190,6 +208,7 @@ onMounted(async () => {
     const current = availableContexts.value.find(c => c.is_current) || availableContexts.value[0];
     if (current) {
       selectedContextName.value = current.name;
+      await fetchNamespaces(current.name);
       fetchResources(current.name, activeResourceKind.value);
     }
   } catch (e) {
@@ -208,7 +227,7 @@ onMounted(async () => {
       v-if="showHotbar"
       :contexts="availableContexts" 
       :active-name="selectedContextName" 
-      @select="(name) => { selectedContextName = name; fetchResources(name, activeResourceKind); }" 
+      @select="async (name) => { selectedContextName = name; await fetchNamespaces(name); fetchResources(name, activeResourceKind); }" 
     />
     
     <!-- pane 3: Sidebar (Independent Toggle) -->
@@ -260,6 +279,13 @@ onMounted(async () => {
           </div>
         </div>
         <div class="header-right">
+          <select 
+            v-if="currentView === 'cluster' || currentView === 'topology'" 
+            v-model="selectedNamespace" 
+            class="namespace-selector"
+          >
+            <option v-for="ns in availableNamespaces" :key="ns" :value="ns">{{ ns }}</option>
+          </select>
           <div class="cluster-status" v-if="selectedContextName && currentView === 'cluster'">
             <span class="status-dot online"></span>
             {{ selectedContextName }}
@@ -403,6 +429,15 @@ body {
 .search-shortcut { font-size: 0.6rem; color: #4b5563; font-weight: 700; border: 1px solid #374151; padding: 0 3px; border-radius: 2px; }
 
 .header-right { display: flex; align-items: center; gap: var(--space-6); min-width: 150px; justify-content: flex-end; }
+.namespace-selector {
+  background-color: var(--surface-dark);
+  border: 1px solid var(--border-dim);
+  color: #d1d5db;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  outline: none;
+}
 .cluster-status { font-size: 0.7rem; color: #9ca3af; display: flex; align-items: center; gap: var(--space-1); font-weight: 600; }
 .status-dot { width: 6px; height: 6px; background-color: #10b981; border-radius: 50%; }
 .time-display { font-family: var(--font-code); font-size: 0.75rem; color: #6b7280; }

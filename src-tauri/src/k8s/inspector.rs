@@ -74,18 +74,6 @@ pub async fn apply_resource_manifest(
 }
 
 #[tauri::command]
-pub async fn get_resource_manifest(
-    context_name: Option<String>,
-    namespace: String,
-    pod_name: String,
-) -> Result<String, String> {
-    let client = create_client(context_name).await?;
-    let pods: Api<Pod> = Api::namespaced(client, &namespace);
-    let p = pods.get(&pod_name).await.map_err(|e| e.to_string())?;
-    serde_yaml::to_string(&p).map_err(|e| e.to_string())
-}
-
-#[tauri::command]
 pub async fn get_pod_events(
     context_name: Option<String>,
     namespace: String,

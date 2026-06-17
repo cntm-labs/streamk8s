@@ -25,7 +25,6 @@ pub fn run() {
             crate::k8s::scaling::resume_namespace,
             crate::k8s::logs::start_log_stream,
             crate::k8s::contexts::get_available_contexts,
-            crate::k8s::inspector::get_resource_manifest,
             crate::k8s::inspector::apply_resource_manifest,
             crate::k8s::inspector::apply_k8s_resource,
             crate::k8s::inspector::get_pod_events,

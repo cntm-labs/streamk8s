@@ -60,10 +60,11 @@ const fetchYaml = async () => {
   if (!props.selectedResource) return;
   isLoadingYaml.value = true;
   try {
-    yamlContent.value = await invoke('get_resource_manifest', {
+    yamlContent.value = await invoke('get_k8s_resource_details', {
       contextName: props.selectedResource.contextName,
       namespace: props.selectedResource.namespace,
-      podName: props.selectedResource.name
+      name: props.selectedResource.name,
+      kind: props.selectedResource.kind.replace(/s$/, '')
     });
   } catch (e) {
     yamlContent.value = `Error fetching YAML: ${e}`;
@@ -165,9 +166,9 @@ const runAiAnalysis = async () => {
   try {
     const result: string = await invoke('analyze_with_ai', {
       contextName: props.selectedResource.contextName,
+      kind: props.selectedResource.kind.replace(/s$/, ''),
       namespace: props.selectedResource.namespace,
-      podName: props.selectedResource.name,
-      apiKey: apiKey.value
+      resourceName: props.selectedResource.name
     });
     aiAdvice.value = result;
   } catch (e) {
