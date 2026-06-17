@@ -1,6 +1,5 @@
 use crate::config::AppConfig;
 use crate::k8s::inspector::get_pod_events;
-use crate::k8s::inspector::get_resource_manifest;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
@@ -165,6 +164,7 @@ impl AiProvider for OllamaProvider {
 pub async fn analyze_with_ai(
     app_handle: tauri::AppHandle,
     context_name: Option<String>,
+    kind: String,
     namespace: String,
     resource_name: String,
 ) -> Result<String, String> {
@@ -172,8 +172,9 @@ pub async fn analyze_with_ai(
     let config = crate::config::get_config(app_handle).await?;
 
     // 2. Aggregate Context
-    let manifest = get_resource_manifest(
+    let manifest = crate::k8s::resources::get_k8s_resource_details(
         context_name.clone(),
+        kind,
         namespace.clone(),
         resource_name.clone(),
     )
