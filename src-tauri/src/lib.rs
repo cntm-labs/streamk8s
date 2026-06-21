@@ -16,6 +16,9 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .manage(crate::k8s::terminal::TerminalSessionManager {
+            sessions: std::sync::Mutex::new(std::collections::HashMap::new()),
+        })
         .invoke_handler(tauri::generate_handler![
             crate::config::get_config,
             crate::config::save_config,
@@ -42,7 +45,10 @@ pub fn run() {
             crate::plugins::manager::get_installed_plugins,
             crate::plugins::manager::call_plugin_action,
             crate::plugins::manager::install_plugin,
-            crate::plugins::manager::get_remote_registry
+            crate::plugins::manager::get_remote_registry,
+            crate::k8s::terminal::start_terminal_session,
+            crate::k8s::terminal::send_terminal_input,
+            crate::k8s::terminal::close_terminal_session
         ])
         .setup(|app| {
             let handle = app.handle().clone();

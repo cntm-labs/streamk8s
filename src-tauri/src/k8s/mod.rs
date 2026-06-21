@@ -7,3 +7,5 @@ pub mod resources;
 pub mod scaling;
 pub mod search;
 pub mod topology;
+pub mod terminal;
+

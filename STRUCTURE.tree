@@ -124,6 +124,7 @@
 │   │   │   ├── resources.rs
 │   │   │   ├── scaling.rs
 │   │   │   ├── search.rs
+│   │   │   ├── terminal.rs
 │   │   │   └── topology.rs
 │   │   ├── lib.rs
 │   │   ├── main.rs
@@ -148,4 +149,4 @@
 ├── VISION.md
 └── vite.config.ts
 
-27 directories, 122 files
+27 directories, 123 files
