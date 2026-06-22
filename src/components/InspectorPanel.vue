@@ -4,6 +4,8 @@ import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import { marked } from 'marked';
 import { Loader2 } from 'lucide-vue-next';
+import { Terminal } from 'xterm';
+import 'xterm/css/xterm.css';
 
 const props = defineProps<{
   selectedResource: { contextName: string, namespace: string, name: string, kind: string } | null
@@ -12,7 +14,7 @@ const props = defineProps<{
 const emit = defineEmits<{ (e: 'close'): void; (e: 'edit', resource: any): void; }>();
 
 const activeTab = ref('Logs');
-const tabs = ['Logs', 'YAML', 'Events', 'Files', 'AI Diagnostic'];
+const tabs = ['Logs', 'Terminal', 'YAML', 'Events', 'Files', 'AI Diagnostic'];
 
 // Logs State
 const logs = ref<string[]>([]);
@@ -63,6 +65,84 @@ watch(() => props.selectedResource, async (newVal) => {
     }
   }
 }, { immediate: true });
+
+// Terminal State & Logic
+const terminalDiv = ref<HTMLElement | null>(null);
+let term: Terminal | null = null;
+const sessionId = ref('');
+let stdoutListener: UnlistenFn | null = null;
+let exitListener: UnlistenFn | null = null;
+
+const initTerminal = async () => {
+  const res = props.selectedResource;
+  if (!res || res.kind !== 'Pods') return;
+  
+  destroyTerminal();
+  
+  sessionId.value = Math.random().toString(36).substring(7);
+  
+  term = new Terminal({
+    cols: 120,
+    rows: 35,
+    theme: {
+      background: '#0a0a0a',
+      foreground: '#f8f8f2',
+      cursor: '#f8f8f0',
+    }
+  });
+
+  nextTick(async () => {
+    if (!terminalDiv.value || !term) return;
+    term.open(terminalDiv.value);
+    term.write('Connecting to pod terminal...\r\n');
+
+    try {
+      await invoke('start_terminal_session', {
+        contextName: res.contextName,
+        namespace: res.namespace,
+        podName: res.name,
+        containerName: selectedContainer.value || res.name,
+        sessionId: sessionId.value
+      });
+
+      stdoutListener = await listen<string>(`terminal-stdout-${sessionId.value}`, (event) => {
+        term?.write(event.payload);
+      });
+
+      exitListener = await listen<void>(`terminal-exit-${sessionId.value}`, () => {
+        term?.write('\r\n[Connection Closed]\r\n');
+      });
+
+      term.onData((data) => {
+        invoke('send_terminal_input', {
+          sessionId: sessionId.value,
+          data
+        });
+      });
+    } catch (e) {
+      term.write(`\r\nError launching terminal: ${e}\r\n`);
+    }
+  });
+};
+
+const destroyTerminal = () => {
+  if (stdoutListener) {
+    stdoutListener();
+    stdoutListener = null;
+  }
+  if (exitListener) {
+    exitListener();
+    exitListener = null;
+  }
+  if (sessionId.value) {
+    invoke('close_terminal_session', { sessionId: sessionId.value }).catch(() => {});
+    sessionId.value = '';
+  }
+  if (term) {
+    term.dispose();
+    term = null;
+  }
+};
 
 const clearLogs = () => {
   logs.value = [];
@@ -224,9 +304,12 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (unlisten) unlisten();
+  destroyTerminal();
 });
 
-watch(activeTab, (newTab) => {
+watch(activeTab, (newTab, oldTab) => {
+  if (oldTab === 'Terminal') destroyTerminal();
+  if (newTab === 'Terminal') initTerminal();
   if (newTab === 'Logs') initiateLogStream();
   if (newTab === 'YAML') fetchYaml();
   if (newTab === 'Events') fetchEvents();
@@ -235,6 +318,8 @@ watch(activeTab, (newTab) => {
 
 watch(() => props.selectedResource, () => {
   clearLogs();
+  destroyTerminal();
+  if (activeTab.value === 'Terminal') initTerminal();
   if (activeTab.value === 'Logs') initiateLogStream();
   if (activeTab.value === 'YAML') fetchYaml();
   if (activeTab.value === 'Events') fetchEvents();
@@ -243,6 +328,7 @@ watch(() => props.selectedResource, () => {
 
 watch(selectedContainer, () => {
   clearLogs();
+  if (activeTab.value === 'Terminal') initTerminal();
   if (activeTab.value === 'Logs') initiateLogStream();
   if (activeTab.value === 'Files') readFile();
 });
@@ -295,6 +381,11 @@ defineExpose({ clearLogs });
         <div v-if="logs.length === 0" class="empty-state">
           {{ selectedResource ? 'Streaming logs...' : 'Select a resource to start streaming logs...' }}
         </div>
+      </div>
+
+      <!-- TERMINAL TAB -->
+      <div v-if="activeTab === 'Terminal'" class="terminal-content">
+        <div ref="terminalDiv" class="terminal-panel-body"></div>
       </div>
 
       <!-- YAML TAB -->
@@ -667,5 +758,14 @@ defineExpose({ clearLogs });
   font-style: italic;
   padding: 2rem;
   text-align: center;
+}
+.terminal-content {
+  height: 100%;
+  padding: var(--space-2);
+  background-color: #0a0a0a;
+}
+.terminal-panel-body {
+  height: 100%;
+  width: 100%;
 }
 </style>
