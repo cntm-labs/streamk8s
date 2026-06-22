@@ -37,6 +37,33 @@ const aiAdvice = ref('');
 const isAnalyzing = ref(false);
 const apiKey = ref('');
 
+// Container State
+const containerNames = ref<string[]>([]);
+const selectedContainer = ref('');
+
+watch(() => props.selectedResource, async (newVal) => {
+  if (newVal && newVal.kind === 'Pods') {
+    try {
+      const podDetailsText = await invoke<string>('get_k8s_resource_details', {
+        contextName: newVal.contextName,
+        namespace: newVal.namespace,
+        name: newVal.name,
+        kind: 'Pod'
+      });
+      const parsed = JSON.parse(podDetailsText);
+      const names = parsed.spec?.containers?.map((c: any) => c.name) || [];
+      containerNames.value = names;
+      if (names.length > 0) {
+        selectedContainer.value = names[0];
+      }
+    } catch (e) {
+      console.error('Failed to load container list:', e);
+      containerNames.value = [newVal.name];
+      selectedContainer.value = newVal.name;
+    }
+  }
+}, { immediate: true });
+
 const clearLogs = () => {
   logs.value = [];
 };
@@ -50,6 +77,7 @@ const initiateLogStream = async () => {
       contextName: props.selectedResource.contextName,
       namespace: props.selectedResource.namespace,
       podName: props.selectedResource.name,
+      containerName: selectedContainer.value || null
     });
   } catch (e) {
     logs.value.push(`Stream Error: ${e}`);
@@ -94,14 +122,11 @@ const readFile = async () => {
   if (!props.selectedResource) return;
   isLoadingFiles.value = true;
   try {
-    // Note: container_name is required. For simplicity, we might need to fetch container names first.
-    // For now, let's assume the first container name matches the pod name prefix or just try to get it.
-    // In a real app, we'd have a container selector.
     fileContent.value = await invoke('read_pod_file', {
       contextName: props.selectedResource.contextName,
       namespace: props.selectedResource.namespace,
       podName: props.selectedResource.name,
-      containerName: props.selectedResource.name, // Temporary assumption
+      containerName: selectedContainer.value || props.selectedResource.name,
       filePath: filePath.value
     });
   } catch (e) {
@@ -139,7 +164,7 @@ const saveFile = async () => {
       contextName: props.selectedResource.contextName,
       namespace: props.selectedResource.namespace,
       podName: props.selectedResource.name,
-      containerName: props.selectedResource.name, // Assumption matches readFile
+      containerName: selectedContainer.value || props.selectedResource.name,
       filePath: filePath.value,
       contentBase64
     });
@@ -216,6 +241,12 @@ watch(() => props.selectedResource, () => {
   if (activeTab.value === 'Files') readFile();
 }, { deep: true });
 
+watch(selectedContainer, () => {
+  clearLogs();
+  if (activeTab.value === 'Logs') initiateLogStream();
+  if (activeTab.value === 'Files') readFile();
+});
+
 defineExpose({ clearLogs });
 </script>
 
@@ -231,6 +262,12 @@ defineExpose({ clearLogs });
         >
           {{ t }}
         </button>
+      </div>
+      <div class="container-select-wrapper" v-if="props.selectedResource && props.selectedResource.kind === 'Pods'">
+        <label for="container-select" class="container-label">Container:</label>
+        <select id="container-select" v-model="selectedContainer" class="container-selector">
+          <option v-for="c in containerNames" :key="c" :value="c">{{ c }}</option>
+        </select>
       </div>
       <div class="actions">
         <button v-if="activeTab === 'Logs'" @click="clearLogs" class="action-btn">Clear</button>
@@ -336,6 +373,32 @@ defineExpose({ clearLogs });
   align-items: center;
   padding: 0 var(--space-4);
   border-bottom: 1px solid var(--border-dim);
+}
+.container-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+}
+.container-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 600;
+}
+.container-selector {
+  background-color: var(--surface-dark);
+  border: 1px solid var(--border-dim);
+  color: #d1d5db;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.container-selector:hover {
+  border-color: var(--accent-blue);
+  color: white;
 }
 .tabs {
   display: flex;

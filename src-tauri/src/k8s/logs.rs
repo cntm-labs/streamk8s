@@ -15,6 +15,7 @@ pub async fn start_log_stream(
     context_name: Option<String>,
     namespace: String,
     pod_name: String,
+    container_name: Option<String>,
 ) -> Result<(), String> {
     // Abort previous stream if any
     {
@@ -50,6 +51,9 @@ pub async fn start_log_stream(
     let mut lp = LogParams::default();
     lp.follow = true;
     lp.tail_lines = Some(200); // Increased for better initial experience
+    if let Some(c) = container_name {
+        lp.container = Some(c);
+    }
 
     let stream = pods.log_stream(&pod_name, &lp).await.map_err(|e| {
         let err = format!("Failed to start log stream for {}: {}", pod_name, e);

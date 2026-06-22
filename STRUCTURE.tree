@@ -65,6 +65,7 @@
 │   │   ├── ResourceTree.vue
 │   │   ├── Sidebar.vue
 │   │   ├── __tests__
+│   │   │   ├── InspectorPanel.spec.ts
 │   │   │   └── ResourceTable.spec.ts
 │   │   ├── Toast.vue
 │   │   ├── TrendChart.vue
@@ -149,4 +150,4 @@
 ├── VISION.md
 └── vite.config.ts
 
-27 directories, 123 files
+27 directories, 124 files
