@@ -180,6 +180,34 @@ const cpuHistory = ref<number[]>([]);
 const ramHistory = ref<number[]>([]);
 const gpuHistory = ref<number[]>([]);
 
+const handleOptimize = async () => {
+  if (!currentAdvice.value) return;
+
+  const action = currentAdvice.value.action;
+  const namespace = selectedNamespace.value;
+  const contextName = selectedContextName.value;
+
+  try {
+    if (action === 'Suspend') {
+      await invoke('suspend_namespace', { contextName, namespace });
+      currentAdvice.value = {
+        action: 'Resume',
+        reason: `Namespace '${namespace}' was suspended to save resources.`
+      };
+    } else if (action === 'Resume') {
+      await invoke('resume_namespace', { contextName, namespace });
+      currentAdvice.value = null;
+    }
+    
+    // Refresh resources to update replicas on table
+    if (contextName) {
+      fetchResources(contextName, activeResourceKind.value);
+    }
+  } catch (e) {
+    console.error('Optimization action failed:', e);
+  }
+};
+
 onMounted(async () => {
   window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
@@ -306,7 +334,7 @@ onMounted(async () => {
         />
         
         <section v-else-if="currentView === 'cluster'" class="workloads-panel">
-          <AdviceBanner :advice="currentAdvice" @optimize="() => {}" />
+          <AdviceBanner :advice="currentAdvice" @optimize="handleOptimize" />
           
           <div class="main-scroll-area">
             <div v-if="selectedContextName" class="focused-cluster-view">
@@ -355,7 +383,7 @@ onMounted(async () => {
       :onClose="() => editingResource = null" 
     />
     
-    <AdvisorToast :context-name="selectedContextName" />
+    <AdvisorToast :context-name="selectedContextName" :namespace="selectedNamespace" />
   </div>
 </template>
 
