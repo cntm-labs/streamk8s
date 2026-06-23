@@ -3,7 +3,12 @@ import { ref, onMounted } from 'vue';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 
-const props = defineProps<{ contextName: string | null }>();
+const props = withDefaults(defineProps<{
+  contextName: string | null;
+  namespace?: string;
+}>(), {
+  namespace: 'default'
+});
 
 const visible = ref(false);
 const detectedApp = ref('');
@@ -20,7 +25,7 @@ onMounted(async () => {
 
 const suspend = async () => {
   try {
-    await invoke('suspend_namespace', { contextName: props.contextName, namespace: 'default' });
+    await invoke('suspend_namespace', { contextName: props.contextName, namespace: props.namespace });
     isSuspended.value = true;
     visible.value = false;
   } catch(e) { console.error(e); }
@@ -28,7 +33,7 @@ const suspend = async () => {
 
 const resume = async () => {
   try {
-    await invoke('resume_namespace', { contextName: props.contextName, namespace: 'default' });
+    await invoke('resume_namespace', { contextName: props.contextName, namespace: props.namespace });
     isSuspended.value = false;
   } catch(e) { console.error(e); }
 };
