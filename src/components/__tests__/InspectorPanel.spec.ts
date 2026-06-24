@@ -88,3 +88,63 @@ describe('InspectorPanel Container Parsing', () => {
     expect(wrapper.find('.terminal-panel-body').exists()).toBe(true);
   });
 });
+
+describe('InspectorPanel Dynamic Tabs Redesign', () => {
+  it('displays all tabs for Pods', () => {
+    const wrapper = mount(InspectorPanel, {
+      props: {
+        selectedResource: {
+          contextName: 'kind-cluster',
+          namespace: 'default',
+          name: 'nginx-pod',
+          kind: 'Pods'
+        }
+      }
+    });
+    
+    const buttons = wrapper.findAll('.tab-btn');
+    const tabNames = buttons.map(b => b.text());
+    expect(tabNames.some(t => t.includes('Terminal'))).toBe(true);
+    expect(tabNames.some(t => t.includes('Files'))).toBe(true);
+  });
+
+  it('filters out Terminal, Logs, and Files tabs for non-Pod resources', () => {
+    const wrapper = mount(InspectorPanel, {
+      props: {
+        selectedResource: {
+          contextName: 'kind-cluster',
+          namespace: 'default',
+          name: 'nginx-configmap',
+          kind: 'ConfigMaps'
+        }
+      }
+    });
+    
+    const buttons = wrapper.findAll('.tab-btn');
+    const tabNames = buttons.map(b => b.text());
+    expect(tabNames.some(t => t.includes('Terminal'))).toBe(false);
+    expect(tabNames.some(t => t.includes('Files'))).toBe(false);
+    expect(tabNames.some(t => t.includes('YAML'))).toBe(true);
+  });
+});
+
+describe('InspectorPanel Files Tab Explorer', () => {
+  it('starts listing from root directory / by default', async () => {
+    const wrapper = mount(InspectorPanel, {
+      props: {
+        selectedResource: {
+          contextName: 'kind-cluster',
+          namespace: 'default',
+          name: 'nginx-pod',
+          kind: 'Pods'
+        }
+      }
+    });
+    
+    // Switch to Files tab
+    (wrapper.vm as any).activeTab = 'Files';
+    await wrapper.vm.$nextTick();
+    
+    expect((wrapper.vm as any).filePath).toBe('/');
+  });
+});
