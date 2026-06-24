@@ -159,3 +159,90 @@ pub(crate) async fn create_client(context_name: Option<String>) -> Result<Client
     };
     Client::try_from(config).map_err(|e| e.to_string())
 }
+
+#[tauri::command]
+pub async fn list_pod_files(
+    context_name: Option<String>,
+    namespace: String,
+    pod_name: String,
+    container_name: String,
+    dir_path: String,
+) -> Result<serde_json::Value, String> {
+    let client = create_client(context_name).await?;
+    let pods: Api<Pod> = Api::namespaced(client, &namespace);
+
+    // Command to list files. Appending -F shows / for directories.
+    let command = vec!["ls", "-F", "--color=never", &dir_path];
+
+    let mut attached = pods
+        .exec(
+            &pod_name,
+            command,
+            &kube::api::AttachParams::default()
+                .container(&container_name)
+                .stdout(true),
+        )
+        .await
+        .map_err(|e| e.to_string())?;
+
+    let mut output = String::new();
+    attached
+        .stdout()
+        .unwrap()
+        .read_to_string(&mut output)
+        .await
+        .map_err(|e| e.to_string())?;
+
+    let mut files = Vec::new();
+    for line in output.lines() {
+        let name = line.trim();
+        if name.is_empty() {
+            continue;
+        }
+        let is_dir = name.ends_with('/');
+        let clean_name = if is_dir {
+            &name[..name.len() - 1]
+        } else {
+            name
+        };
+        files.push(serde_json::json!({
+            "name": clean_name,
+            "is_dir": is_dir
+        }));
+    }
+
+    Ok(serde_json::json!(files))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_ls_output() {
+        let sample_output = "bin/\netc/\nhosts\nresolv.conf\n";
+        let mut files = Vec::new();
+        for line in sample_output.lines() {
+            let name = line.trim();
+            if name.is_empty() {
+                continue;
+            }
+            let is_dir = name.ends_with('/');
+            let clean_name = if is_dir {
+                &name[..name.len() - 1]
+            } else {
+                name
+            };
+            files.push(serde_json::json!({
+                "name": clean_name,
+                "is_dir": is_dir
+            }));
+        }
+
+        assert_eq!(files.len(), 4);
+        assert_eq!(files[0]["name"], "bin");
+        assert_eq!(files[0]["is_dir"], true);
+        assert_eq!(files[2]["name"], "hosts");
+        assert_eq!(files[2]["is_dir"], false);
+    }
+}

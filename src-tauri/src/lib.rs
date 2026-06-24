@@ -33,6 +33,7 @@ pub fn run() {
             crate::k8s::inspector::get_pod_events,
             crate::k8s::inspector::read_pod_file,
             crate::k8s::inspector::write_pod_file,
+            crate::k8s::inspector::list_pod_files,
             crate::k8s::resources::get_deployments,
             crate::k8s::resources::get_services,
             crate::k8s::resources::get_configmaps,
