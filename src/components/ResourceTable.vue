@@ -16,7 +16,8 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'select-resource', namespace: string, name: string, kind: string): void
+  (e: 'select-resource', namespace: string, name: string, kind: string): void;
+  (e: 'edit-yaml', namespace: string, name: string, kind: string): void;
 }>();
 
 const selectResource = (namespace: string, name: string) => {
@@ -127,6 +128,7 @@ const isScaleSupported = computed(() => ['Pod', 'Deployment', 'StatefulSet'].inc
             <th>Name</th>
             <th v-if="filteredRows.some(r => r.namespace)">Namespace</th>
             <th v-if="filteredRows.some(r => r.status)">Status</th>
+            <th class="col-actions">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -151,6 +153,15 @@ const isScaleSupported = computed(() => ['Pod', 'Deployment', 'StatefulSet'].inc
               <span :class="['status-badge', row.status.toLowerCase()]">
                 {{ row.status }}
               </span>
+            </td>
+            <td class="col-actions" @click.stop>
+              <button 
+                @click="emit('edit-yaml', row.namespace, row.name, kind)" 
+                class="btn-action edit-yaml-btn"
+                title="Edit YAML Manifest"
+              >
+                ✏️ YAML
+              </button>
             </td>
           </tr>
         </tbody>
@@ -323,4 +334,25 @@ tr.row-selected {
 /* Generic statuses */
 .active, .ready { background-color: rgba(6, 95, 70, 0.2); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.2); }
 .inactive, .error { background-color: rgba(153, 27, 27, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
+
+.col-actions {
+  width: 100px;
+  text-align: center;
+}
+.btn-action {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-action:hover {
+  background-color: rgba(168, 85, 247, 0.1);
+  border-color: #a855f7;
+  color: #c084fc;
+}
 </style>
