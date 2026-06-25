@@ -48,6 +48,7 @@ const initTerminal = async () => {
   nextTick(async () => {
     if (!terminalDiv.value || !term) return;
     term.open(terminalDiv.value);
+    term.focus();
     term.write('Connecting to pod terminal...\r\n');
 
     try {
@@ -203,7 +204,7 @@ defineExpose({ clearLogs });
       </div>
 
       <!-- TERMINAL TAB -->
-      <div v-if="activeTab === 'Terminal'" class="terminal-content">
+      <div v-if="activeTab === 'Terminal'" class="terminal-content" @click="term?.focus()">
         <div ref="terminalDiv" class="terminal-panel-body"></div>
       </div>
     </div>

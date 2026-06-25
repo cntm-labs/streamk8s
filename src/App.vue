@@ -14,7 +14,7 @@ import AdviceBanner from './components/AdviceBanner.vue';
 import CommandPalette from './components/CommandPalette.vue';
 import YamlEditorModal from './components/YamlEditorModal.vue';
 import AdvisorToast from './components/AdvisorToast.vue';
-import ResourceDetailDrawer from './components/ResourceDetailDrawer.vue';
+import ResourceDetailModal from './components/ResourceDetailModal.vue';
 
 // Views
 import WelcomeView from './views/WelcomeView.vue';
@@ -390,7 +390,7 @@ onMounted(async () => {
     
     <AdvisorToast :context-name="selectedContextName" :namespace="selectedNamespace" />
     
-    <ResourceDetailDrawer 
+    <ResourceDetailModal 
       :visible="showDetailDrawer" 
       :resource="selectedResource"
       @close="showDetailDrawer = false"

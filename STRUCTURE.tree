@@ -61,14 +61,14 @@
 │   │   ├── InspectorPanel.vue
 │   │   ├── PluginRenderer.vue
 │   │   ├── PodList.vue
-│   │   ├── ResourceDetailDrawer.vue
+│   │   ├── ResourceDetailModal.vue
 │   │   ├── ResourceTable.vue
 │   │   ├── ResourceTree.vue
 │   │   ├── Sidebar.vue
 │   │   ├── __tests__
 │   │   │   ├── AdvisorToast.spec.ts
 │   │   │   ├── InspectorPanel.spec.ts
-│   │   │   ├── ResourceDetailDrawer.spec.ts
+│   │   │   ├── ResourceDetailModal.spec.ts
 │   │   │   └── ResourceTable.spec.ts
 │   │   ├── Toast.vue
 │   │   ├── TrendChart.vue
