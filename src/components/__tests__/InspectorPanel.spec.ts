@@ -50,101 +50,45 @@ vi.mock('@tauri-apps/api/event', () => ({
 }));
 
 vi.mock('@tauri-apps/api/core', () => ({
-  invoke: vi.fn().mockResolvedValue('{"spec":{"containers":[{"name":"container-a"},{"name":"container-b"}]}}'),
+  invoke: vi.fn().mockResolvedValue(''),
 }));
 
-describe('InspectorPanel Container Parsing', () => {
-  it('populates dropdown with container names from selected resource spec', async () => {
-    const mockResource = {
-      contextName: 'ctx',
-      namespace: 'default',
-      name: 'test-pod',
-      kind: 'Pods',
-      spec: {
-        containers: [{ name: 'container-a' }, { name: 'container-b' }]
-      }
-    };
+describe('InspectorPanel Simplified Diagnostics Redesign', () => {
+  it('displays only Logs and Terminal tabs for Pods', () => {
     const wrapper = mount(InspectorPanel, {
-      props: { selectedResource: mockResource }
+      props: {
+        selectedResource: {
+          contextName: 'kind-cluster',
+          namespace: 'default',
+          name: 'nginx-pod',
+          kind: 'Pods'
+        },
+        containerName: 'nginx'
+      }
     });
-    // Wait for rendering
-    await wrapper.vm.$nextTick();
-    const options = wrapper.findAll('option');
-    expect(options.length).toBeGreaterThanOrEqual(1);
+    
+    const buttons = wrapper.findAll('.tab-btn');
+    const tabNames = buttons.map(b => b.text());
+    expect(tabNames.some(t => t.includes('Logs'))).toBe(true);
+    expect(tabNames.some(t => t.includes('Terminal'))).toBe(true);
+    expect(tabNames.some(t => t.includes('YAML'))).toBe(false);
+    expect(tabNames.some(t => t.includes('Files'))).toBe(false);
   });
 
-  it('renders terminal tab contents when Terminal is clicked', async () => {
-    const mockResource = {
-      contextName: 'ctx',
-      namespace: 'default',
-      name: 'test-pod',
-      kind: 'Pods'
-    };
+  it('renders terminal tab contents when Terminal is active', async () => {
     const wrapper = mount(InspectorPanel, {
-      props: { selectedResource: mockResource }
+      props: {
+        selectedResource: {
+          contextName: 'kind-cluster',
+          namespace: 'default',
+          name: 'nginx-pod',
+          kind: 'Pods'
+        },
+        containerName: 'nginx'
+      }
     });
-    // Set tab to Terminal
+    
     await wrapper.setData({ activeTab: 'Terminal' });
     expect(wrapper.find('.terminal-panel-body').exists()).toBe(true);
-  });
-});
-
-describe('InspectorPanel Dynamic Tabs Redesign', () => {
-  it('displays all tabs for Pods', () => {
-    const wrapper = mount(InspectorPanel, {
-      props: {
-        selectedResource: {
-          contextName: 'kind-cluster',
-          namespace: 'default',
-          name: 'nginx-pod',
-          kind: 'Pods'
-        }
-      }
-    });
-    
-    const buttons = wrapper.findAll('.tab-btn');
-    const tabNames = buttons.map(b => b.text());
-    expect(tabNames.some(t => t.includes('Terminal'))).toBe(true);
-    expect(tabNames.some(t => t.includes('Files'))).toBe(true);
-  });
-
-  it('filters out Terminal, Logs, and Files tabs for non-Pod resources', () => {
-    const wrapper = mount(InspectorPanel, {
-      props: {
-        selectedResource: {
-          contextName: 'kind-cluster',
-          namespace: 'default',
-          name: 'nginx-configmap',
-          kind: 'ConfigMaps'
-        }
-      }
-    });
-    
-    const buttons = wrapper.findAll('.tab-btn');
-    const tabNames = buttons.map(b => b.text());
-    expect(tabNames.some(t => t.includes('Terminal'))).toBe(false);
-    expect(tabNames.some(t => t.includes('Files'))).toBe(false);
-    expect(tabNames.some(t => t.includes('YAML'))).toBe(true);
-  });
-});
-
-describe('InspectorPanel Files Tab Explorer', () => {
-  it('starts listing from root directory / by default', async () => {
-    const wrapper = mount(InspectorPanel, {
-      props: {
-        selectedResource: {
-          contextName: 'kind-cluster',
-          namespace: 'default',
-          name: 'nginx-pod',
-          kind: 'Pods'
-        }
-      }
-    });
-    
-    // Switch to Files tab
-    (wrapper.vm as any).activeTab = 'Files';
-    await wrapper.vm.$nextTick();
-    
-    expect((wrapper.vm as any).filePath).toBe('/');
   });
 });
