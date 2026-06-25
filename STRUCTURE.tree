@@ -61,12 +61,14 @@
 │   │   ├── InspectorPanel.vue
 │   │   ├── PluginRenderer.vue
 │   │   ├── PodList.vue
+│   │   ├── ResourceDetailDrawer.vue
 │   │   ├── ResourceTable.vue
 │   │   ├── ResourceTree.vue
 │   │   ├── Sidebar.vue
 │   │   ├── __tests__
 │   │   │   ├── AdvisorToast.spec.ts
 │   │   │   ├── InspectorPanel.spec.ts
+│   │   │   ├── ResourceDetailDrawer.spec.ts
 │   │   │   └── ResourceTable.spec.ts
 │   │   ├── Toast.vue
 │   │   ├── TrendChart.vue
@@ -151,4 +153,4 @@
 ├── VISION.md
 └── vite.config.ts
 
-27 directories, 125 files
+27 directories, 127 files
