@@ -38,17 +38,17 @@ const fetchDetails = async () => {
       contextName: res.contextName,
       namespace: res.namespace,
       name: res.name,
-      kind: kindSingular
+      kind: kindSingular,
     });
+    
+    // Parse response
     const parsed = JSON.parse(dataText);
     detailData.value = parsed;
 
-    // Extract containers if resource is Pod
-    if (res.kind === 'Pods') {
-      const names = parsed.spec?.containers?.map((c: any) => c.name) || [];
-      containerNames.value = names;
-      if (names.length > 0) {
-        selectedContainer.value = names[0];
+    if (res.kind === 'Pods' && parsed.spec?.containers) {
+      containerNames.value = parsed.spec.containers.map((c: any) => c.name);
+      if (containerNames.value.length > 0) {
+        selectedContainer.value = containerNames.value[0];
       }
     }
   } catch (e) {
@@ -60,20 +60,19 @@ const fetchDetails = async () => {
 
 const fetchEvents = async () => {
   const res = props.resource;
-  if (!res || res.kind !== 'Pods') {
-    events.value = [];
-    return;
-  }
+  if (!res || res.kind !== 'Pods') return;
   isLoadingEvents.value = true;
+  events.value = [];
+
   try {
-    const response: any = await invoke('get_pod_events', {
+    const eventsText = await invoke<string>('get_pod_events', {
       contextName: res.contextName,
       namespace: res.namespace,
-      podName: res.name
+      podName: res.name,
     });
-    events.value = response.items || [];
+    events.value = JSON.parse(eventsText);
   } catch (e) {
-    console.error('Failed to fetch events:', e);
+    console.error('Failed to fetch pod events:', e);
   } finally {
     isLoadingEvents.value = false;
   }
@@ -82,19 +81,19 @@ const fetchEvents = async () => {
 const deleteResource = async () => {
   const res = props.resource;
   if (!res) return;
-
-  const confirmed = confirm(`Are you sure you want to delete ${res.kind.replace(/s$/, '')} "${res.name}"?`);
+  
+  const confirmed = window.confirm(`Are you sure you want to delete ${res.kind.replace(/s$/, '')} "${res.name}"?`);
   if (!confirmed) return;
 
   isDeleting.value = true;
   try {
+    const kindSingular = res.kind.replace(/s$/, '');
     await invoke('delete_k8s_resource', {
       contextName: res.contextName,
-      kind: res.kind.replace(/s$/, ''),
       namespace: res.namespace,
-      name: res.name
+      name: res.name,
+      kind: kindSingular,
     });
-    alert(`${res.name} deleted successfully.`);
     emit('deleted');
   } catch (e) {
     alert(`Failed to delete resource: ${e}`);
@@ -119,20 +118,16 @@ watch(() => props.visible, (newVal) => {
 </script>
 
 <template>
-  <div>
-    <!-- Backdrop overlay -->
-    <div v-if="visible" class="drawer-overlay" @click="emit('close')"></div>
-
-    <!-- Right Drawer -->
-    <div :class="['resource-drawer', { open: visible }]">
-      <div v-if="resource" class="drawer-container">
+  <div v-if="visible" class="modal-overlay" @click.self="emit('close')">
+    <div class="resource-modal" role="dialog" aria-modal="true">
+      <div v-if="resource" class="modal-container">
         <!-- Header -->
-        <header class="drawer-header">
+        <header class="modal-header">
           <div class="header-main">
-            <span class="resource-kind-badge">{{ resource.kind.replace(/s$/, '') }}</span>
-            <h2 class="drawer-title" :title="resource.name">{{ resource.name }}</h2>
+            <span class="resource-kind-badge">{{ resource.kind.replace(/s$/, '') }} Detail</span>
+            <h2 class="modal-title" :title="resource.name">{{ resource.name }}</h2>
           </div>
-          <button class="btn-close" @click="emit('close')">✕</button>
+          <button class="btn-close" @click="emit('close')" aria-label="Close dialog">✕</button>
         </header>
 
         <!-- Quick Action Tools Bar -->
@@ -171,13 +166,13 @@ watch(() => props.visible, (newVal) => {
         </section>
 
         <!-- Loader -->
-        <div v-if="isLoading" class="drawer-loader">
+        <div v-if="isLoading" class="modal-loader">
           <Loader2 class="animate-spin" :size="32" />
           <p>Loading details...</p>
         </div>
 
         <!-- Scrollable Content -->
-        <div v-else class="drawer-content">
+        <div v-else class="modal-content">
           <!-- Metadata Info -->
           <div class="info-group">
             <h3>Overview</h3>
@@ -221,8 +216,8 @@ watch(() => props.visible, (newVal) => {
           <div class="info-group" v-if="resource.kind === 'Pods' && containerNames.length > 0">
             <h3>Containers Details</h3>
             <div class="container-selection-block">
-              <label for="drawer-container-select" class="container-select-label">Active Container:</label>
-              <select id="drawer-container-select" v-model="selectedContainer" class="container-select-dropdown">
+              <label for="modal-container-select" class="container-select-label">Active Container:</label>
+              <select id="modal-container-select" v-model="selectedContainer" class="container-select-dropdown">
                 <option v-for="c in containerNames" :key="c" :value="c">{{ c }}</option>
               </select>
             </div>
@@ -242,7 +237,7 @@ watch(() => props.visible, (newVal) => {
             <h3>Recent Events</h3>
             <div v-if="isLoadingEvents" class="events-loader">Loading events...</div>
             <div v-else-if="events.length === 0" class="empty-events">No events found.</div>
-            <div v-else class="drawer-events-list">
+            <div v-else class="modal-events-list">
               <div v-for="ev in events" :key="ev.metadata.uid" class="event-item-card">
                 <div class="event-item-header">
                   <span :class="['event-badge', ev.type.toLowerCase()]">{{ ev.type }}</span>
@@ -260,33 +255,37 @@ watch(() => props.visible, (newVal) => {
 </template>
 
 <style scoped>
-/* Drawer slide out layout */
-.drawer-overlay {
+/* Modal overlay layout */
+.modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
   z-index: 1000;
-  animation: fadeIn 0.2s ease-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.2s ease-out forwards;
 }
-.resource-drawer {
-  position: fixed;
-  top: 0;
-  right: -450px;
-  width: 420px;
-  height: 100vh;
-  background-color: #0d0e12;
-  border-left: 1px solid #1e293b;
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+
+/* Modal box floating in center */
+.resource-modal {
+  width: 760px;
+  max-width: 90vw;
+  height: 620px;
+  max-height: 80vh;
+  background-color: rgba(13, 14, 18, 0.95);
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   z-index: 1001;
-  transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
-.resource-drawer.open {
-  right: 0;
-}
-.drawer-container {
+
+.modal-container {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -294,8 +293,8 @@ watch(() => props.visible, (newVal) => {
 }
 
 /* Header */
-.drawer-header {
-  padding: 16px 20px;
+.modal-header {
+  padding: 16px 24px;
   background-color: #111827;
   border-bottom: 1px solid #1e293b;
   display: flex;
@@ -306,7 +305,7 @@ watch(() => props.visible, (newVal) => {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-width: 80%;
+  max-width: 85%;
 }
 .resource-kind-badge {
   font-size: 0.65rem;
@@ -315,9 +314,9 @@ watch(() => props.visible, (newVal) => {
   font-weight: bold;
   letter-spacing: 0.05em;
 }
-.drawer-title {
+.modal-title {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   color: #f3f4f6;
   white-space: nowrap;
   overflow: hidden;
@@ -338,11 +337,11 @@ watch(() => props.visible, (newVal) => {
 
 /* Quick Actions Bar */
 .quick-actions-bar {
-  padding: 12px 20px;
+  padding: 12px 24px;
   background-color: #090b0f;
   border-bottom: 1px solid #1e293b;
   display: flex;
-  gap: 8px;
+  gap: 10px;
   overflow-x: auto;
 }
 .action-btn {
@@ -393,7 +392,7 @@ watch(() => props.visible, (newVal) => {
 }
 
 /* Loaders and Empty States */
-.drawer-loader {
+.modal-loader {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -412,10 +411,10 @@ watch(() => props.visible, (newVal) => {
 }
 
 /* Content Layout */
-.drawer-content {
+.modal-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -442,7 +441,7 @@ watch(() => props.visible, (newVal) => {
 }
 .label-col {
   color: #94a3b8;
-  width: 30%;
+  width: 25%;
   font-weight: 500;
 }
 .value-col {
@@ -547,7 +546,7 @@ watch(() => props.visible, (newVal) => {
   font-style: italic;
   padding: 8px 0;
 }
-.drawer-events-list {
+.modal-events-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -592,5 +591,16 @@ watch(() => props.visible, (newVal) => {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>
