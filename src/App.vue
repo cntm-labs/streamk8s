@@ -14,7 +14,7 @@ import AdviceBanner from './components/AdviceBanner.vue';
 import CommandPalette from './components/CommandPalette.vue';
 import YamlEditorModal from './components/YamlEditorModal.vue';
 import AdvisorToast from './components/AdvisorToast.vue';
-import ResourceDetailModal from './components/ResourceDetailModal.vue';
+
 
 // Views
 import WelcomeView from './views/WelcomeView.vue';
@@ -86,7 +86,6 @@ const currentAdvice = ref<Advice | null>(null);
 const activeResourceKind = ref('Pods');
 const selectedResource = ref<any | null>(null);
 const inspectorPanelRef = ref<any | null>(null);
-const showDetailDrawer = ref(false);
 const activeContainer = ref('');
 const showBottomPanel = ref(false);
 
@@ -120,7 +119,7 @@ const handleSelectResource = (namespace: string, name: string, kind: string) => 
     name,
     kind 
   };
-  showDetailDrawer.value = true;
+  showBottomPanel.value = true;
 };
 
 const fetchNamespaces = async (context: string) => {
@@ -352,6 +351,14 @@ onMounted(async () => {
                 :context-name="selectedContextName"
                 :kind="activeResourceKind"
                 @select-resource="handleSelectResource" 
+                @edit-yaml="(namespace, name, kind) => {
+                  editingResource = {
+                    contextName: selectedContextName,
+                    namespace,
+                    name,
+                    kind
+                  };
+                }"
               />
             </div>
             <div v-else class="no-cluster-selected">
@@ -390,15 +397,7 @@ onMounted(async () => {
     
     <AdvisorToast :context-name="selectedContextName" :namespace="selectedNamespace" />
     
-    <ResourceDetailModal 
-      :visible="showDetailDrawer" 
-      :resource="selectedResource"
-      @close="showDetailDrawer = false"
-      @open-terminal="(container) => { activeContainer = container; activeTab = 'Terminal'; showBottomPanel = true; }"
-      @open-logs="(container) => { activeContainer = container; activeTab = 'Logs'; showBottomPanel = true; }"
-      @edit-yaml="(res) => editingResource = res"
-      @deleted="() => { showDetailDrawer = false; if (selectedContextName) fetchResources(selectedContextName, activeResourceKind); }"
-    />
+
   </div>
 </template>
 
