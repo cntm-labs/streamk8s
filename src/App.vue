@@ -14,6 +14,7 @@ import AdviceBanner from './components/AdviceBanner.vue';
 import CommandPalette from './components/CommandPalette.vue';
 import YamlEditorModal from './components/YamlEditorModal.vue';
 import AdvisorToast from './components/AdvisorToast.vue';
+import ResourceDetailDrawer from './components/ResourceDetailDrawer.vue';
 
 // Views
 import WelcomeView from './views/WelcomeView.vue';
@@ -85,6 +86,9 @@ const currentAdvice = ref<Advice | null>(null);
 const activeResourceKind = ref('Pods');
 const selectedResource = ref<any | null>(null);
 const inspectorPanelRef = ref<any | null>(null);
+const showDetailDrawer = ref(false);
+const activeContainer = ref('');
+const showBottomPanel = ref(false);
 
 const handleTabChange = (id: string) => {
   const config = navMap[id];
@@ -109,13 +113,14 @@ const gridColumns = computed(() => {
   return `${activityBarWidth} ${hotbarWidth} ${sidebarWidthVal} 1fr`;
 });
 
-const handleSelectResource = (resource: any) => {
+const handleSelectResource = (namespace: string, name: string, kind: string) => {
   selectedResource.value = { 
     contextName: selectedContextName.value, 
-    namespace: resource.namespace, 
-    name: resource.name,
-    kind: activeResourceKind.value 
+    namespace, 
+    name,
+    kind 
   };
+  showDetailDrawer.value = true;
 };
 
 const fetchNamespaces = async (context: string) => {
@@ -358,12 +363,12 @@ onMounted(async () => {
           </div>
 
           <!-- Bottom Inspector Panel -->
-          <div v-if="selectedResource" class="floating-inspector">
+          <div v-if="showBottomPanel && selectedResource" class="floating-inspector">
              <InspectorPanel 
                ref="inspectorPanelRef"
                :selected-resource="selectedResource" 
-               @close="selectedResource = null"
-               @edit="(res) => editingResource = res"
+               :container-name="activeContainer"
+               @close="showBottomPanel = false"
              />
           </div>
         </section>
@@ -384,6 +389,16 @@ onMounted(async () => {
     />
     
     <AdvisorToast :context-name="selectedContextName" :namespace="selectedNamespace" />
+    
+    <ResourceDetailDrawer 
+      :visible="showDetailDrawer" 
+      :resource="selectedResource"
+      @close="showDetailDrawer = false"
+      @open-terminal="(container) => { activeContainer = container; activeTab = 'Terminal'; showBottomPanel = true; }"
+      @open-logs="(container) => { activeContainer = container; activeTab = 'Logs'; showBottomPanel = true; }"
+      @edit-yaml="(res) => editingResource = res"
+      @deleted="() => { showDetailDrawer = false; if (selectedContextName) fetchResources(selectedContextName, activeResourceKind); }"
+    />
   </div>
 </template>
 

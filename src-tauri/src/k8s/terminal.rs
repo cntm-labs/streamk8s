@@ -1,13 +1,13 @@
 // src-tauri/src/k8s/terminal.rs
 
-use tokio::sync::mpsc::Sender;
-use tokio::task::AbortHandle;
+use k8s_openapi::api::core::v1::Pod;
+use kube::api::{Api, AttachParams};
 use std::collections::HashMap;
 use std::sync::Mutex;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tauri::Emitter;
-use kube::api::{Api, AttachParams};
-use k8s_openapi::api::core::v1::Pod;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::sync::mpsc::Sender;
+use tokio::task::AbortHandle;
 
 pub struct TerminalSession {
     pub stdin_tx: Sender<Vec<u8>>,
@@ -33,19 +33,22 @@ pub async fn start_terminal_session(
     let pods: Api<Pod> = Api::namespaced(client, &namespace);
 
     // Check bash first, fallback to sh
-    let mut attached = match pods.exec(
-        &pod_name,
-        vec!["/bin/bash"],
-        &AttachParams::default()
-            .container(&container_name)
-            .stdin(true)
-            .stdout(true)
-            .stderr(true)
-            .tty(true),
-    ).await {
+    let mut attached = match pods
+        .exec(
+            &pod_name,
+            vec!["/bin/bash"],
+            &AttachParams::default()
+                .container(&container_name)
+                .stdin(true)
+                .stdout(true)
+                .stderr(true)
+                .tty(true),
+        )
+        .await
+    {
         Ok(res) => res,
-        Err(_) => {
-            pods.exec(
+        Err(_) => pods
+            .exec(
                 &pod_name,
                 vec!["/bin/sh"],
                 &AttachParams::default()
@@ -54,8 +57,9 @@ pub async fn start_terminal_session(
                     .stdout(true)
                     .stderr(true)
                     .tty(true),
-            ).await.map_err(|e| format!("Both bash and sh failed: {}", e))?
-        }
+            )
+            .await
+            .map_err(|e| format!("Both bash and sh failed: {}", e))?,
     };
 
     let mut stdout = attached.stdout().ok_or("Failed to attach to stdout")?;
@@ -138,7 +142,7 @@ pub async fn close_terminal_session(
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[tokio::test]
     async fn test_session_manager_registration() {
         let manager = TerminalSessionManager {
@@ -147,18 +151,30 @@ mod tests {
         let (tx, _rx) = tokio::sync::mpsc::channel(1);
         let writer_task = tokio::spawn(async {});
         let reader_task = tokio::spawn(async {});
-        
+
         let session = TerminalSession {
             stdin_tx: tx,
             writer_abort: writer_task.abort_handle(),
             reader_abort: reader_task.abort_handle(),
         };
-        
-        manager.sessions.lock().unwrap().insert("test-session".to_string(), session);
-        assert!(manager.sessions.lock().unwrap().contains_key("test-session"));
-        
+
+        manager
+            .sessions
+            .lock()
+            .unwrap()
+            .insert("test-session".to_string(), session);
+        assert!(manager
+            .sessions
+            .lock()
+            .unwrap()
+            .contains_key("test-session"));
+
         manager.sessions.lock().unwrap().remove("test-session");
-        assert!(!manager.sessions.lock().unwrap().contains_key("test-session"));
+        assert!(!manager
+            .sessions
+            .lock()
+            .unwrap()
+            .contains_key("test-session"));
     }
 
     #[tokio::test]
