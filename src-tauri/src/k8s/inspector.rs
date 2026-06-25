@@ -214,9 +214,45 @@ pub async fn list_pod_files(
     Ok(serde_json::json!(files))
 }
 
+#[tauri::command]
+pub async fn delete_k8s_resource(
+    context_name: Option<String>,
+    kind: String,
+    namespace: String,
+    name: String,
+) -> Result<String, String> {
+    let client = create_client(context_name).await?;
+    let discovery = Discovery::new(client.clone())
+        .run()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    for group in discovery.groups() {
+        if let Some((ar, caps)) = group.recommended_kind(&kind) {
+            let api: kube::Api<DynamicObject> = if caps.scope == Scope::Namespaced {
+                kube::Api::namespaced_with(client.clone(), &namespace, &ar)
+            } else {
+                kube::Api::all_with(client.clone(), &ar)
+            };
+
+            let dp = kube::api::DeleteParams::default();
+            api.delete(&name, &dp).await.map_err(|e| e.to_string())?;
+            return Ok(format!("Successfully deleted {} {}", kind, name));
+        }
+    }
+
+    Err(format!("Resource kind '{}' not found", kind))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_delete_params_compiles() {
+        let dp = kube::api::DeleteParams::default();
+        assert_eq!(dp.grace_period_seconds, None);
+    }
 
     #[test]
     fn test_parse_ls_output() {
