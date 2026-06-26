@@ -24,8 +24,28 @@ pub async fn apply_k8s_resource(
         .await
         .map_err(|e| e.to_string())?;
 
+    let normalized_kind = match kind.as_str() {
+        "Pods" => "Pod",
+        "Deployments" => "Deployment",
+        "Services" => "Service",
+        "ConfigMaps" => "ConfigMap",
+        "Secrets" => "Secret",
+        "Namespaces" => "Namespace",
+        "Nodes" => "Node",
+        "StatefulSets" => "StatefulSet",
+        "DaemonSets" => "DaemonSet",
+        "Ingresses" => "Ingress",
+        _ => {
+            if kind.ends_with('s') && kind.len() > 1 {
+                &kind[..kind.len() - 1]
+            } else {
+                &kind
+            }
+        }
+    };
+
     for group in discovery.groups() {
-        if let Some((ar, caps)) = group.recommended_kind(&kind) {
+        if let Some((ar, caps)) = group.recommended_kind(normalized_kind) {
             let api: kube::Api<DynamicObject> = if caps.scope == Scope::Namespaced {
                 kube::Api::namespaced_with(client.clone(), &namespace, &ar)
             } else {
@@ -227,8 +247,28 @@ pub async fn delete_k8s_resource(
         .await
         .map_err(|e| e.to_string())?;
 
+    let normalized_kind = match kind.as_str() {
+        "Pods" => "Pod",
+        "Deployments" => "Deployment",
+        "Services" => "Service",
+        "ConfigMaps" => "ConfigMap",
+        "Secrets" => "Secret",
+        "Namespaces" => "Namespace",
+        "Nodes" => "Node",
+        "StatefulSets" => "StatefulSet",
+        "DaemonSets" => "DaemonSet",
+        "Ingresses" => "Ingress",
+        _ => {
+            if kind.ends_with('s') && kind.len() > 1 {
+                &kind[..kind.len() - 1]
+            } else {
+                &kind
+            }
+        }
+    };
+
     for group in discovery.groups() {
-        if let Some((ar, caps)) = group.recommended_kind(&kind) {
+        if let Some((ar, caps)) = group.recommended_kind(normalized_kind) {
             let api: kube::Api<DynamicObject> = if caps.scope == Scope::Namespaced {
                 kube::Api::namespaced_with(client.clone(), &namespace, &ar)
             } else {
