@@ -26,14 +26,14 @@ const nodeTypes = {
     template: `
       <div class="node-group-container">
         <div class="group-header">
-          <span class="icon">🖥️</span> {{ props.label }}
+          <span class="icon">🖥️</span> {{ label }}
         </div>
       </div>
     `
   }),
   custom: markRaw({
     props: ['label', 'data'],
-    setup(props: any) {
+    setup() {
       const getIcon = (kind: string) => {
         switch (kind?.toLowerCase()) {
           case 'pod': return Box;
@@ -42,12 +42,12 @@ const nodeTypes = {
           default: return Cpu;
         }
       };
-      return { getIcon, props };
+      return { getIcon };
     },
     template: `
-      <div class="custom-node-container" :class="props.data.kind?.toLowerCase()">
-        <component :is="getIcon(props.data.kind)" :size="16" class="node-icon" />
-        <span class="node-label">{{ props.label }}</span>
+      <div class="custom-node-container" :class="data?.kind?.toLowerCase()">
+        <component :is="getIcon(data?.kind)" :size="16" class="node-icon" />
+        <span class="node-label">{{ label }}</span>
       </div>
     `
   })
