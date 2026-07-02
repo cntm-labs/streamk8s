@@ -64,7 +64,11 @@ pub fn is_namespace_ignored(namespace: &str, config: &crate::config::AppConfig) 
     if system_namespaces.contains(&namespace) {
         return true;
     }
-    config.telemetry.ignored_namespaces.iter().any(|ns| ns == namespace)
+    config
+        .telemetry
+        .ignored_namespaces
+        .iter()
+        .any(|ns| ns == namespace)
 }
 
 #[tauri::command]
@@ -75,8 +79,14 @@ pub async fn suspend_namespace(
 ) -> Result<String, String> {
     let config = crate::config::AppConfig::load(&app_handle).map_err(|e| e.to_string())?;
     if is_namespace_ignored(&namespace, &config) {
-        println!("Ignoring suspend request for protected namespace: {}", namespace);
-        return Ok(format!("Ignoring suspend request for protected namespace: {}", namespace));
+        println!(
+            "Ignoring suspend request for protected namespace: {}",
+            namespace
+        );
+        return Ok(format!(
+            "Ignoring suspend request for protected namespace: {}",
+            namespace
+        ));
     }
 
     let client = crate::k8s::inspector::create_client(context_name).await?;
@@ -197,7 +207,7 @@ mod tests {
     #[tokio::test]
     async fn test_suspend_ignored_namespace() {
         use crate::config::{AppConfig, TelemetryConfig};
-        
+
         let config = AppConfig {
             telemetry: TelemetryConfig {
                 ignored_namespaces: vec!["my-custom-ignore".to_string()],
