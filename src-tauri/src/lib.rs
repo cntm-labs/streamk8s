@@ -3,7 +3,6 @@ pub mod hardware;
 pub mod k8s;
 pub mod plugins;
 
-
 use crate::hardware::collector::collect_metrics;
 
 use crate::k8s::scaling::{update_active_cluster_state, ActiveClusterState};
@@ -77,10 +76,12 @@ pub fn run() {
                         if let Some(event) = evaluator.evaluate(&metrics, &config.telemetry) {
                             if event == "hardware-threshold-exceeded" {
                                 println!("Threshold exceeded, triggering auto-suspend...");
-                                let _ = handle.emit("hardware-threshold-exceeded", "Sustained Heavy Load");
+                                let _ = handle
+                                    .emit("hardware-threshold-exceeded", "Sustained Heavy Load");
                             } else if event == "hardware-threshold-recovered" {
                                 println!("Threshold recovered, resuming workloads...");
-                                let _ = handle.emit("hardware-threshold-recovered", "Load normalized");
+                                let _ =
+                                    handle.emit("hardware-threshold-recovered", "Load normalized");
                             }
                         }
                     }

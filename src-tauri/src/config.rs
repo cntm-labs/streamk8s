@@ -8,6 +8,8 @@ pub struct TelemetryConfig {
     pub gpu_suspend_threshold: u32,
     pub cpu_suspend_threshold: u32,
     pub sustain_duration_seconds: u32,
+    #[serde(default)]
+    pub ignored_namespaces: Vec<String>,
 }
 
 impl Default for TelemetryConfig {
@@ -16,6 +18,7 @@ impl Default for TelemetryConfig {
             gpu_suspend_threshold: 80,
             cpu_suspend_threshold: 85,
             sustain_duration_seconds: 15,
+            ignored_namespaces: Vec::new(),
         }
     }
 }
@@ -92,5 +95,11 @@ mod tests {
         assert_eq!(config.telemetry.gpu_suspend_threshold, 80);
         assert_eq!(config.telemetry.cpu_suspend_threshold, 85);
         assert_eq!(config.telemetry.sustain_duration_seconds, 15);
+    }
+
+    #[test]
+    fn test_telemetry_config_ignored_namespaces() {
+        let config = TelemetryConfig::default();
+        assert_eq!(config.ignored_namespaces, Vec::<String>::new());
     }
 }

@@ -123,6 +123,7 @@ mod tests {
             gpu_suspend_threshold: 80,
             cpu_suspend_threshold: 85,
             sustain_duration_seconds: 15,
+            ignored_namespaces: Vec::new(),
         };
         let mut evaluator = HardwareEvaluator::new();
 
