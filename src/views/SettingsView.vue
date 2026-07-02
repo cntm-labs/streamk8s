@@ -13,6 +13,7 @@ interface AppConfig {
     gpu_suspend_threshold: number;
     cpu_suspend_threshold: number;
     sustain_duration_seconds: number;
+    ignored_namespaces: string[];
   };
 }
 
@@ -25,9 +26,25 @@ const config = ref<AppConfig>({
   telemetry: {
     gpu_suspend_threshold: 80,
     cpu_suspend_threshold: 85,
-    sustain_duration_seconds: 15
+    sustain_duration_seconds: 15,
+    ignored_namespaces: []
   }
 });
+
+const newIgnoredNamespace = ref('');
+const addIgnoredNamespace = () => {
+  const ns = newIgnoredNamespace.value.trim();
+  if (ns && !config.value.telemetry.ignored_namespaces.includes(ns)) {
+    config.value.telemetry.ignored_namespaces.push(ns);
+    saveConfig();
+  }
+  newIgnoredNamespace.value = '';
+};
+
+const removeIgnoredNamespace = (ns: string) => {
+  config.value.telemetry.ignored_namespaces = config.value.telemetry.ignored_namespaces.filter((n: string) => n !== ns);
+  saveConfig();
+};
 
 const isSaving = ref(false);
 const showSuccess = ref(false);
@@ -177,6 +194,38 @@ onMounted(loadConfig);
             <label class="block text-sm mb-1">Sustain Duration (Seconds)</label>
             <input type="number" v-model.number="config.telemetry.sustain_duration_seconds" min="1" max="300" class="w-full bg-gray-900 border border-gray-600 rounded p-1" @change="saveConfig">
             <span class="text-xs text-gray-400">Time to wait before triggering to avoid rapid flapping.</span>
+          </div>
+
+          <div class="mt-6 border-t border-slate-700/50 pt-6">
+            <h3 class="text-sm font-medium text-slate-300 mb-4">Namespace Ignore List</h3>
+            <p class="text-xs text-slate-400 mb-3">These namespaces will never be auto-suspended. (System namespaces like kube-system are protected by default).</p>
+            
+            <div class="flex gap-2 mb-4">
+              <input 
+                v-model="newIgnoredNamespace" 
+                @keyup.enter="addIgnoredNamespace"
+                type="text" 
+                placeholder="Namespace name..." 
+                class="flex-1 bg-slate-900/50 border border-slate-700/50 rounded px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus:border-emerald-500/50"
+              />
+              <button 
+                @click="addIgnoredNamespace"
+                class="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded text-sm hover:bg-emerald-500/20 transition-colors"
+              >
+                Add
+              </button>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <div 
+                v-for="ns in config.telemetry.ignored_namespaces" 
+                :key="ns"
+                class="inline-flex items-center gap-1.5 px-2 py-1 bg-slate-800 rounded text-xs text-slate-300 border border-slate-700"
+              >
+                {{ ns }}
+                <button @click="removeIgnoredNamespace(ns)" class="text-slate-500 hover:text-red-400">&times;</button>
+              </div>
+            </div>
           </div>
         </div>
 
