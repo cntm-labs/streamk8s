@@ -3,10 +3,12 @@ pub mod hardware;
 pub mod k8s;
 pub mod plugins;
 
+
 use crate::hardware::collector::collect_metrics;
-use crate::hardware::profiler::Profiler;
+
+use crate::k8s::scaling::{update_active_cluster_state, ActiveClusterState};
 use nvml_wrapper::Nvml;
-use serde_json::json;
+
 use std::time::Duration;
 use sysinfo::System;
 use tauri::Emitter;
@@ -18,6 +20,10 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .manage(crate::k8s::terminal::TerminalSessionManager {
             sessions: std::sync::Mutex::new(std::collections::HashMap::new()),
+        })
+        .manage(ActiveClusterState {
+            context_name: std::sync::Mutex::new(None),
+            namespace: std::sync::Mutex::new("default".to_string()),
         })
         .invoke_handler(tauri::generate_handler![
             crate::config::get_config,
@@ -50,35 +56,33 @@ pub fn run() {
             crate::plugins::manager::get_remote_registry,
             crate::k8s::terminal::start_terminal_session,
             crate::k8s::terminal::send_terminal_input,
-            crate::k8s::terminal::close_terminal_session
+            crate::k8s::terminal::close_terminal_session,
+            update_active_cluster_state
         ])
         .setup(|app| {
             let handle = app.handle().clone();
             let nvml = Nvml::init().ok();
             tauri::async_runtime::spawn(async move {
                 let mut sys = System::new_all();
+                let mut evaluator = crate::hardware::collector::HardwareEvaluator::new();
                 loop {
                     let metrics = collect_metrics(&mut sys, &nvml);
-                    crate::hardware::collector::check_for_heavy_apps(&sys, &handle);
                     let _ = handle.emit("hardware-update", &metrics);
 
-                    let heavy_apps = Profiler::scan_heavy_apps(&sys);
-                    if !heavy_apps.is_empty()
-                        || metrics.cpu_usage > 80.0
-                        || metrics.gpu_usage.unwrap_or(0.0) > 80.0
-                    {
-                        let _ = handle.emit(
-                            "smart-advice",
-                            json!({
-                                "action": "Suspend",
-                                "reason": if !heavy_apps.is_empty() {
-                                    format!("Heavy apps detected: {:?}", heavy_apps)
-                                } else {
-                                    "High system load detected".to_string()
-                                },
-                                "suggested_pods": ["*"]
-                            }),
-                        );
+                    // Read configuration
+                    let config = crate::config::AppConfig::load(&handle).unwrap_or_default();
+
+                    // Only evaluate if auto_suspend is globally enabled
+                    if config.auto_suspend {
+                        if let Some(event) = evaluator.evaluate(&metrics, &config.telemetry) {
+                            if event == "hardware-threshold-exceeded" {
+                                println!("Threshold exceeded, triggering auto-suspend...");
+                                let _ = handle.emit("hardware-threshold-exceeded", "Sustained Heavy Load");
+                            } else if event == "hardware-threshold-recovered" {
+                                println!("Threshold recovered, resuming workloads...");
+                                let _ = handle.emit("hardware-threshold-recovered", "Load normalized");
+                            }
+                        }
                     }
 
                     tokio::time::sleep(Duration::from_secs(1)).await;

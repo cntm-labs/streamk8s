@@ -8,13 +8,25 @@ interface AppConfig {
   api_key: string;
   endpoint: string;
   model: string;
+  auto_suspend: boolean;
+  telemetry: {
+    gpu_suspend_threshold: number;
+    cpu_suspend_threshold: number;
+    sustain_duration_seconds: number;
+  };
 }
 
 const config = ref<AppConfig>({
   ai_provider: 'OpenAI',
   api_key: '',
   endpoint: 'https://api.openai.com/v1',
-  model: 'gpt-4-turbo'
+  model: 'gpt-4-turbo',
+  auto_suspend: false,
+  telemetry: {
+    gpu_suspend_threshold: 80,
+    cpu_suspend_threshold: 85,
+    sustain_duration_seconds: 15
+  }
 });
 
 const isSaving = ref(false);
@@ -132,12 +144,53 @@ onMounted(loadConfig);
 
       <div class="settings-section">
         <h3>🏢 General Preferences</h3>
+        
+        <div class="setting-item">
+          <div class="info">
+            <label>Auto-Suspend Mode</label>
+            <p>Automatically scale down Kubernetes workloads to 0 replicas when heavy desktop apps or games are running</p>
+          </div>
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" v-model="config.auto_suspend" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 border rounded border-gray-700 bg-gray-800" v-if="config.auto_suspend">
+          <h3 class="text-md font-semibold mb-2">Autonomous Telemetry Thresholds</h3>
+          
+          <div class="mb-4">
+            <label class="block text-sm mb-1">GPU Suspend Threshold (%)</label>
+            <input type="range" v-model.number="config.telemetry.gpu_suspend_threshold" min="10" max="100" class="w-full" @change="saveConfig">
+            <span class="text-xs text-gray-400">Current: {{ config.telemetry.gpu_suspend_threshold }}%</span>
+          </div>
+          
+          <div class="mb-4">
+            <label class="block text-sm mb-1">CPU Suspend Threshold (%)</label>
+            <input type="range" v-model.number="config.telemetry.cpu_suspend_threshold" min="10" max="100" class="w-full" @change="saveConfig">
+            <span class="text-xs text-gray-400">Current: {{ config.telemetry.cpu_suspend_threshold }}%</span>
+          </div>
+          
+          <div>
+            <label class="block text-sm mb-1">Sustain Duration (Seconds)</label>
+            <input type="number" v-model.number="config.telemetry.sustain_duration_seconds" min="1" max="300" class="w-full bg-gray-900 border border-gray-600 rounded p-1" @change="saveConfig">
+            <span class="text-xs text-gray-400">Time to wait before triggering to avoid rapid flapping.</span>
+          </div>
+        </div>
+
         <div class="setting-item">
           <div class="info">
             <label>Auto-Analyze Health</label>
             <p>Automatically run diagnostics when a resource error is detected</p>
           </div>
-          <input type="checkbox" checked />
+          <div class="switch-container">
+            <label class="switch">
+              <input type="checkbox" checked disabled />
+              <span class="slider round"></span>
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -264,6 +317,71 @@ select, .config-input {
 
 select:focus, .config-input:focus {
   border-color: #3b82f6;
+}
+
+/* Toggle Switch Styles */
+.switch-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #374151;
+  transition: .4s;
+  border: 1px solid #4b5563;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #9ca3af;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: rgba(37, 99, 235, 0.2);
+  border-color: #2563eb;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2563eb;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+  background-color: #3b82f6;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 
 .mr-2 { margin-right: 0.5rem; }
