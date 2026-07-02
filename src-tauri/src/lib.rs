@@ -3,15 +3,15 @@ pub mod hardware;
 pub mod k8s;
 pub mod plugins;
 
-use crate::config::get_config;
+
 use crate::hardware::collector::collect_metrics;
 
 use crate::k8s::scaling::{update_active_cluster_state, ActiveClusterState};
 use nvml_wrapper::Nvml;
-use serde_json::json;
+
 use std::time::Duration;
 use sysinfo::System;
-use tauri::{Emitter, Manager};
+use tauri::Emitter;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -70,70 +70,17 @@ pub fn run() {
                     let _ = handle.emit("hardware-update", &metrics);
 
                     // Read configuration
-                    let config = get_config(handle.clone()).await.unwrap_or_default();
+                    let config = crate::config::AppConfig::load(&handle).unwrap_or_default();
 
-                    if let Some(event) = evaluator.evaluate(&metrics, &config.telemetry) {
-                        let (current_ctx, current_ns) = {
-                            let state = handle.state::<ActiveClusterState>();
-                            let ctx = state.context_name.lock().unwrap().clone();
-                            let ns = state.namespace.lock().unwrap().clone();
-                            (ctx, ns)
-                        };
-
-                        if event == "hardware-threshold-exceeded" {
-                            if config.auto_suspend {
-                                match crate::k8s::scaling::suspend_namespace(
-                                    current_ctx.clone(),
-                                    current_ns.clone(),
-                                )
-                                .await
-                                {
-                                    Ok(_) => {
-                                        let _ = handle.emit(
-                                            "auto-suspend-status",
-                                            json!({
-                                                "status": "Suspended",
-                                                "reason": "Sustained high hardware load",
-                                                "namespace": current_ns
-                                            }),
-                                        );
-                                    }
-                                    Err(e) => {
-                                        eprintln!("Auto-suspend failed: {}", e);
-                                    }
-                                }
-                            } else {
-                                let _ = handle.emit(
-                                    "smart-advice",
-                                    json!({
-                                        "action": "Suspend",
-                                        "reason": "Sustained high hardware load",
-                                        "suggested_pods": ["*"]
-                                    }),
-                                );
-                            }
-                        } else if event == "hardware-threshold-recovered" {
-                            if config.auto_suspend {
-                                match crate::k8s::scaling::resume_namespace(
-                                    current_ctx.clone(),
-                                    current_ns.clone(),
-                                )
-                                .await
-                                {
-                                    Ok(_) => {
-                                        let _ = handle.emit(
-                                            "auto-suspend-status",
-                                            json!({
-                                                "status": "Resumed",
-                                                "reason": "System load returned to normal",
-                                                "namespace": current_ns
-                                            }),
-                                        );
-                                    }
-                                    Err(e) => {
-                                        eprintln!("Auto-resume failed: {}", e);
-                                    }
-                                }
+                    // Only evaluate if auto_suspend is globally enabled
+                    if config.auto_suspend {
+                        if let Some(event) = evaluator.evaluate(&metrics, &config.telemetry) {
+                            if event == "hardware-threshold-exceeded" {
+                                println!("Threshold exceeded, triggering auto-suspend...");
+                                let _ = handle.emit("hardware-threshold-exceeded", "Sustained Heavy Load");
+                            } else if event == "hardware-threshold-recovered" {
+                                println!("Threshold recovered, resuming workloads...");
+                                let _ = handle.emit("hardware-threshold-recovered", "Load normalized");
                             }
                         }
                     }

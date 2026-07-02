@@ -45,6 +45,18 @@ impl Default for AppConfig {
     }
 }
 
+impl AppConfig {
+    pub fn load(app_handle: &tauri::AppHandle) -> Result<Self, String> {
+        let path = get_config_path(app_handle)?;
+        if !path.exists() {
+            return Ok(AppConfig::default());
+        }
+        let content = fs::read_to_string(path).map_err(|e| e.to_string())?;
+        let config: AppConfig = serde_json::from_str(&content).map_err(|e| e.to_string())?;
+        Ok(config)
+    }
+}
+
 fn get_config_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     let mut path = app_handle
         .path()
@@ -59,13 +71,7 @@ fn get_config_path(app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
 
 #[tauri::command]
 pub async fn get_config(app_handle: tauri::AppHandle) -> Result<AppConfig, String> {
-    let path = get_config_path(&app_handle)?;
-    if !path.exists() {
-        return Ok(AppConfig::default());
-    }
-    let content = fs::read_to_string(path).map_err(|e| e.to_string())?;
-    let config: AppConfig = serde_json::from_str(&content).map_err(|e| e.to_string())?;
-    Ok(config)
+    AppConfig::load(&app_handle)
 }
 
 #[tauri::command]
