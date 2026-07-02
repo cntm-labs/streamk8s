@@ -36,6 +36,7 @@ interface Advice {
   action: string;
   reason: string;
 }
+interface ThresholdPayload {}
 
 const activeTab = ref('explorer');
 const currentView = ref<'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology'>('welcome');
@@ -212,21 +213,6 @@ const handleOptimize = async () => {
   }
 };
 
-const syncActiveClusterState = async () => {
-  try {
-    await invoke('update_active_cluster_state', {
-      contextName: selectedContextName.value || null,
-      namespace: selectedNamespace.value
-    });
-  } catch (e) {
-    console.error('Failed to sync active cluster state:', e);
-  }
-};
-
-watch([selectedContextName, selectedNamespace], () => {
-  syncActiveClusterState();
-}, { immediate: true });
-
 onMounted(async () => {
   window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
@@ -272,7 +258,7 @@ onMounted(async () => {
     }
   });
 
-  await listen<any>('hardware-threshold-exceeded', async () => {
+  await listen<ThresholdPayload>('hardware-threshold-exceeded', async () => {
     if (!selectedContextName.value) return;
     try {
       await invoke('suspend_namespace', { 
@@ -289,7 +275,7 @@ onMounted(async () => {
     }
   });
 
-  await listen<any>('hardware-threshold-recovered', async () => {
+  await listen<ThresholdPayload>('hardware-threshold-recovered', async () => {
     if (!selectedContextName.value) return;
     try {
       await invoke('resume_namespace', { 
