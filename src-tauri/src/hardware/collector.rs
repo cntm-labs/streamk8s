@@ -62,9 +62,9 @@ pub enum EvaluatorState {
 }
 
 pub struct HardwareEvaluator {
-    pub state: EvaluatorState,
-    pub first_exceeded: Option<Instant>,
-    pub first_recovered: Option<Instant>,
+    state: EvaluatorState,
+    first_exceeded: Option<Instant>,
+    first_recovered: Option<Instant>,
 }
 
 impl HardwareEvaluator {
@@ -84,39 +84,43 @@ impl HardwareEvaluator {
         let is_heavy = metrics.cpu_usage > config.cpu_suspend_threshold as f32
             || metrics.gpu_usage.unwrap_or(0.0) > config.gpu_suspend_threshold as f32;
 
-        match self.state {
-            EvaluatorState::Normal => {
-                if is_heavy {
-                    if let Some(t) = self.first_exceeded {
-                        if t.elapsed().as_secs() >= config.sustain_duration_seconds as u64 {
-                            self.state = EvaluatorState::Suspended;
-                            self.first_exceeded = None;
-                            return Some("hardware-threshold-exceeded");
-                        }
-                    } else {
-                        self.first_exceeded = Some(Instant::now());
-                    }
-                } else {
-                    self.first_exceeded = None;
-                }
+        let (target_state, condition_met, first_timestamp, event_name) = match self.state {
+            EvaluatorState::Normal => (
+                EvaluatorState::Suspended,
+                is_heavy,
+                &mut self.first_exceeded,
+                "hardware-threshold-exceeded",
+            ),
+            EvaluatorState::Suspended => (
+                EvaluatorState::Normal,
+                !is_heavy,
+                &mut self.first_recovered,
+                "hardware-threshold-recovered",
+            ),
+        };
+
+        if condition_met {
+            let t = first_timestamp.get_or_insert_with(Instant::now);
+            if t.elapsed().as_secs() >= config.sustain_duration_seconds as u64 {
+                self.state = target_state;
+                *first_timestamp = None;
+                return Some(event_name);
             }
-            EvaluatorState::Suspended => {
-                if !is_heavy {
-                    if let Some(t) = self.first_recovered {
-                        if t.elapsed().as_secs() >= config.sustain_duration_seconds as u64 {
-                            self.state = EvaluatorState::Normal;
-                            self.first_recovered = None;
-                            return Some("hardware-threshold-recovered");
-                        }
-                    } else {
-                        self.first_recovered = Some(Instant::now());
-                    }
-                } else {
-                    self.first_recovered = None;
-                }
-            }
+        } else {
+            *first_timestamp = None;
         }
+
         None
+    }
+
+    #[cfg(test)]
+    pub fn set_first_exceeded_for_test(&mut self, t: Instant) {
+        self.first_exceeded = Some(t);
+    }
+
+    #[cfg(test)]
+    pub fn set_first_recovered_for_test(&mut self, t: Instant) {
+        self.first_recovered = Some(t);
     }
 }
 
@@ -128,7 +132,11 @@ mod tests {
 
     #[test]
     fn test_evaluator_thresholds() {
-        let config = TelemetryConfig::default();
+        let config = TelemetryConfig {
+            gpu_suspend_threshold: 80,
+            cpu_suspend_threshold: 85,
+            sustain_duration_seconds: 15,
+        };
         let mut evaluator = HardwareEvaluator::new();
 
         let mut metrics = SystemMetrics {
@@ -142,7 +150,7 @@ mod tests {
         assert_eq!(evaluator.evaluate(&metrics, &config), None);
 
         // Simulate time pass
-        evaluator.first_exceeded = Some(std::time::Instant::now() - Duration::from_secs(16));
+        evaluator.set_first_exceeded_for_test(std::time::Instant::now() - Duration::from_secs(16));
 
         // Second tick, should trigger
         assert_eq!(
@@ -154,7 +162,7 @@ mod tests {
         metrics.cpu_usage = 10.0;
         assert_eq!(evaluator.evaluate(&metrics, &config), None); // not recovered yet, waiting for duration
 
-        evaluator.first_recovered = Some(std::time::Instant::now() - Duration::from_secs(16));
+        evaluator.set_first_recovered_for_test(std::time::Instant::now() - Duration::from_secs(16));
         assert_eq!(
             evaluator.evaluate(&metrics, &config),
             Some("hardware-threshold-recovered")
