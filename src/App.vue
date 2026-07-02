@@ -212,6 +212,21 @@ const handleOptimize = async () => {
   }
 };
 
+const syncActiveClusterState = async () => {
+  try {
+    await invoke('update_active_cluster_state', {
+      contextName: selectedContextName.value || null,
+      namespace: selectedNamespace.value
+    });
+  } catch (e) {
+    console.error('Failed to sync active cluster state:', e);
+  }
+};
+
+watch([selectedContextName, selectedNamespace], () => {
+  syncActiveClusterState();
+}, { immediate: true });
+
 onMounted(async () => {
   window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
@@ -233,6 +248,59 @@ onMounted(async () => {
 
   await listen<Advice>('smart-advice', (event) => {
     currentAdvice.value = event.payload;
+  });
+
+  interface AutoSuspendPayload {
+    status: 'Suspended' | 'Resumed';
+    reason: string;
+    namespace: string;
+  }
+
+  await listen<AutoSuspendPayload>('auto-suspend-status', (event) => {
+    const payload = event.payload;
+    if (payload.status === 'Suspended') {
+      currentAdvice.value = {
+        action: 'Resume',
+        reason: `[Auto-Suspended] ${payload.reason}. Pods in '${payload.namespace}' were scaled down.`
+      };
+    } else {
+      currentAdvice.value = null;
+    }
+
+    if (selectedContextName.value) {
+      fetchResources(selectedContextName.value, activeResourceKind.value);
+    }
+  });
+
+  await listen<any>('hardware-threshold-exceeded', async () => {
+    if (!selectedContextName.value) return;
+    try {
+      await invoke('suspend_namespace', { 
+        contextName: selectedContextName.value, 
+        namespace: selectedNamespace.value 
+      });
+      currentAdvice.value = {
+        action: 'Resume',
+        reason: `[Auto-Suspended] Hardware threshold exceeded. Pods in '${selectedNamespace.value}' were scaled down.`
+      };
+      fetchResources(selectedContextName.value, activeResourceKind.value);
+    } catch (e) {
+      console.error('Failed to suspend namespace on threshold exceed:', e);
+    }
+  });
+
+  await listen<any>('hardware-threshold-recovered', async () => {
+    if (!selectedContextName.value) return;
+    try {
+      await invoke('resume_namespace', { 
+        contextName: selectedContextName.value, 
+        namespace: selectedNamespace.value 
+      });
+      currentAdvice.value = null;
+      fetchResources(selectedContextName.value, activeResourceKind.value);
+    } catch (e) {
+      console.error('Failed to resume namespace on threshold recover:', e);
+    }
   });
 
   try {
