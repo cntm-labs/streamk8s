@@ -1,5 +1,7 @@
+use crate::config::TelemetryConfig;
 use nvml_wrapper::Nvml;
 use serde::Serialize;
+use std::time::Instant;
 use sysinfo::System;
 use tauri::{AppHandle, Emitter};
 
@@ -50,5 +52,112 @@ pub fn collect_metrics(sys: &mut System, nvml: &Option<Nvml>) -> SystemMetrics {
         ram_usage: ram,
         gpu_usage: gpu_load,
         gpu_mem_usage: gpu_mem,
+    }
+}
+
+#[derive(Debug)]
+pub enum EvaluatorState {
+    Normal,
+    Suspended,
+}
+
+pub struct HardwareEvaluator {
+    pub state: EvaluatorState,
+    pub first_exceeded: Option<Instant>,
+    pub first_recovered: Option<Instant>,
+}
+
+impl HardwareEvaluator {
+    pub fn new() -> Self {
+        Self {
+            state: EvaluatorState::Normal,
+            first_exceeded: None,
+            first_recovered: None,
+        }
+    }
+
+    pub fn evaluate(
+        &mut self,
+        metrics: &SystemMetrics,
+        config: &TelemetryConfig,
+    ) -> Option<&'static str> {
+        let is_heavy = metrics.cpu_usage > config.cpu_suspend_threshold as f32
+            || metrics.gpu_usage.unwrap_or(0.0) > config.gpu_suspend_threshold as f32;
+
+        match self.state {
+            EvaluatorState::Normal => {
+                if is_heavy {
+                    if let Some(t) = self.first_exceeded {
+                        if t.elapsed().as_secs() >= config.sustain_duration_seconds as u64 {
+                            self.state = EvaluatorState::Suspended;
+                            self.first_exceeded = None;
+                            return Some("hardware-threshold-exceeded");
+                        }
+                    } else {
+                        self.first_exceeded = Some(Instant::now());
+                    }
+                } else {
+                    self.first_exceeded = None;
+                }
+            }
+            EvaluatorState::Suspended => {
+                if !is_heavy {
+                    if let Some(t) = self.first_recovered {
+                        if t.elapsed().as_secs() >= config.sustain_duration_seconds as u64 {
+                            self.state = EvaluatorState::Normal;
+                            self.first_recovered = None;
+                            return Some("hardware-threshold-recovered");
+                        }
+                    } else {
+                        self.first_recovered = Some(Instant::now());
+                    }
+                } else {
+                    self.first_recovered = None;
+                }
+            }
+        }
+        None
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::TelemetryConfig;
+    use std::time::Duration;
+
+    #[test]
+    fn test_evaluator_thresholds() {
+        let config = TelemetryConfig::default();
+        let mut evaluator = HardwareEvaluator::new();
+
+        let mut metrics = SystemMetrics {
+            cpu_usage: 90.0, // High CPU
+            ram_usage: 50.0,
+            gpu_usage: None,
+            gpu_mem_usage: None,
+        };
+
+        // First tick, should not trigger yet (duration is 15s)
+        assert_eq!(evaluator.evaluate(&metrics, &config), None);
+
+        // Simulate time pass
+        evaluator.first_exceeded = Some(std::time::Instant::now() - Duration::from_secs(16));
+
+        // Second tick, should trigger
+        assert_eq!(
+            evaluator.evaluate(&metrics, &config),
+            Some("hardware-threshold-exceeded")
+        );
+
+        // Now metrics drop
+        metrics.cpu_usage = 10.0;
+        assert_eq!(evaluator.evaluate(&metrics, &config), None); // not recovered yet, waiting for duration
+
+        evaluator.first_recovered = Some(std::time::Instant::now() - Duration::from_secs(16));
+        assert_eq!(
+            evaluator.evaluate(&metrics, &config),
+            Some("hardware-threshold-recovered")
+        );
     }
 }
