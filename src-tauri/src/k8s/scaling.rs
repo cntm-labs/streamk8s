@@ -59,11 +59,26 @@ pub async fn scale_workload(
     Ok(())
 }
 
+pub fn is_namespace_ignored(namespace: &str, config: &crate::config::AppConfig) -> bool {
+    let system_namespaces = ["kube-system", "kube-public", "kube-node-lease", "default"];
+    if system_namespaces.contains(&namespace) {
+        return true;
+    }
+    config.telemetry.ignored_namespaces.contains(&namespace.to_string())
+}
+
 #[tauri::command]
 pub async fn suspend_namespace(
+    app_handle: tauri::AppHandle,
     context_name: Option<String>,
     namespace: String,
 ) -> Result<String, String> {
+    let config = crate::config::AppConfig::load(&app_handle).map_err(|e| e.to_string())?;
+    if is_namespace_ignored(&namespace, &config) {
+        println!("Ignoring suspend request for protected namespace: {}", namespace);
+        return Ok(format!("Ignoring suspend request for protected namespace: {}", namespace));
+    }
+
     let client = crate::k8s::inspector::create_client(context_name).await?;
     let api: Api<Deployment> = Api::namespaced(client, &namespace);
 
@@ -177,5 +192,23 @@ mod tests {
         assert!(should_suspend(Some(5)));
         assert!(!should_suspend(Some(0)));
         assert!(should_suspend(None)); // Default to 1, so should suspend
+    }
+
+    #[tokio::test]
+    async fn test_suspend_ignored_namespace() {
+        use crate::config::{AppConfig, TelemetryConfig};
+        
+        let config = AppConfig {
+            telemetry: TelemetryConfig {
+                ignored_namespaces: vec!["my-custom-ignore".to_string()],
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+
+        assert!(super::is_namespace_ignored("kube-system", &config));
+        assert!(super::is_namespace_ignored("default", &config));
+        assert!(super::is_namespace_ignored("my-custom-ignore", &config));
+        assert!(!super::is_namespace_ignored("my-app", &config));
     }
 }
