@@ -5,6 +5,25 @@ use kube::{
 };
 use serde_json::json;
 
+pub struct ActiveClusterState {
+    pub context_name: std::sync::Mutex<Option<String>>,
+    pub namespace: std::sync::Mutex<String>,
+}
+
+#[tauri::command]
+pub fn update_active_cluster_state(
+    state: tauri::State<'_, ActiveClusterState>,
+    context_name: Option<String>,
+    namespace: String,
+) {
+    if let Ok(mut ctx) = state.context_name.lock() {
+        *ctx = context_name;
+    }
+    if let Ok(mut ns) = state.namespace.lock() {
+        *ns = namespace;
+    }
+}
+
 #[tauri::command]
 pub async fn scale_workload(
     context_name: Option<String>,
