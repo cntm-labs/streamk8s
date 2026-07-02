@@ -64,7 +64,7 @@ pub fn is_namespace_ignored(namespace: &str, config: &crate::config::AppConfig) 
     if system_namespaces.contains(&namespace) {
         return true;
     }
-    config.telemetry.ignored_namespaces.contains(&namespace.to_string())
+    config.telemetry.ignored_namespaces.iter().any(|ns| ns == namespace)
 }
 
 #[tauri::command]

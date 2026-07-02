@@ -34,6 +34,11 @@ const config = ref<AppConfig>({
 const newIgnoredNamespace = ref('');
 const addIgnoredNamespace = () => {
   const ns = newIgnoredNamespace.value.trim();
+  const systemNamespaces = ['kube-system', 'kube-public', 'kube-node-lease', 'default'];
+  if (systemNamespaces.includes(ns)) {
+    newIgnoredNamespace.value = '';
+    return;
+  }
   if (ns && !config.value.telemetry.ignored_namespaces.includes(ns)) {
     config.value.telemetry.ignored_namespaces.push(ns);
     saveConfig();
