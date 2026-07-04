@@ -130,9 +130,10 @@
 │   │   │   └── topology.rs
 │   │   ├── lib.rs
 │   │   ├── main.rs
-│   │   └── plugins
-│   │       ├── manager.rs
-│   │       └── mod.rs
+│   │   ├── plugins
+│   │   │   ├── manager.rs
+│   │   │   └── mod.rs
+│   │   └── state_manager.rs
 │   └── tauri.conf.json
 ├── STRATEGY.md
 ├── STRUCTURE.tree
@@ -151,4 +152,4 @@
 ├── VISION.md
 └── vite.config.ts
 
-27 directories, 125 files
+27 directories, 126 files

@@ -74,6 +74,7 @@ pub fn is_namespace_ignored(namespace: &str, config: &crate::config::AppConfig) 
 #[tauri::command]
 pub async fn suspend_namespace(
     app_handle: tauri::AppHandle,
+    state_cache: tauri::State<'_, crate::SuspendedStateCache>,
     context_name: Option<String>,
     namespace: String,
 ) -> Result<String, String> {
@@ -124,11 +125,23 @@ pub async fn suspend_namespace(
         }
     }
 
+    use tauri::Manager;
+    let state_manager =
+        crate::state_manager::StateManager::new(app_handle.path().app_data_dir().ok());
+    if let Err(e) = state_manager.add_namespace(&namespace) {
+        println!("Failed to save persistent state: {}", e);
+    }
+    if let Ok(mut cache) = state_cache.0.lock() {
+        cache.insert(namespace.clone());
+    }
+
     Ok(format!("Namespace {} suspended.", namespace))
 }
 
 #[tauri::command]
 pub async fn resume_namespace(
+    app_handle: tauri::AppHandle,
+    state_cache: tauri::State<'_, crate::SuspendedStateCache>,
     context_name: Option<String>,
     namespace: String,
 ) -> Result<String, String> {
@@ -154,6 +167,16 @@ pub async fn resume_namespace(
                 .await
                 .map_err(|e| e.to_string())?;
         }
+    }
+
+    use tauri::Manager;
+    let state_manager =
+        crate::state_manager::StateManager::new(app_handle.path().app_data_dir().ok());
+    if let Err(e) = state_manager.remove_namespace(&namespace) {
+        println!("Failed to save persistent state: {}", e);
+    }
+    if let Ok(mut cache) = state_cache.0.lock() {
+        cache.remove(&namespace);
     }
 
     Ok(format!("Namespace {} resumed.", namespace))
