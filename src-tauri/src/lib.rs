@@ -77,14 +77,17 @@ pub fn run() {
                 state.suspended_namespaces,
             )));
 
-            let nvml = Nvml::init().ok();
+            let (nvml, permission_error) = match Nvml::init() {
+                Ok(n) => (Some(n), None),
+                Err(e) => (None, Some(format!("GPU monitoring requires Admin/Root or NVIDIA drivers are missing. ({})", e))),
+            };
             tauri::async_runtime::spawn(async move {
                 let mut sys = System::new_all();
                 let mut evaluator = crate::hardware::collector::HardwareEvaluator::new();
                 let mut adaptive_poller = crate::hardware::collector::AdaptivePoller::new();
 
                 loop {
-                    let metrics = collect_metrics(&mut sys, &nvml);
+                    let metrics = collect_metrics(&mut sys, &nvml, &permission_error);
                     let _ = handle.emit("hardware-update", &metrics);
 
                     // Read configuration

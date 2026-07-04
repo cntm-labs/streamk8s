@@ -10,9 +10,10 @@ pub struct SystemMetrics {
     pub ram_usage: f32,
     pub gpu_usage: Option<f32>,
     pub gpu_mem_usage: Option<f32>,
+    pub permission_error: Option<String>,
 }
 
-pub fn collect_metrics(sys: &mut System, nvml: &Option<Nvml>) -> SystemMetrics {
+pub fn collect_metrics(sys: &mut System, nvml: &Option<Nvml>, permission_error: &Option<String>) -> SystemMetrics {
     // In sysinfo 0.30, traits like SystemExt and CpuExt are no longer needed.
     // Methods are now implemented directly on the types.
     sys.refresh_all();
@@ -39,6 +40,7 @@ pub fn collect_metrics(sys: &mut System, nvml: &Option<Nvml>) -> SystemMetrics {
         ram_usage: ram,
         gpu_usage: gpu_load,
         gpu_mem_usage: gpu_mem,
+        permission_error: permission_error.clone(),
     }
 }
 
@@ -161,6 +163,7 @@ mod tests {
             ram_usage: 50.0,
             gpu_usage: None,
             gpu_mem_usage: None,
+            permission_error: None,
         };
 
         // First tick, should not trigger yet (duration is 15s)
