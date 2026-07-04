@@ -7,6 +7,8 @@
 ├── DESIGN_DECISIONS.md
 ├── docs
 │   └── DEVELOPER_GUIDE.md
+├── e2e
+│   └── smoke.spec.ts
 ├── FAQ.md
 ├── GEMINI.md
 ├── .github
@@ -32,6 +34,7 @@
 ├── package.json
 ├── package-lock.json
 ├── PHILOSOPHY.md
+├── playwright.config.ts
 ├── pr_body.md
 ├── .pre-commit-config.yaml
 ├── PRINCIPLES.md
@@ -48,6 +51,7 @@
 │           └── lib.rs
 ├── SECURITY.md
 ├── src
+│   ├── App.spec.ts
 │   ├── App.vue
 │   ├── assets
 │   │   └── vue.svg
@@ -153,4 +157,4 @@
 ├── VISION.md
 └── vite.config.ts
 
-27 directories, 127 files
+28 directories, 130 files
