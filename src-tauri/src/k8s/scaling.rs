@@ -47,14 +47,17 @@ pub async fn scale_workload(
         "spec": { "replicas": replicas }
     });
 
-    deploy_api
-        .patch(
-            &name,
-            &PatchParams::apply("streamk8s"),
-            &Patch::Merge(&patch),
-        )
-        .await
-        .map_err(|e| e.to_string())?;
+    crate::k8s::retry::with_retry(|| async {
+        deploy_api
+            .patch(
+                &name,
+                &PatchParams::apply("streamk8s"),
+                &Patch::Merge(&patch),
+            )
+            .await
+    })
+    .await
+    .map_err(|e| e.to_string())?;
 
     Ok(())
 }
@@ -93,10 +96,10 @@ pub async fn suspend_namespace(
     let client = crate::k8s::inspector::create_client(context_name).await?;
     let api: Api<Deployment> = Api::namespaced(client, &namespace);
 
-    let deployments = api
-        .list(&Default::default())
-        .await
-        .map_err(|e| e.to_string())?;
+    let deployments =
+        crate::k8s::retry::with_retry(|| async { api.list(&Default::default()).await })
+            .await
+            .map_err(|e| e.to_string())?;
 
     for dep in deployments.items {
         let name = dep.metadata.name.unwrap_or_default();
@@ -115,11 +118,14 @@ pub async fn suspend_namespace(
                 }
             });
 
-            api.patch(
-                &name,
-                &PatchParams::apply("streamk8s"),
-                &Patch::Apply(&patch),
-            )
+            crate::k8s::retry::with_retry(|| async {
+                api.patch(
+                    &name,
+                    &PatchParams::apply("streamk8s"),
+                    &Patch::Apply(&patch),
+                )
+                .await
+            })
             .await
             .map_err(|e| e.to_string())?;
         }
@@ -148,10 +154,10 @@ pub async fn resume_namespace(
     let client = crate::k8s::inspector::create_client(context_name).await?;
     let api: Api<Deployment> = Api::namespaced(client, &namespace);
 
-    let deployments = api
-        .list(&Default::default())
-        .await
-        .map_err(|e| e.to_string())?;
+    let deployments =
+        crate::k8s::retry::with_retry(|| async { api.list(&Default::default()).await })
+            .await
+            .map_err(|e| e.to_string())?;
 
     for dep in deployments.items {
         let name = dep.metadata.name.unwrap_or_default();
@@ -162,10 +168,12 @@ pub async fn resume_namespace(
                 }
             });
 
-            // Using merge patch for specific field update
-            api.patch(&name, &PatchParams::default(), &Patch::Merge(&patch))
-                .await
-                .map_err(|e| e.to_string())?;
+            crate::k8s::retry::with_retry(|| async {
+                api.patch(&name, &PatchParams::default(), &Patch::Merge(&patch))
+                    .await
+            })
+            .await
+            .map_err(|e| e.to_string())?;
         }
     }
 

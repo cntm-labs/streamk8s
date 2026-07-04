@@ -19,10 +19,10 @@ pub async fn apply_k8s_resource(
     dry_run: bool,
 ) -> Result<String, String> {
     let client = create_client(context_name).await?;
-    let discovery = Discovery::new(client.clone())
-        .run()
-        .await
-        .map_err(|e| e.to_string())?;
+    let discovery =
+        crate::k8s::retry::with_retry(|| async { Discovery::new(client.clone()).run().await })
+            .await
+            .map_err(|e| e.to_string())?;
 
     let normalized_kind = match kind.as_str() {
         "Pods" => "Pod",
@@ -61,10 +61,11 @@ pub async fn apply_k8s_resource(
                 pp.dry_run = true;
             }
 
-            let _obj = api
-                .patch(&name, &pp, &Patch::Apply(&patch))
-                .await
-                .map_err(|e| e.to_string())?;
+            let _obj = crate::k8s::retry::with_retry(|| async {
+                api.patch(&name, &pp, &Patch::Apply(&patch)).await
+            })
+            .await
+            .map_err(|e| e.to_string())?;
             return Ok(format!("Successfully applied {} {}", kind, name));
         }
     }
@@ -83,11 +84,14 @@ pub async fn apply_resource_manifest(
     let pods: Api<Pod> = Api::namespaced(client, &namespace);
     let patch: Pod = serde_yaml::from_str(&yaml_content).map_err(|e| e.to_string())?;
 
-    pods.patch(
-        &pod_name,
-        &PatchParams::apply("streamk8s"),
-        &Patch::Apply(&patch),
-    )
+    crate::k8s::retry::with_retry(|| async {
+        pods.patch(
+            &pod_name,
+            &PatchParams::apply("streamk8s"),
+            &Patch::Apply(&patch),
+        )
+        .await
+    })
     .await
     .map_err(|e| e.to_string())?;
     Ok(())
@@ -102,7 +106,9 @@ pub async fn get_pod_events(
     let client = create_client(context_name).await?;
     let events: Api<Event> = Api::namespaced(client, &namespace);
     let lp = ListParams::default().fields(&format!("involvedObject.name={}", pod_name));
-    let evs = events.list(&lp).await.map_err(|e| e.to_string())?;
+    let evs = crate::k8s::retry::with_retry(|| async { events.list(&lp).await })
+        .await
+        .map_err(|e| e.to_string())?;
     Ok(serde_json::to_value(evs).unwrap_or(serde_json::json!([])))
 }
 
@@ -116,10 +122,9 @@ pub async fn read_pod_file(
 ) -> Result<String, String> {
     let client = create_client(context_name).await?;
     let pods: Api<Pod> = Api::namespaced(client, &namespace);
-    let command = vec!["cat", &file_path];
-
-    let mut attached = pods
-        .exec(
+    let mut attached = crate::k8s::retry::with_retry(|| async {
+        let command = vec!["cat", file_path.as_str()];
+        pods.exec(
             &pod_name,
             command,
             &kube::api::AttachParams::default()
@@ -127,7 +132,9 @@ pub async fn read_pod_file(
                 .stdout(true),
         )
         .await
-        .map_err(|e| e.to_string())?;
+    })
+    .await
+    .map_err(|e| e.to_string())?;
 
     let mut output = String::new();
     attached
@@ -153,13 +160,15 @@ pub async fn write_pod_file(
 
     // Command to write via base64 to avoid shell escaping issues
     let script = format!("echo {} | base64 -d > {}", content_base64, file_path);
-    let command = vec!["sh", "-c", &script];
-
-    pods.exec(
-        &pod_name,
-        command,
-        &kube::api::AttachParams::default().container(&container_name),
-    )
+    crate::k8s::retry::with_retry(|| async {
+        let command = vec!["sh", "-c", script.as_str()];
+        pods.exec(
+            &pod_name,
+            command,
+            &kube::api::AttachParams::default().container(&container_name),
+        )
+        .await
+    })
     .await
     .map_err(|e| e.to_string())?;
 
@@ -192,10 +201,9 @@ pub async fn list_pod_files(
     let pods: Api<Pod> = Api::namespaced(client, &namespace);
 
     // Command to list files. Appending -F shows / for directories.
-    let command = vec!["ls", "-F", "--color=never", &dir_path];
-
-    let mut attached = pods
-        .exec(
+    let mut attached = crate::k8s::retry::with_retry(|| async {
+        let command = vec!["ls", "-F", "--color=never", dir_path.as_str()];
+        pods.exec(
             &pod_name,
             command,
             &kube::api::AttachParams::default()
@@ -203,7 +211,9 @@ pub async fn list_pod_files(
                 .stdout(true),
         )
         .await
-        .map_err(|e| e.to_string())?;
+    })
+    .await
+    .map_err(|e| e.to_string())?;
 
     let mut output = String::new();
     attached
@@ -242,10 +252,10 @@ pub async fn delete_k8s_resource(
     name: String,
 ) -> Result<String, String> {
     let client = create_client(context_name).await?;
-    let discovery = Discovery::new(client.clone())
-        .run()
-        .await
-        .map_err(|e| e.to_string())?;
+    let discovery =
+        crate::k8s::retry::with_retry(|| async { Discovery::new(client.clone()).run().await })
+            .await
+            .map_err(|e| e.to_string())?;
 
     let normalized_kind = match kind.as_str() {
         "Pods" => "Pod",
@@ -276,7 +286,9 @@ pub async fn delete_k8s_resource(
             };
 
             let dp = kube::api::DeleteParams::default();
-            api.delete(&name, &dp).await.map_err(|e| e.to_string())?;
+            crate::k8s::retry::with_retry(|| async { api.delete(&name, &dp).await })
+                .await
+                .map_err(|e| e.to_string())?;
             return Ok(format!("Successfully deleted {} {}", kind, name));
         }
     }
