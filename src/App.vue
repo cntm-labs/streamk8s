@@ -258,7 +258,20 @@ onMounted(async () => {
     }
   });
 
+  await listen<ThresholdPayload>('hardware-threshold-exceeded', async () => {
+    if (!selectedContextName.value) return;
+    currentAdvice.value = {
+      action: 'Resume',
+      reason: `[Auto-Suspended] Hardware threshold exceeded. Background namespaces were scaled down.`
+    };
+    fetchResources(selectedContextName.value, activeResourceKind.value);
+  });
 
+  await listen<ThresholdPayload>('hardware-threshold-recovered', async () => {
+    if (!selectedContextName.value) return;
+    currentAdvice.value = null;
+    fetchResources(selectedContextName.value, activeResourceKind.value);
+  });
 
   try {
     availableContexts.value = await invoke<ClusterContext[]>('get_available_contexts');
