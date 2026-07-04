@@ -260,33 +260,17 @@ onMounted(async () => {
 
   await listen<ThresholdPayload>('hardware-threshold-exceeded', async () => {
     if (!selectedContextName.value) return;
-    try {
-      await invoke('suspend_namespace', { 
-        contextName: selectedContextName.value, 
-        namespace: selectedNamespace.value 
-      });
-      currentAdvice.value = {
-        action: 'Resume',
-        reason: `[Auto-Suspended] Hardware threshold exceeded. Pods in '${selectedNamespace.value}' were scaled down.`
-      };
-      fetchResources(selectedContextName.value, activeResourceKind.value);
-    } catch (e) {
-      console.error('Failed to suspend namespace on threshold exceed:', e);
-    }
+    currentAdvice.value = {
+      action: 'Resume',
+      reason: `[Auto-Suspended] Hardware threshold exceeded. Background namespaces were scaled down.`
+    };
+    fetchResources(selectedContextName.value, activeResourceKind.value);
   });
 
   await listen<ThresholdPayload>('hardware-threshold-recovered', async () => {
     if (!selectedContextName.value) return;
-    try {
-      await invoke('resume_namespace', { 
-        contextName: selectedContextName.value, 
-        namespace: selectedNamespace.value 
-      });
-      currentAdvice.value = null;
-      fetchResources(selectedContextName.value, activeResourceKind.value);
-    } catch (e) {
-      console.error('Failed to resume namespace on threshold recover:', e);
-    }
+    currentAdvice.value = null;
+    fetchResources(selectedContextName.value, activeResourceKind.value);
   });
 
   try {

@@ -111,6 +111,35 @@ impl HardwareEvaluator {
     }
 }
 
+pub struct AdaptivePoller {
+    idle_start: Option<Instant>,
+}
+
+impl AdaptivePoller {
+    pub fn new() -> Self {
+        Self { idle_start: None }
+    }
+
+    pub fn get_interval(&mut self, cpu_usage: f32, has_suspended: bool) -> std::time::Duration {
+        if cpu_usage >= 20.0 || has_suspended {
+            self.idle_start = None;
+            return std::time::Duration::from_secs(1);
+        }
+
+        let start = self.idle_start.get_or_insert_with(Instant::now);
+        if start.elapsed().as_secs() >= 30 {
+            std::time::Duration::from_secs(5)
+        } else {
+            std::time::Duration::from_secs(1)
+        }
+    }
+
+    #[cfg(test)]
+    pub fn set_idle_start_for_test(&mut self, t: Instant) {
+        self.idle_start = Some(t);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -155,5 +184,27 @@ mod tests {
             evaluator.evaluate(&metrics, &config),
             Some("hardware-threshold-recovered")
         );
+    }
+
+    #[test]
+    fn test_adaptive_poller() {
+        let mut poller = AdaptivePoller::new();
+
+        // High CPU -> 1 sec
+        assert_eq!(poller.get_interval(25.0, false), Duration::from_secs(1));
+
+        // Low CPU but just started -> 1 sec
+        assert_eq!(poller.get_interval(10.0, false), Duration::from_secs(1));
+
+        // Low CPU for 31 secs -> 5 secs
+        poller.set_idle_start_for_test(std::time::Instant::now() - Duration::from_secs(31));
+        assert_eq!(poller.get_interval(10.0, false), Duration::from_secs(5));
+
+        // Has suspended namespaces -> 1 sec
+        assert_eq!(poller.get_interval(10.0, true), Duration::from_secs(1));
+
+        // High CPU again -> 1 sec
+        poller.set_idle_start_for_test(std::time::Instant::now() - Duration::from_secs(31));
+        assert_eq!(poller.get_interval(25.0, false), Duration::from_secs(1));
     }
 }

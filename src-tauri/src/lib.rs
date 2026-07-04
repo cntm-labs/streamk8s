@@ -9,7 +9,6 @@ use crate::hardware::collector::collect_metrics;
 use crate::k8s::scaling::{update_active_cluster_state, ActiveClusterState};
 use nvml_wrapper::Nvml;
 
-use std::time::Duration;
 use sysinfo::System;
 use tauri::{Emitter, Manager};
 
@@ -80,12 +79,22 @@ pub fn run() {
             tauri::async_runtime::spawn(async move {
                 let mut sys = System::new_all();
                 let mut evaluator = crate::hardware::collector::HardwareEvaluator::new();
+                let mut adaptive_poller = crate::hardware::collector::AdaptivePoller::new();
+
                 loop {
                     let metrics = collect_metrics(&mut sys, &nvml);
                     let _ = handle.emit("hardware-update", &metrics);
 
                     // Read configuration
                     let config = crate::config::AppConfig::load(&handle).unwrap_or_default();
+
+                    let has_suspended = {
+                        let cache = handle.state::<SuspendedStateCache>();
+                        let is_empty = cache.0.lock().unwrap().is_empty();
+                        !is_empty
+                    };
+
+                    let interval = adaptive_poller.get_interval(metrics.cpu_usage, has_suspended);
 
                     // Only evaluate if auto_suspend is globally enabled
                     if config.auto_suspend {
@@ -94,15 +103,73 @@ pub fn run() {
                                 println!("Threshold exceeded, triggering auto-suspend...");
                                 let _ = handle
                                     .emit("hardware-threshold-exceeded", "Sustained Heavy Load");
+
+                                let context_name = {
+                                    let active_state = handle.state::<ActiveClusterState>();
+                                    let name = active_state.context_name.lock().unwrap().clone();
+                                    name
+                                };
+
+                                let handle_clone = handle.clone();
+                                let config_clone = config.clone();
+
+                                tauri::async_runtime::spawn(async move {
+                                    if let Ok(namespaces) =
+                                        crate::k8s::resources::get_namespaces(context_name.clone())
+                                            .await
+                                    {
+                                        let cache = handle_clone.state::<SuspendedStateCache>();
+                                        for ns in namespaces {
+                                            if !crate::k8s::scaling::is_namespace_ignored(
+                                                &ns,
+                                                &config_clone,
+                                            ) {
+                                                let _ = crate::k8s::scaling::suspend_namespace(
+                                                    handle_clone.clone(),
+                                                    cache.clone(),
+                                                    context_name.clone(),
+                                                    ns,
+                                                )
+                                                .await;
+                                            }
+                                        }
+                                    }
+                                });
                             } else if event == "hardware-threshold-recovered" {
                                 println!("Threshold recovered, resuming workloads...");
                                 let _ =
                                     handle.emit("hardware-threshold-recovered", "Load normalized");
+
+                                let context_name = {
+                                    let active_state = handle.state::<ActiveClusterState>();
+                                    let name = active_state.context_name.lock().unwrap().clone();
+                                    name
+                                };
+
+                                let handle_clone = handle.clone();
+                                tauri::async_runtime::spawn(async move {
+                                    let namespaces_to_resume: Vec<String> = {
+                                        let cache = handle_clone.state::<SuspendedStateCache>();
+                                        let list: Vec<String> =
+                                            cache.0.lock().unwrap().iter().cloned().collect();
+                                        list
+                                    };
+                                    let cache = handle_clone.state::<SuspendedStateCache>();
+                                    for ns in namespaces_to_resume {
+                                        let _ = crate::k8s::scaling::resume_namespace(
+                                            handle_clone.clone(),
+                                            cache.clone(),
+                                            context_name.clone(),
+                                            ns,
+                                        )
+                                        .await;
+                                    }
+                                });
                             }
                         }
                     }
 
-                    tokio::time::sleep(Duration::from_secs(1)).await;
+                    tokio::time::sleep(interval).await;
                 }
             });
             Ok(())
