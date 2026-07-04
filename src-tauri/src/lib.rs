@@ -11,6 +11,7 @@ use nvml_wrapper::Nvml;
 
 use sysinfo::System;
 use tauri::{Emitter, Manager};
+use tauri_plugin_notification::NotificationExt;
 
 pub struct SuspendedStateCache(pub std::sync::Mutex<std::collections::HashSet<String>>);
 
@@ -19,6 +20,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_notification::init())
         .manage(crate::k8s::terminal::TerminalSessionManager {
             sessions: std::sync::Mutex::new(std::collections::HashMap::new()),
         })
@@ -119,19 +121,35 @@ pub fn run() {
                                             .await
                                     {
                                         let cache = handle_clone.state::<SuspendedStateCache>();
+                                        let mut suspended_count = 0;
                                         for ns in namespaces {
                                             if !crate::k8s::scaling::is_namespace_ignored(
                                                 &ns,
                                                 &config_clone,
                                             ) {
-                                                let _ = crate::k8s::scaling::suspend_namespace(
+                                                if crate::k8s::scaling::suspend_namespace(
                                                     handle_clone.clone(),
                                                     cache.clone(),
                                                     context_name.clone(),
                                                     ns,
                                                 )
-                                                .await;
+                                                .await
+                                                .is_ok()
+                                                {
+                                                    suspended_count += 1;
+                                                }
                                             }
+                                        }
+                                        if suspended_count > 0 {
+                                            let _ = handle_clone
+                                                .notification()
+                                                .builder()
+                                                .title("StreamK8s: Resource Optimization")
+                                                .body(format!(
+                                                    "High load detected. Auto-suspended {} namespaces.",
+                                                    suspended_count
+                                                ))
+                                                .show();
                                         }
                                     }
                                 });
@@ -155,14 +173,30 @@ pub fn run() {
                                         list
                                     };
                                     let cache = handle_clone.state::<SuspendedStateCache>();
+                                    let mut resumed_count = 0;
                                     for ns in namespaces_to_resume {
-                                        let _ = crate::k8s::scaling::resume_namespace(
+                                        if crate::k8s::scaling::resume_namespace(
                                             handle_clone.clone(),
                                             cache.clone(),
                                             context_name.clone(),
                                             ns,
                                         )
-                                        .await;
+                                        .await
+                                        .is_ok()
+                                        {
+                                            resumed_count += 1;
+                                        }
+                                    }
+                                    if resumed_count > 0 {
+                                        let _ = handle_clone
+                                            .notification()
+                                            .builder()
+                                            .title("StreamK8s: Normal Operation")
+                                            .body(format!(
+                                                "System load normalized. Resumed {} namespaces.",
+                                                resumed_count
+                                            ))
+                                            .show();
                                     }
                                 });
                             }
