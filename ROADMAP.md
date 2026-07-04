@@ -30,5 +30,5 @@ Transition from a management tool to a fully autonomous OS-level resource negoti
 - [x] **Resilience & State Recovery:** Implement persistent state for Crash & Reboot Recovery (remembering suspended namespaces).
 - [x] **Resilience & State Recovery:** Add Exponential Backoff Retry for Kubernetes API network instability.
 - [x] **Self-Performance:** Adaptive Polling for hardware metrics to save battery (e.g., 5s loop when load is low instead of 1s).
-- [ ] **Testing Coverage:** Implement E2E testing framework (Playwright/WebdriverIO) and Frontend unit tests for threshold events.
+- [x] **Testing Coverage:** Implement E2E testing framework (Playwright/WebdriverIO) and Frontend unit tests for threshold events.
 - [x] **OS-Level UX:** Integrate Native OS Desktop Notifications for background auto-suspend actions to prevent user confusion.
