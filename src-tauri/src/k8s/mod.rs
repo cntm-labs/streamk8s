@@ -4,6 +4,7 @@ pub mod inspector;
 pub mod logs;
 pub mod pods;
 pub mod resources;
+pub mod retry;
 pub mod scaling;
 pub mod search;
 pub mod terminal;
