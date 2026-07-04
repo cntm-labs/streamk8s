@@ -27,6 +27,7 @@ interface Metrics {
   ram_usage: number;
   gpu_usage: number | null;
   gpu_mem_usage: number | null;
+  permission_error: string | null;
 }
 interface ClusterContext {
   name: string;
@@ -77,7 +78,7 @@ const handleMouseUp = () => {
   document.body.style.cursor = 'default';
 };
 
-const metrics = ref<Metrics>({ cpu_usage: 0, ram_usage: 0, gpu_usage: null, gpu_mem_usage: null });
+const metrics = ref<Metrics>({ cpu_usage: 0, ram_usage: 0, gpu_usage: null, gpu_mem_usage: null, permission_error: null });
 const availableContexts = ref<ClusterContext[]>([]);
 const selectedContextName = ref<string | null>(null);
 const selectedNamespace = ref('default');
@@ -325,7 +326,10 @@ onMounted(async () => {
           <Gauge label="RAM Usage" :value="metrics.ram_usage" color="#10b981" />
           <TrendChart :data="ramHistory" color="#10b981" />
         </div>
-        <div v-if="metrics.gpu_usage !== null" class="metric-group">
+        <div v-if="metrics.permission_error" class="gpu-not-found permission-error" title="GPU telemetry is disabled due to missing permissions or drivers.">
+          <span class="error-icon">⚠️</span> GPU metrics unavailable: {{ metrics.permission_error }}
+        </div>
+        <div v-else-if="metrics.gpu_usage !== null" class="metric-group">
           <Gauge label="GPU Load" :value="metrics.gpu_usage" color="#f59e0b" />
           <TrendChart :data="gpuHistory" color="#f59e0b" />
           <div class="sub-metric">VRAM: {{ metrics.gpu_mem_usage?.toFixed(1) }}%</div>

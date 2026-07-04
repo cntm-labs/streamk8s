@@ -102,7 +102,7 @@ mod tests {
 
         let result = with_retry(|| async {
             attempts.fetch_add(1, Ordering::SeqCst);
-            Err::<(), kube::Error>(kube::Error::Auth("Unauthorized".to_string()))
+            Err::<(), kube::Error>(kube::Error::Auth(kube::client::AuthError::AuthExec("Unauthorized".to_string())))
         })
         .await;
 
