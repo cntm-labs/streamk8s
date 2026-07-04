@@ -2,6 +2,7 @@ pub mod config;
 pub mod hardware;
 pub mod k8s;
 pub mod plugins;
+pub mod state_manager;
 
 use crate::hardware::collector::collect_metrics;
 
@@ -10,7 +11,9 @@ use nvml_wrapper::Nvml;
 
 use std::time::Duration;
 use sysinfo::System;
-use tauri::Emitter;
+use tauri::{Emitter, Manager};
+
+pub struct SuspendedStateCache(pub std::sync::Mutex<std::collections::HashSet<String>>);
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -60,6 +63,19 @@ pub fn run() {
         ])
         .setup(|app| {
             let handle = app.handle().clone();
+            let app_data_dir = handle.path().app_data_dir().ok();
+            let state_manager = crate::state_manager::StateManager::new(app_data_dir);
+            let state = state_manager.load();
+            if !state.suspended_namespaces.is_empty() {
+                println!(
+                    "Recovered suspended namespaces from persistent state: {:?}",
+                    state.suspended_namespaces
+                );
+            }
+            app.manage(SuspendedStateCache(std::sync::Mutex::new(
+                state.suspended_namespaces,
+            )));
+
             let nvml = Nvml::init().ok();
             tauri::async_runtime::spawn(async move {
                 let mut sys = System::new_all();
