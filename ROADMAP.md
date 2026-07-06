@@ -32,3 +32,9 @@ Transition from a management tool to a fully autonomous OS-level resource negoti
 - [x] **Self-Performance:** Adaptive Polling for hardware metrics to save battery (e.g., 5s loop when load is low instead of 1s).
 - [x] **Testing Coverage:** Implement E2E testing framework (Playwright/WebdriverIO) and Frontend unit tests for threshold events.
 - [x] **OS-Level UX:** Integrate Native OS Desktop Notifications for background auto-suspend actions to prevent user confusion.
+
+### Phase 4: Advanced K8s Features (OpenLens Parity)
+- [ ] **Dynamic API:** Implement Full CRD & Resource Viewer using `kube-rs` Dynamic API and Discovery client.
+- [ ] **Networking:** Implement Port Forwarding Manager UI and backend using `kube-rs` WebSocket native port forwarding.
+- [ ] **Helm Integration:** Add Helm Chart Explorer and Release Manager.
+- [ ] **Prometheus:** Add cluster-wide metrics scraping for advanced visualization.
