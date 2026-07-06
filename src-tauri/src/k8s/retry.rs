@@ -37,8 +37,8 @@ fn is_transient(e: &kube::Error) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use kube::core::ErrorResponse;
     use std::sync::atomic::{AtomicUsize, Ordering};
+    use kube::core::ErrorResponse;
 
     #[tokio::test]
     async fn test_with_retry_success_first_try() {
@@ -102,9 +102,7 @@ mod tests {
 
         let result = with_retry(|| async {
             attempts.fetch_add(1, Ordering::SeqCst);
-            Err::<(), kube::Error>(kube::Error::Auth(kube::client::AuthError::AuthExec(
-                "Unauthorized".to_string(),
-            )))
+            Err::<(), kube::Error>(kube::Error::Auth(kube::client::AuthError::AuthExec("Unauthorized".to_string())))
         })
         .await;
 

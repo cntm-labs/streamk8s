@@ -13,11 +13,7 @@ pub struct SystemMetrics {
     pub permission_error: Option<String>,
 }
 
-pub fn collect_metrics(
-    sys: &mut System,
-    nvml: &Option<Nvml>,
-    permission_error: &Option<String>,
-) -> SystemMetrics {
+pub fn collect_metrics(sys: &mut System, nvml: &Option<Nvml>, permission_error: &Option<String>) -> SystemMetrics {
     // In sysinfo 0.30, traits like SystemExt and CpuExt are no longer needed.
     // Methods are now implemented directly on the types.
     sys.refresh_all();
