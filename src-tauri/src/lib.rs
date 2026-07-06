@@ -60,6 +60,8 @@ pub fn run() {
             crate::k8s::terminal::start_terminal_session,
             crate::k8s::terminal::send_terminal_input,
             crate::k8s::terminal::close_terminal_session,
+            crate::k8s::dynamic::get_api_resources,
+            crate::k8s::dynamic::list_dynamic_resource,
             update_active_cluster_state
         ])
         .setup(|app| {

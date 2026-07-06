@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { mount, flushPromises } from '@vue/test-utils';
 import App from './App.vue';
-import WelcomeView from './views/WelcomeView.vue';
+
 import ActivityBar from './components/ActivityBar.vue';
 import { listen } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
@@ -19,7 +19,7 @@ describe('App.vue Threshold Events', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     
-    global.ResizeObserver = vi.fn().mockImplementation(() => ({
+    (globalThis as any).ResizeObserver = vi.fn().mockImplementation(() => ({
       observe: vi.fn(),
       unobserve: vi.fn(),
       disconnect: vi.fn(),
@@ -41,10 +41,10 @@ describe('App.vue Threshold Events', () => {
   });
 
   it('renders advice banner when hardware-threshold-exceeded is emitted', async () => {
-    let thresholdExceededCallback: Function | null = null;
-    let thresholdRecoveredCallback: Function | null = null;
+    let thresholdExceededCallback: any = null;
+    let thresholdRecoveredCallback: any = null;
     
-    (listen as any).mockImplementation((event: string, callback: Function) => {
+    (listen as any).mockImplementation((event: string, callback: any) => {
       if (event === 'hardware-threshold-exceeded') {
         thresholdExceededCallback = callback;
       }

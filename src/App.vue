@@ -6,7 +6,7 @@ import ActivityBar from './components/ActivityBar.vue';
 import ClusterHotbar from './components/ClusterHotbar.vue';
 import Sidebar from './components/Sidebar.vue';
 import ResourceTree from './components/ResourceTree.vue';
-import ResourceTable from './components/ResourceTable.vue';
+import DynamicResourceTable from './components/DynamicResourceTable.vue';
 import Gauge from './components/Gauge.vue';
 import TrendChart from './components/TrendChart.vue';
 import InspectorPanel from './components/InspectorPanel.vue';
@@ -85,7 +85,7 @@ const selectedNamespace = ref('default');
 const availableNamespaces = ref<string[]>(['default']);
 const clusterResources = ref<Record<string, any[]>>({});
 const currentAdvice = ref<Advice | null>(null);
-const activeResourceKind = ref('Pods');
+const activeResourceKind = ref<any>({ group: '', version: 'v1', kind: 'Pod', plural: 'pods', namespaced: true });
 const selectedResource = ref<any | null>(null);
 const inspectorPanelRef = ref<any | null>(null);
 const activeContainer = ref('');
@@ -160,25 +160,28 @@ const handleCommandSelect = async (result: any) => {
   }
 };
 
-const fetchResources = async (context: string, kind: string) => {
+const fetchResources = async (context: string, resourceInfo: any) => {
+  if (!resourceInfo || !resourceInfo.kind) return;
   try {
-    let cmd = 'get_pods';
-    if (kind === 'Deployments') cmd = 'get_deployments';
-    else if (kind === 'Services') cmd = 'get_services';
-    else if (kind === 'ConfigMaps') cmd = 'get_configmaps';
-    else if (kind === 'Secrets') cmd = 'get_secrets';
-
-    const data = await invoke<any[]>(cmd, { contextName: context, namespace: selectedNamespace.value });
+    const data = await invoke<any[]>('list_dynamic_resource', { 
+      contextName: context, 
+      group: resourceInfo.group || "", 
+      version: resourceInfo.version || "", 
+      kind: resourceInfo.kind || "",
+      plural: resourceInfo.plural || "",
+      namespaced: resourceInfo.namespaced !== false,
+      namespace: selectedNamespace.value 
+    });
     clusterResources.value[context] = data;
   } catch (e) {
-    console.error(`Failed to fetch ${kind}:`, e);
+    console.error(`Failed to fetch ${resourceInfo.kind}:`, e);
   }
 };
 
-const handleResourceTypeSelect = (kind: string) => {
-  activeResourceKind.value = kind;
+const handleResourceTypeSelect = (resourceInfo: any) => {
+  activeResourceKind.value = resourceInfo;
   if (selectedContextName.value) {
-    fetchResources(selectedContextName.value, kind);
+    fetchResources(selectedContextName.value, resourceInfo);
   }
 };
 
@@ -314,7 +317,7 @@ onMounted(async () => {
           <span class="label-icon">⎈</span>
           <span class="label-text">{{ selectedContextName }}</span>
         </div>
-        <ResourceTree @select-resource-type="handleResourceTypeSelect" />
+        <ResourceTree :context-name="selectedContextName" @select-resource-type="handleResourceTypeSelect" />
       </div>
       <div v-else-if="activeTab === 'hardware'" class="telemetry-panel">
         <h3>System Telemetry</h3>
@@ -385,13 +388,13 @@ onMounted(async () => {
           <div class="main-scroll-area">
             <div v-if="selectedContextName" class="focused-cluster-view">
               <header class="view-title-bar">
-                <h2>{{ activeResourceKind }}</h2>
+                <h2>{{ activeResourceKind.kind }}</h2>
                 <button class="btn-refresh" @click="fetchResources(selectedContextName!, activeResourceKind)">Refresh</button>
               </header>
-              <ResourceTable 
+              <DynamicResourceTable 
                 :rows="clusterResources[selectedContextName] || []" 
                 :context-name="selectedContextName"
-                :kind="activeResourceKind"
+                :kind="activeResourceKind.kind"
                 @select-resource="handleSelectResource" 
                 @edit-yaml="(namespace, name, kind) => {
                   editingResource = {

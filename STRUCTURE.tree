@@ -35,6 +35,8 @@
 ├── package-lock.json
 ├── PHILOSOPHY.md
 ├── playwright.config.ts
+├── playwright-report
+│   └── index.html
 ├── pr_body.md
 ├── .pre-commit-config.yaml
 ├── PRINCIPLES.md
@@ -61,6 +63,7 @@
 │   │   ├── AdvisorToast.vue
 │   │   ├── ClusterHotbar.vue
 │   │   ├── CommandPalette.vue
+│   │   ├── DynamicResourceTable.vue
 │   │   ├── Gauge.vue
 │   │   ├── InspectorPanel.vue
 │   │   ├── PluginRenderer.vue
@@ -123,6 +126,7 @@
 │   │   ├── k8s
 │   │   │   ├── ai.rs
 │   │   │   ├── contexts.rs
+│   │   │   ├── dynamic.rs
 │   │   │   ├── inspector.rs
 │   │   │   ├── logs.rs
 │   │   │   ├── mod.rs
@@ -150,6 +154,8 @@
 │       ├── Cargo.toml
 │       └── src
 │           └── lib.rs
+├── test-results
+│   └── .last-run.json
 ├── .todos.md
 ├── TROUBLESHOOTING.md
 ├── tsconfig.json
@@ -157,4 +163,4 @@
 ├── VISION.md
 └── vite.config.ts
 
-28 directories, 130 files
+30 directories, 134 files

@@ -1,5 +1,6 @@
 pub mod ai;
 pub mod contexts;
+pub mod dynamic;
 pub mod inspector;
 pub mod logs;
 pub mod pods;

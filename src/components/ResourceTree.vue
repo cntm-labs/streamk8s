@@ -1,79 +1,67 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import { invoke } from '@tauri-apps/api/core';
 
-const expandedGroups = ref<Record<string, boolean>>({
-  workloads: true,
-  network: false,
-  configuration: false,
+const props = defineProps<{
+  contextName: string | null;
+}>();
+
+const emit = defineEmits(['select-resource-type']);
+
+interface DynamicResourceInfo {
+  group: string;
+  version: string;
+  kind: string;
+  plural: string;
+  namespaced: boolean;
+}
+
+const apiGroups = ref<Record<string, DynamicResourceInfo[]>>({});
+const expandedGroups = ref<Record<string, boolean>>({});
+
+const fetchApiResources = async () => {
+  if (!props.contextName) return;
+  try {
+    const res = await invoke<Record<string, DynamicResourceInfo[]>>('get_api_resources', {
+      contextName: props.contextName
+    });
+    apiGroups.value = res;
+    // expand core by default
+    expandedGroups.value['core'] = true;
+  } catch (e) {
+    console.error('Failed to fetch api resources', e);
+  }
+};
+
+watch(() => props.contextName, () => {
+  fetchApiResources();
+});
+
+onMounted(() => {
+  fetchApiResources();
 });
 
 const toggleGroup = (group: string) => {
   expandedGroups.value[group] = !expandedGroups.value[group];
 };
 
-const emit = defineEmits(['select-resource-type']);
-
-const handleItemClick = (type: string) => {
-  emit('select-resource-type', type);
+const handleItemClick = (resource: DynamicResourceInfo) => {
+  // Pass an object so we can use dynamic list
+  emit('select-resource-type', resource);
 };
 </script>
 
 <template>
   <div class="resource-tree">
-    <!-- Workloads -->
-    <div class="tree-group">
-      <div class="group-header" @click="toggleGroup('workloads')">
-        <span class="chevron" :class="{ 'is-expanded': expandedGroups.workloads }">▶</span>
-        <span class="label">Workloads</span>
+    <div v-for="(resources, groupName) in apiGroups" :key="groupName" class="tree-group">
+      <div class="group-header" @click="toggleGroup(groupName)">
+        <span class="chevron" :class="{ 'is-expanded': expandedGroups[groupName] }">▶</span>
+        <span class="label">{{ groupName === 'core' ? 'Core' : groupName }}</span>
       </div>
-      <div v-if="expandedGroups.workloads" class="group-items">
-        <div class="tree-item" @click="handleItemClick('Pods')">
-          <span class="icon pod-icon">P</span>
-          <span class="label">Pods</span>
-        </div>
-        <div class="tree-item" @click="handleItemClick('Deployments')">
-          <span class="icon deploy-icon">D</span>
-          <span class="label">Deployments</span>
-        </div>
-        <div class="tree-item" @click="handleItemClick('StatefulSets')">
-          <span class="icon ss-icon">S</span>
-          <span class="label">StatefulSets</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Network -->
-    <div class="tree-group">
-      <div class="group-header" @click="toggleGroup('network')">
-        <span class="chevron" :class="{ 'is-expanded': expandedGroups.network }">▶</span>
-        <span class="label">Network</span>
-      </div>
-      <div v-if="expandedGroups.network" class="group-items">
-        <div class="tree-item" @click="handleItemClick('Services')">
-          <span class="icon svc-icon">S</span>
-          <span class="label">Services</span>
-        </div>
-        <div class="tree-item" @click="handleItemClick('Ingresses')">
-          <span class="icon ing-icon">I</span>
-          <span class="label">Ingresses</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Configuration -->
-    <div class="tree-group">
-      <div class="group-header" @click="toggleGroup('configuration')">
-        <span class="chevron" :class="{ 'is-expanded': expandedGroups.configuration }">▶</span>
-        <span class="label">Configuration</span>
-      </div>
-      <div v-if="expandedGroups.configuration" class="group-items">
-        <div class="tree-item" @click="handleItemClick('ConfigMaps')">
-          <span class="icon cm-icon">C</span>
-          <span class="label">ConfigMaps</span>
-        </div>
-        <div class="tree-item" @click="handleItemClick('Secrets')">
-          <span class="icon sec-icon">S</span>
-          <span class="label">Secrets</span>
+      <div v-if="expandedGroups[groupName]" class="group-items">
+        <div v-for="res in resources" :key="res.kind" class="tree-item" @click="handleItemClick(res)">
+          <span class="icon default-icon">{{ res.kind.charAt(0) }}</span>
+          <span class="label">{{ res.kind }}</span>
         </div>
       </div>
     </div>
@@ -147,15 +135,7 @@ const handleItemClick = (type: string) => {
   background-color: #374151;
   color: #9ca3af;
 }
-
-.pod-icon { color: #10b981; border: 1px solid #10b981; }
-.deploy-icon { color: #3b82f6; border: 1px solid #3b82f6; }
-.ss-icon { color: #8b5cf6; border: 1px solid #8b5cf6; }
-.svc-icon { color: #f59e0b; border: 1px solid #f59e0b; }
-.ing-icon { color: #ec4899; border: 1px solid #ec4899; }
-.cm-icon { color: #6b7280; border: 1px solid #6b7280; }
-.sec-icon { color: #ef4444; border: 1px solid #ef4444; }
-
+.default-icon { color: #3b82f6; border: 1px solid #3b82f6; }
 .label {
   white-space: nowrap;
   overflow: hidden;
