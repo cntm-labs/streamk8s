@@ -77,7 +77,7 @@ pub async fn list_dynamic_resource(
 
     let api: Api<DynamicObject> = if namespaced {
         if let Some(ns) = namespace {
-            if !ns.is_empty() {
+            if !ns.is_empty() && ns != "All Namespaces" {
                 Api::namespaced_with(client, &ns, &ar)
             } else {
                 Api::all_with(client, &ar)

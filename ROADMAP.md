@@ -34,7 +34,7 @@ Transition from a management tool to a fully autonomous OS-level resource negoti
 - [x] **OS-Level UX:** Integrate Native OS Desktop Notifications for background auto-suspend actions to prevent user confusion.
 
 ### Phase 4: Advanced K8s Features (OpenLens Parity)
-- [ ] **Dynamic API:** Implement Full CRD & Resource Viewer using `kube-rs` Dynamic API and Discovery client.
+- [x] **Dynamic API:** Implement Full CRD & Resource Viewer using `kube-rs` Dynamic API and Discovery client.
 - [ ] **Networking:** Implement Port Forwarding Manager UI and backend using `kube-rs` WebSocket native port forwarding.
 - [ ] **Helm Integration:** Add Helm Chart Explorer and Release Manager.
 - [ ] **Prometheus:** Add cluster-wide metrics scraping for advanced visualization.

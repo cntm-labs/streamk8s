@@ -175,6 +175,7 @@ const fetchResources = async (context: string, resourceInfo: any) => {
     clusterResources.value[context] = data;
   } catch (e) {
     console.error(`Failed to fetch ${resourceInfo.kind}:`, e);
+    alert(`Failed to fetch ${resourceInfo.kind}: ${e}`);
   }
 };
 
