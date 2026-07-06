@@ -6,7 +6,8 @@ import {
   Activity,
   Network,
   User,
-  Settings
+  Settings,
+  Cable
 } from 'lucide-vue-next';
 
 defineProps<{
@@ -20,6 +21,7 @@ const emit = defineEmits<{
 const topItems = [
   { id: 'explorer', icon: LayoutGrid, title: 'Explorer' },
   { id: 'topology', icon: Network, title: 'Topology Map' },
+  { id: 'port-forwards', icon: Cable, title: 'Port Forwards' },
   { id: 'ai', icon: Bot, title: 'AI Assistant' },
   { id: 'marketplace', icon: ShoppingBag, title: 'Marketplace' },
   { id: 'hardware', icon: Activity, title: 'Hardware' },

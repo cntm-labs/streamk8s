@@ -4,6 +4,7 @@ pub mod dynamic;
 pub mod inspector;
 pub mod logs;
 pub mod pods;
+pub mod portforward;
 pub mod resources;
 pub mod retry;
 pub mod scaling;

@@ -21,6 +21,7 @@ import WelcomeView from './views/WelcomeView.vue';
 import SettingsView from './views/SettingsView.vue';
 import MarketplaceView from './views/MarketplaceView.vue';
 import TopologyView from './views/TopologyView.vue';
+import PortForwardManager from './views/PortForwardManager.vue';
 
 interface Metrics {
   cpu_usage: number;
@@ -40,20 +41,21 @@ interface Advice {
 interface ThresholdPayload {}
 
 const activeTab = ref('explorer');
-const currentView = ref<'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology'>('welcome');
+const currentView = ref<'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology' | 'port-forwards'>('welcome');
 const sidebarVisible = ref(true);
 const sidebarWidth = ref(240);
 const isResizing = ref(false);
 const showCommandPalette = ref(false);
 const editingResource = ref<any | null>(null);
 
-const navMap: Record<string, { sidebar: boolean, view: 'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology' }> = {
+const navMap: Record<string, { sidebar: boolean, view: 'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology' | 'port-forwards' }> = {
   explorer: { sidebar: true, view: 'cluster' },
   topology: { sidebar: false, view: 'topology' as any },
   hardware: { sidebar: true, view: 'cluster' },
   ai: { sidebar: true, view: 'cluster' },
   marketplace: { sidebar: true, view: 'marketplace' },
   settings: { sidebar: false, view: 'settings' },
+  'port-forwards': { sidebar: false, view: 'port-forwards' },
 };
 
 const handleStartResize = () => {
@@ -382,6 +384,7 @@ onMounted(async () => {
           :context-name="selectedContextName"
           namespace="default"
         />
+        <PortForwardManager v-else-if="currentView === 'port-forwards'" />
         
         <section v-else-if="currentView === 'cluster'" class="workloads-panel">
           <AdviceBanner :advice="currentAdvice" @optimize="handleOptimize" />

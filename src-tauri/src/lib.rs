@@ -24,6 +24,7 @@ pub fn run() {
         .manage(crate::k8s::terminal::TerminalSessionManager {
             sessions: std::sync::Mutex::new(std::collections::HashMap::new()),
         })
+        .manage(crate::k8s::portforward::PortForwardManager::new())
         .manage(ActiveClusterState {
             context_name: std::sync::Mutex::new(None),
             namespace: std::sync::Mutex::new("default".to_string()),
@@ -62,6 +63,9 @@ pub fn run() {
             crate::k8s::terminal::close_terminal_session,
             crate::k8s::dynamic::get_api_resources,
             crate::k8s::dynamic::list_dynamic_resource,
+            crate::k8s::portforward::start_port_forward,
+            crate::k8s::portforward::stop_port_forward,
+            crate::k8s::portforward::list_active_forwards,
             update_active_cluster_state
         ])
         .setup(|app| {

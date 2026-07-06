@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import PortForwardModal from './PortForwardModal.vue';
 
 const props = defineProps<{ 
   rows: any[],
@@ -14,6 +15,14 @@ const emit = defineEmits<{
 
 const selectResource = (namespace: string, name: string) => {
   emit('select-resource', namespace || '', name, props.kind);
+};
+
+const showPfModal = ref(false);
+const pfTarget = ref({ name: '', namespace: '' });
+
+const openPfModal = (namespace: string, name: string) => {
+  pfTarget.value = { namespace, name };
+  showPfModal.value = true;
 };
 
 const searchQuery = ref('');
@@ -109,11 +118,28 @@ const getSpecValue = (row: any, col: string) => {
               >
                 ✏️ YAML
               </button>
+              <button 
+                v-if="kind === 'Pod'"
+                @click="openPfModal(row.namespace, row.name)" 
+                class="btn-action pf-btn"
+                title="Port Forward"
+              >
+                🔌 Forward
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+    
+    <PortForwardModal
+      v-if="showPfModal"
+      :context-name="contextName"
+      :namespace="pfTarget.namespace"
+      :pod-name="pfTarget.name"
+      @close="showPfModal = false"
+      @success="showPfModal = false"
+    />
   </div>
 </template>
 
@@ -217,8 +243,11 @@ tr:hover {
 .failed, .inactive, .error { background-color: rgba(153, 27, 27, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.2); }
 
 .col-actions {
-  width: 100px;
+  width: 200px;
   text-align: center;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 }
 .btn-action {
   background-color: #1e293b;

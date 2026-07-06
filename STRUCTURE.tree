@@ -35,8 +35,6 @@
 ├── package-lock.json
 ├── PHILOSOPHY.md
 ├── playwright.config.ts
-├── playwright-report
-│   └── index.html
 ├── pr_body.md
 ├── .pre-commit-config.yaml
 ├── PRINCIPLES.md
@@ -45,6 +43,12 @@
 │   └── vite.svg
 ├── README.md
 ├── ROADMAP.md
+├── scratch
+│   └── pf_test
+│       ├── Cargo.lock
+│       ├── Cargo.toml
+│       └── src
+│           └── main.rs
 ├── sdk
 │   └── rust
 │       ├── Cargo.lock
@@ -68,6 +72,7 @@
 │   │   ├── InspectorPanel.vue
 │   │   ├── PluginRenderer.vue
 │   │   ├── PodList.vue
+│   │   ├── PortForwardModal.vue
 │   │   ├── ResourceTable.vue
 │   │   ├── ResourceTree.vue
 │   │   ├── Sidebar.vue
@@ -83,6 +88,7 @@
 │   ├── views
 │   │   ├── ClusterView.vue
 │   │   ├── MarketplaceView.vue
+│   │   ├── PortForwardManager.vue
 │   │   ├── SettingsView.vue
 │   │   ├── TopologyView.vue
 │   │   └── WelcomeView.vue
@@ -131,6 +137,7 @@
 │   │   │   ├── logs.rs
 │   │   │   ├── mod.rs
 │   │   │   ├── pods.rs
+│   │   │   ├── portforward.rs
 │   │   │   ├── resources.rs
 │   │   │   ├── retry.rs
 │   │   │   ├── scaling.rs
@@ -154,8 +161,6 @@
 │       ├── Cargo.toml
 │       └── src
 │           └── lib.rs
-├── test-results
-│   └── .last-run.json
 ├── .todos.md
 ├── TROUBLESHOOTING.md
 ├── tsconfig.json
@@ -163,4 +168,4 @@
 ├── VISION.md
 └── vite.config.ts
 
-30 directories, 134 files
+31 directories, 138 files
