@@ -35,6 +35,6 @@ Transition from a management tool to a fully autonomous OS-level resource negoti
 
 ### Phase 4: Advanced K8s Features (OpenLens Parity)
 - [x] **Dynamic API:** Implement Full CRD & Resource Viewer using `kube-rs` Dynamic API and Discovery client.
-- [ ] **Networking:** Implement Port Forwarding Manager UI and backend using `kube-rs` WebSocket native port forwarding.
+- [x] **Networking:** Implement Port Forwarding Manager UI and backend using `kube-rs` WebSocket native port forwarding.
 - [ ] **Helm Integration:** Add Helm Chart Explorer and Release Manager.
 - [ ] **Prometheus:** Add cluster-wide metrics scraping for advanced visualization.
