@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { invoke } from '@tauri-apps/api/core';
 import PortForwardModal from './PortForwardModal.vue';
 
 const props = defineProps<{ 
@@ -27,14 +28,64 @@ const openPfModal = (namespace: string, name: string) => {
 
 const searchQuery = ref('');
 
+const podMetrics = ref<Record<string, {cpu: string, memory: string}>>({});
+let metricsInterval: ReturnType<typeof setInterval>;
+
+const fetchMetrics = async () => {
+  if (props.kind !== 'Pod') return;
+  try {
+    const res = await invoke<any[]>('get_pod_metrics', { 
+      contextName: props.contextName, 
+      namespace: '' 
+    });
+    const metricsObj: Record<string, any> = {};
+    for (const m of res) {
+      metricsObj[`${m.namespace}/${m.name}`] = { cpu: m.cpu, memory: m.memory };
+    }
+    podMetrics.value = metricsObj;
+  } catch (e) {
+    console.error("Failed to fetch pod metrics:", e);
+  }
+};
+
+onMounted(() => {
+  if (props.kind === 'Pod') {
+    fetchMetrics();
+    metricsInterval = setInterval(fetchMetrics, 10000);
+  }
+});
+
+onUnmounted(() => {
+  if (metricsInterval) clearInterval(metricsInterval);
+});
+
+watch(() => props.kind, (newVal) => {
+  if (newVal === 'Pod') {
+    fetchMetrics();
+    if (!metricsInterval) metricsInterval = setInterval(fetchMetrics, 10000);
+  } else {
+    if (metricsInterval) {
+      clearInterval(metricsInterval);
+      metricsInterval = undefined as any;
+    }
+  }
+});
+
 const formattedRows = computed(() => {
   return props.rows.map(r => {
+    const name = r.metadata?.name || 'Unknown';
+    const namespace = r.metadata?.namespace || '';
+    const key = `${namespace}/${name}`;
+    const metrics = podMetrics.value[key];
+
     return {
       _raw: r,
-      name: r.metadata?.name || 'Unknown',
-      namespace: r.metadata?.namespace || '',
+      name,
+      namespace,
       creationTimestamp: r.metadata?.creationTimestamp ? new Date(r.metadata.creationTimestamp).toLocaleString() : '',
-      status: r.status?.phase || r.status?.conditions?.[0]?.type || ''
+      status: r.status?.phase || r.status?.conditions?.[0]?.type || '',
+      cpu: metrics?.cpu || '-',
+      memory: metrics?.memory || '-'
     };
   });
 });
@@ -89,6 +140,8 @@ const getSpecValue = (row: any, col: string) => {
             <th v-if="filteredRows.some(r => r.namespace)">Namespace</th>
             <th>Created At</th>
             <th v-for="col in dynamicColumns" :key="col">Spec: {{ col }}</th>
+            <th v-if="kind === 'Pod'">CPU</th>
+            <th v-if="kind === 'Pod'">Memory</th>
             <th v-if="filteredRows.some(r => r.status)">Status</th>
             <th class="col-actions">Actions</th>
           </tr>
@@ -105,6 +158,8 @@ const getSpecValue = (row: any, col: string) => {
             <td v-if="row.namespace">{{ row.namespace }}</td>
             <td>{{ row.creationTimestamp }}</td>
             <td v-for="col in dynamicColumns" :key="col">{{ getSpecValue(row, col) }}</td>
+            <td v-if="kind === 'Pod'">{{ row.cpu }}</td>
+            <td v-if="kind === 'Pod'">{{ row.memory }}</td>
             <td v-if="row.status">
               <span :class="['status-badge', row.status.toLowerCase()]">
                 {{ row.status }}

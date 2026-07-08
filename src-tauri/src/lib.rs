@@ -52,6 +52,7 @@ pub fn run() {
             crate::k8s::resources::get_k8s_resource_details,
             crate::k8s::resources::get_namespaces,
             crate::k8s::ai::analyze_with_ai,
+            crate::k8s::ai_profiler::analyze_workloads,
             crate::k8s::search::global_search,
             crate::k8s::topology::get_namespace_topology,
             crate::plugins::manager::get_installed_plugins,
@@ -66,6 +67,9 @@ pub fn run() {
             crate::k8s::portforward::start_port_forward,
             crate::k8s::portforward::stop_port_forward,
             crate::k8s::portforward::list_active_forwards,
+            crate::k8s::metrics::get_pod_metrics,
+            crate::k8s::helm::list_helm_releases,
+            crate::k8s::helm::get_helm_release_history,
             update_active_cluster_state
         ])
         .setup(|app| {

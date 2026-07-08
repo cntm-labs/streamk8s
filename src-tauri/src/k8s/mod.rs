@@ -1,8 +1,11 @@
 pub mod ai;
+pub mod ai_profiler;
 pub mod contexts;
 pub mod dynamic;
+pub mod helm;
 pub mod inspector;
 pub mod logs;
+pub mod metrics;
 pub mod pods;
 pub mod portforward;
 pub mod resources;

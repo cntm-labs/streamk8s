@@ -7,7 +7,8 @@ import {
   Network,
   User,
   Settings,
-  Cable
+  Cable,
+  Anchor
 } from 'lucide-vue-next';
 
 defineProps<{
@@ -22,6 +23,7 @@ const topItems = [
   { id: 'explorer', icon: LayoutGrid, title: 'Explorer' },
   { id: 'topology', icon: Network, title: 'Topology Map' },
   { id: 'port-forwards', icon: Cable, title: 'Port Forwards' },
+  { id: 'helm', icon: Anchor, title: 'Helm Releases' },
   { id: 'ai', icon: Bot, title: 'AI Assistant' },
   { id: 'marketplace', icon: ShoppingBag, title: 'Marketplace' },
   { id: 'hardware', icon: Activity, title: 'Hardware' },

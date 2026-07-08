@@ -22,6 +22,8 @@ import SettingsView from './views/SettingsView.vue';
 import MarketplaceView from './views/MarketplaceView.vue';
 import TopologyView from './views/TopologyView.vue';
 import PortForwardManager from './views/PortForwardManager.vue';
+import HelmReleasesView from './views/HelmReleasesView.vue';
+import AiInsightsView from './views/AiInsightsView.vue';
 
 interface Metrics {
   cpu_usage: number;
@@ -41,18 +43,19 @@ interface Advice {
 interface ThresholdPayload {}
 
 const activeTab = ref('explorer');
-const currentView = ref<'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology' | 'port-forwards'>('welcome');
+const currentView = ref<'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology' | 'port-forwards' | 'ai-insights' | 'helm'>('welcome');
 const sidebarVisible = ref(true);
 const sidebarWidth = ref(240);
 const isResizing = ref(false);
 const showCommandPalette = ref(false);
 const editingResource = ref<any | null>(null);
 
-const navMap: Record<string, { sidebar: boolean, view: 'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology' | 'port-forwards' }> = {
+const navMap: Record<string, { sidebar: boolean, view: 'welcome' | 'cluster' | 'settings' | 'marketplace' | 'topology' | 'port-forwards' | 'ai-insights' | 'helm' }> = {
   explorer: { sidebar: true, view: 'cluster' },
   topology: { sidebar: false, view: 'topology' as any },
   hardware: { sidebar: true, view: 'cluster' },
-  ai: { sidebar: true, view: 'cluster' },
+  helm: { sidebar: false, view: 'helm' },
+  ai: { sidebar: false, view: 'ai-insights' },
   marketplace: { sidebar: true, view: 'marketplace' },
   settings: { sidebar: false, view: 'settings' },
   'port-forwards': { sidebar: false, view: 'port-forwards' },
@@ -360,7 +363,7 @@ onMounted(async () => {
         </div>
         <div class="header-right">
           <select 
-            v-if="currentView === 'cluster' || currentView === 'topology'" 
+            v-if="currentView === 'cluster' || currentView === 'topology' || currentView === 'helm'" 
             v-model="selectedNamespace" 
             class="namespace-selector"
           >
@@ -385,6 +388,11 @@ onMounted(async () => {
           namespace="default"
         />
         <PortForwardManager v-else-if="currentView === 'port-forwards'" />
+        <HelmReleasesView v-else-if="currentView === 'helm'" :namespace="selectedNamespace" />
+        <AiInsightsView 
+          v-else-if="currentView === 'ai-insights'"
+          :context-name="selectedContextName"
+        />
         
         <section v-else-if="currentView === 'cluster'" class="workloads-panel">
           <AdviceBanner :advice="currentAdvice" @optimize="handleOptimize" />
