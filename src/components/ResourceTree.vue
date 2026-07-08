@@ -16,7 +16,45 @@ interface DynamicResourceInfo {
   namespaced: boolean;
 }
 
-const apiGroups = ref<Record<string, DynamicResourceInfo[]>>({});
+const CATEGORY_MAP: Record<string, string> = {
+  'Pod': 'Workloads',
+  'Deployment': 'Workloads',
+  'DaemonSet': 'Workloads',
+  'StatefulSet': 'Workloads',
+  'ReplicaSet': 'Workloads',
+  'Job': 'Workloads',
+  'CronJob': 'Workloads',
+  'Service': 'Network',
+  'Endpoints': 'Network',
+  'Ingress': 'Network',
+  'IngressClass': 'Network',
+  'NetworkPolicy': 'Network',
+  'ConfigMap': 'Config',
+  'Secret': 'Config',
+  'ResourceQuota': 'Config',
+  'LimitRange': 'Config',
+  'HorizontalPodAutoscaler': 'Config',
+  'PodDisruptionBudget': 'Config',
+  'PersistentVolumeClaim': 'Storage',
+  'PersistentVolume': 'Storage',
+  'StorageClass': 'Storage',
+  'ServiceAccount': 'Access Control',
+  'ClusterRole': 'Access Control',
+  'ClusterRoleBinding': 'Access Control',
+  'Role': 'Access Control',
+  'RoleBinding': 'Access Control',
+};
+
+const GROUP_ICONS: Record<string, string> = {
+  'Workloads': '📦',
+  'Network': '🌐',
+  'Config': '⚙️',
+  'Storage': '💾',
+  'Access Control': '🔐',
+  'Custom Resources': '🧩',
+};
+
+const logicalGroups = ref<Record<string, DynamicResourceInfo[]>>({});
 const expandedGroups = ref<Record<string, boolean>>({});
 
 const fetchApiResources = async () => {
@@ -25,9 +63,25 @@ const fetchApiResources = async () => {
     const res = await invoke<Record<string, DynamicResourceInfo[]>>('get_api_resources', {
       contextName: props.contextName
     });
-    apiGroups.value = res;
-    // expand core by default
-    expandedGroups.value['core'] = true;
+    
+    const newGroups: Record<string, DynamicResourceInfo[]> = {
+      'Workloads': [],
+      'Network': [],
+      'Config': [],
+      'Storage': [],
+      'Access Control': [],
+      'Custom Resources': [],
+    };
+
+    for (const group in res) {
+      for (const resource of res[group]) {
+        const category = CATEGORY_MAP[resource.kind] || 'Custom Resources';
+        newGroups[category].push(resource);
+      }
+    }
+
+    logicalGroups.value = newGroups;
+    expandedGroups.value['Workloads'] = true;
   } catch (e) {
     console.error('Failed to fetch api resources', e);
   }
@@ -46,25 +100,26 @@ const toggleGroup = (group: string) => {
 };
 
 const handleItemClick = (resource: DynamicResourceInfo) => {
-  // Pass an object so we can use dynamic list
   emit('select-resource-type', resource);
 };
 </script>
 
 <template>
   <div class="resource-tree">
-    <div v-for="(resources, groupName) in apiGroups" :key="groupName" class="tree-group">
-      <div class="group-header" @click="toggleGroup(groupName)">
-        <span class="chevron" :class="{ 'is-expanded': expandedGroups[groupName] }">▶</span>
-        <span class="label">{{ groupName === 'core' ? 'Core' : groupName }}</span>
-      </div>
-      <div v-if="expandedGroups[groupName]" class="group-items">
-        <div v-for="res in resources" :key="res.kind" class="tree-item" @click="handleItemClick(res)">
-          <span class="icon default-icon">{{ res.kind.charAt(0) }}</span>
-          <span class="label">{{ res.kind }}</span>
+    <template v-for="(resources, groupName) in logicalGroups" :key="groupName">
+      <div v-if="resources.length > 0" class="tree-group">
+        <div class="group-header" @click="toggleGroup(groupName as string)">
+          <span class="chevron" :class="{ 'is-expanded': expandedGroups[groupName as string] }">▶</span>
+          <span class="icon group-icon">{{ GROUP_ICONS[groupName as string] || '🧩' }}</span>
+          <span class="label">{{ groupName }}</span>
+        </div>
+        <div v-if="expandedGroups[groupName as string]" class="group-items">
+          <div v-for="res in resources" :key="res.kind" class="tree-item" @click="handleItemClick(res)">
+            <span class="label">{{ res.kind }}</span>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -106,7 +161,7 @@ const handleItemClick = (resource: DynamicResourceInfo) => {
 }
 
 .group-items {
-  padding-left: 16px;
+  padding-left: 24px;
 }
 
 .tree-item {
@@ -128,14 +183,10 @@ const handleItemClick = (resource: DynamicResourceInfo) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.6rem;
-  font-weight: bold;
+  font-size: 0.8rem;
   margin-right: 8px;
-  border-radius: 2px;
-  background-color: #374151;
-  color: #9ca3af;
 }
-.default-icon { color: #3b82f6; border: 1px solid #3b82f6; }
+
 .label {
   white-space: nowrap;
   overflow: hidden;
