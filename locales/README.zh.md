@@ -11,9 +11,9 @@
 
 <!-- LOD Badges -->
 ![Rust LOD](https://img.shields.io/badge/Rust_LOD-2652-orange)
-![Vue LOD](https://img.shields.io/badge/Vue_LOD-138-4FC08D)
+![Vue LOD](https://img.shields.io/badge/Vue_LOD-140-4FC08D)
 ![TypeScript LOD](https://img.shields.io/badge/TypeScript_LOD-322-3178C6)
-![Total LOD](https://img.shields.io/badge/Total_LOD-11590-blue)
+![Total LOD](https://img.shields.io/badge/Total_LOD-11637-blue)
 
 <!-- Language Badges -->
 [![Rust](https://img.shields.io/badge/Rust-2021-orange?logo=rust)](https://www.rust-lang.org/)
