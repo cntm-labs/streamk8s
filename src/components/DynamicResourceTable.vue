@@ -12,6 +12,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'select-resource', namespace: string, name: string, kind: string): void;
   (e: 'edit-yaml', namespace: string, name: string, kind: string): void;
+  (e: 'open-logs', namespace: string, name: string): void;
+  (e: 'open-terminal', namespace: string, name: string): void;
 }>();
 
 const selectResource = (namespace: string, name: string) => {
@@ -172,6 +174,22 @@ const getSpecValue = (row: any, col: string) => {
                 title="Edit YAML Manifest"
               >
                 ✏️ YAML
+              </button>
+              <button 
+                v-if="kind === 'Pod'"
+                @click="emit('open-logs', row.namespace, row.name)" 
+                class="btn-action log-btn"
+                title="Logs"
+              >
+                📝 Logs
+              </button>
+              <button 
+                v-if="kind === 'Pod'"
+                @click="emit('open-terminal', row.namespace, row.name)" 
+                class="btn-action term-btn"
+                title="Terminal"
+              >
+                💻 Terminal
               </button>
               <button 
                 v-if="kind === 'Pod'"

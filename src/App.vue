@@ -14,7 +14,7 @@ import AdviceBanner from './components/AdviceBanner.vue';
 import CommandPalette from './components/CommandPalette.vue';
 import YamlEditorModal from './components/YamlEditorModal.vue';
 import AdvisorToast from './components/AdvisorToast.vue';
-
+import BottomDock from './components/BottomDock.vue';
 
 // Views
 import WelcomeView from './views/WelcomeView.vue';
@@ -95,6 +95,22 @@ const selectedResource = ref<any | null>(null);
 const inspectorPanelRef = ref<any | null>(null);
 const activeContainer = ref('');
 const showBottomPanel = ref(false);
+
+const isDockOpen = ref(false);
+const dockMode = ref<'logs' | 'terminal'>('logs');
+const activePodContext = ref({ namespace: '', podName: '', containerName: '' });
+
+const openLogs = (namespace: string, podName: string) => {
+  activePodContext.value = { namespace, podName, containerName: '' };
+  dockMode.value = 'logs';
+  isDockOpen.value = true;
+};
+
+const openTerminal = (namespace: string, podName: string) => {
+  activePodContext.value = { namespace, podName, containerName: '' };
+  dockMode.value = 'terminal';
+  isDockOpen.value = true;
+};
 
 const handleTabChange = (id: string) => {
   const config = navMap[id];
@@ -416,6 +432,8 @@ onMounted(async () => {
                     kind
                   };
                 }"
+                @open-logs="openLogs"
+                @open-terminal="openTerminal"
               />
             </div>
             <div v-else class="no-cluster-selected">
@@ -454,6 +472,15 @@ onMounted(async () => {
     
     <AdvisorToast :context-name="selectedContextName" :namespace="selectedNamespace" />
     
+    <BottomDock 
+      :is-open="isDockOpen" 
+      :mode="dockMode" 
+      :context-name="selectedContextName"
+      :namespace="activePodContext.namespace"
+      :pod-name="activePodContext.podName"
+      :container-name="activePodContext.containerName"
+      @close="isDockOpen = false"
+    />
 
   </div>
 </template>

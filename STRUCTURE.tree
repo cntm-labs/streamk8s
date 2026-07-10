@@ -65,13 +65,16 @@
 │   │   ├── ActivityBar.vue
 │   │   ├── AdviceBanner.vue
 │   │   ├── AdvisorToast.vue
+│   │   ├── BottomDock.vue
 │   │   ├── ClusterHotbar.vue
 │   │   ├── CommandPalette.vue
 │   │   ├── DynamicResourceTable.vue
 │   │   ├── Gauge.vue
 │   │   ├── InspectorPanel.vue
+│   │   ├── LogViewer.vue
 │   │   ├── PluginRenderer.vue
 │   │   ├── PodList.vue
+│   │   ├── PodTerminal.vue
 │   │   ├── PortForwardModal.vue
 │   │   ├── ResourceTable.vue
 │   │   ├── ResourceTree.vue
@@ -86,7 +89,9 @@
 │   ├── main.ts
 │   ├── style.css
 │   ├── views
+│   │   ├── AiInsightsView.vue
 │   │   ├── ClusterView.vue
+│   │   ├── HelmReleasesView.vue
 │   │   ├── MarketplaceView.vue
 │   │   ├── PortForwardManager.vue
 │   │   ├── SettingsView.vue
@@ -130,11 +135,14 @@
 │   │   │   ├── mod.rs
 │   │   │   └── profiler.rs
 │   │   ├── k8s
+│   │   │   ├── ai_profiler.rs
 │   │   │   ├── ai.rs
 │   │   │   ├── contexts.rs
 │   │   │   ├── dynamic.rs
+│   │   │   ├── helm.rs
 │   │   │   ├── inspector.rs
 │   │   │   ├── logs.rs
+│   │   │   ├── metrics.rs
 │   │   │   ├── mod.rs
 │   │   │   ├── pods.rs
 │   │   │   ├── portforward.rs
@@ -168,4 +176,4 @@
 ├── VISION.md
 └── vite.config.ts
 
-31 directories, 138 files
+31 directories, 146 files
